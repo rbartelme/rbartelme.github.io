@@ -1,0 +1,24 @@
+name: "Ryan P. Bartelme"
+output_dir: "."
+navbar:
+  title: "Ryan P. Bartelme"
+  left:
+    - text: "Publications"
+      href: https://scholar.google.com/citations?user=zkKcdmcAAAAJ&hl=en
+    - text: "Programming"
+      href: software.html
+    - text: "Teaching"
+      href: teaching.html
+  right:
+    - icon: fa-envelope fa-lg
+      href: contact.html
+    - icon: fa-github fa-lg
+      href: http://github.com/rbartelme
+    - icon: fa-twitter fa-lg
+      href: https://twitter.com/MicrobialBart
+    - icon: fa-linkedin fa-lg
+      href: https://www.linkedin.com/in/ryan-bartelme/
+output:
+  html_document:
+    remote_theme: thelehhman/texture
+
