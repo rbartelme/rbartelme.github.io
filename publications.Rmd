@@ -1,0 +1,8 @@
+---
+title: 'Publications'
+output: html_document
+bibliography: jun2020.bib
+---
+
+<iframe src="https://bibbase.org/show?bib=[BIBTEXFILE]"></iframe>
+
