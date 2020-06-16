@@ -3,10 +3,12 @@ output_dir: "."
 navbar:
   title: "Ryan P. Bartelme"
   left:
+    - text: "About"
+      href: about.html
     - text: "Publications"
       href: publications.html
-    - text: "Programming"
-      href: software.html
+    - text: "Coding"
+      href: programming.html
     - text: "Teaching"
       href: teaching.html
   right:

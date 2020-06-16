@@ -1,18 +1,11 @@
 ---
-title: 'Ryan Bartelme'
+title: ''
 output: html_document
 ---
 
 <link rel="stylesheet" href="styles.css" type="text/css">
 
-<img src="images/ryan.jpg" style="width:25%; border:10px solid; margin-right: 20px" align="left">
 
-## About Me:
-
-I'm always striving to learn new technologies and methods from a systems perspective. With my interdisciplinary skills rooted in biology and agriculture, I'm a quick learner who's expanded into engineering and data science. Statistics and statistical thinking drives my work, and I welcome an agile work environment that encourages growth in knowledge and technical skills. As comfortable coding as with a pipette or soldering iron, I am actively engaged in expanding my understanding of computer vision, deep learning, and classical machine learning schema.
-
-<br>
-I did my doctorate in Freshwater Science with [Dr. Ryan J. Newton](https://www.newtonlabuwm.org/) at the University of Wisconsin - Milwaukee [School of Freshwater Sciences](https://uwm.edu/freshwater/). 
 
 
 
@@ -22,7 +15,9 @@ I did my doctorate in Freshwater Science with [Dr. Ryan J. Newton](https://www.n
 
 
 <br><br><br><br><br><br><br><br> 
-<br><br><br><br> 
+<br><br><br><br><br><br><br><br><br><br><br><br> 
+<br><br>
 
 
-Thank you to [Emily Zabor](https://www.emilyzabor.com/) for the [tutorial](https://www.emilyzabor.com/tutorials/rmarkdown_websites_tutorial.html) to build github.io pages with Rmarkdown.
+
+Thank you to [Emily Zabor](https://www.emilyzabor.com/) for the github.io page build  [tutorial](https://www.emilyzabor.com/tutorials/rmarkdown_websites_tutorial.html) using [Rmarkdown](https://rmarkdown.rstudio.com/) and [Rstudio](https://rstudio.com/).
