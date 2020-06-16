@@ -2,7 +2,9 @@
 title: 'Publications'
 output: html_document
 bibliography: jun2020.bib
+nocite: '@*'
 ---
 
-<iframe src="https://bibbase.org/show?bib=[BIBTEXFILE]"></iframe>
+<link rel="stylesheet" href="styles.css" type="text/css">
 
+### *Publications list last updated  on June 15 2021. For any recent publication activity please visit my [Google Scholar page](https://scholar.google.com/citations?user=zkKcdmcAAAAJ&hl=en).*

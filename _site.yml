@@ -4,7 +4,7 @@ navbar:
   title: "Ryan P. Bartelme"
   left:
     - text: "Publications"
-      href: https://scholar.google.com/citations?user=zkKcdmcAAAAJ&hl=en
+      href: publications.html
     - text: "Programming"
       href: software.html
     - text: "Teaching"
