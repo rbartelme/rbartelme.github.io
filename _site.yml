@@ -1,7 +1,7 @@
 name: "Ryan P. Bartelme"
 output_dir: "."
 navbar:
-  title: "Ryan P. Bartelme"
+  title: "Home"
   left:
     - text: "About"
       href: about.html
