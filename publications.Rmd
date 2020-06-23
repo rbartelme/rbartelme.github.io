@@ -10,5 +10,4 @@ csl: apa-cv.csl
 
 
 **Publications list last updated  on June 23 2020.**<br>
-*For any recent publication activity please visit my [Google Scholar page](https://scholar.google.com/citations?user=zkKcdmcAAAAJ&hl=en).*<br><br>
-Bartelme R.P., Behrisch M., Cain E.J., Chang R., Debnath I., Heidorn P.B., Jaiswal P., LeBauer D.S., Mosca A., Munoz-Torres M., Ross A., Shefchek K., Swetnam T.L., & Thessen A.E. [*In Review*](https://github.com/genophenoenvo/papers/blob/master/phenomics_perspective/Perspective.pdf). Do androids dream of electric sorghum?: Predicting Phenotypes from Multi-Scale Genomic and Environmental Data using Neural Networks and Knowledge Graphs. 
+*For any recent publication activity please visit my [Google Scholar page](https://scholar.google.com/citations?user=zkKcdmcAAAAJ&hl=en).*<br><br>Bartelme, R. P., Behrisch, M., Cain, E. J., Chang, R., Debnath, I., Heidorn, P. B., Jaiswal, P., LeBauer, D. S., Mosca, A., Munoz-Torres, M., Ross, A., Shefchek, K., Swetnam, T. L., & Thessen, A. E. [*In Review*](https://github.com/genophenoenvo/papers/blob/master/phenomics_perspective/Perspective.pdf). Do androids dream of electric sorghum?: Predicting Phenotypes from Multi-Scale Genomic and Environmental Data using Neural Networks and Knowledge Graphs. 
