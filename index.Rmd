@@ -11,20 +11,28 @@ output: html_document
 ### *Application Driven, Microbially Rooted, Agricultural Data Science*
 
 <br><br>
+<p>
+#### Data Science, Informatics, Edge Computing
 
-* **Applied Microbial Ecology**
+<img src="images/Microprocessor.jpg" style="width:70%; border:1px solid">
 
-<br><br>
+<br><br></p>
+<p>
+#### Agriculture
 
-* **Agriculture**
+<img src="images/GreenField.jpg" style="width:70%; border:1px solid">
 
-<br><br>
 
-* **Informatics and Modeling**
+<br><br></p>
+<p>
+#### Applied Microbial Ecology
 
-<br><br>
+<img src="images/cultures.jpg" style="width:70%; border:1px solid">
 
-* **Edge Computing**
+
+</p>
+
+
 
 <br><br>
 
