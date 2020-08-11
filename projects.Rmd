@@ -5,6 +5,8 @@ output: html_document
 
 <link rel="stylesheet" href="styles.css" type="text/css">
 
+---
+
 ### Modeling *Sorghum bicolor* Phenotypes with Bayesian Belief Networks
 
 This [project](https://www.github.com/rbartelme/phenophasebbn/) is a research component of the [GenoPhenoEnvo NSF HDR award](https://genophenoenvo.github.io/). It's written in the R language and uses the Bayesian Network library `bnlearn` to construct diacyclic graphs for the phenotypic, genomic, and environmental data compiled by the [TERRA-REF Project](https://www.terraref.org/). The data and code are freely available on GitHub and, when the project is completed, the Docker container and data will be freely available to use on the [CyVerse Discovery Environment](https://de.cyverse.org/de/).
