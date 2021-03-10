@@ -7,3 +7,6 @@ Conflict test.
 The publications list in LaTeX format which renders on `knit`. 
 
 The remote theme is currently broken and defaulting to minima.
+
+
+Conflict resolution through branching.
