@@ -2,7 +2,7 @@
 tasks:
   - name: jekyll build
     init: bundle install
-    command: bundle install Gemfile
+    command: bundle install
 
 
 # List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
