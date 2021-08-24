@@ -53,6 +53,8 @@ GEM
       citeproc-ruby (~> 1.0)
       csl-styles (~> 1.0)
       jekyll (~> 4.0)
+    jekyll-seo-tag (2.7.1)
+      jekyll (>= 3.8, < 5.0)
     jekyll-watch (2.2.1)
       listen (~> 3.0)
     kramdown (2.3.1)
@@ -89,6 +91,7 @@ DEPENDENCIES
   jekyll
   jekyll-remote-theme
   jekyll-scholar
+  jekyll-seo-tag
 
 BUNDLED WITH
    2.2.17
