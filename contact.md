@@ -4,7 +4,6 @@ layout: default
 output: html_document
 ---
 
-{% include navigation.html %}
 
 Feel free to reach out to me with any questions, collaborations, or general inquiries:
 

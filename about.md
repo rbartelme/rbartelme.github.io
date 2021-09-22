@@ -4,7 +4,6 @@ layout: default
 output: html_document
 ---
 
-{% include navigation.html %}
 
 <img src="images/ryan.jpg" style="width:25%; border:10px solid; margin-right: 20px" align="left">
 
