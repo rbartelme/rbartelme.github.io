@@ -1,0 +1,17 @@
+- title: Home
+  url: /index
+
+- title: Projects & Publications
+  url: /projects
+
+- title: About
+  url: /about
+
+- title: Contact
+  url: /contact
+
+- title: GitHub
+  url: https://www.github.com/rbartelme
+
+- title: LinkedIn
+  url: https://www.linkedin.com/in/ryan-bartelme/
