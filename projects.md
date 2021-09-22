@@ -18,16 +18,6 @@ This [project](https://www.github.com/rbartelme/phenophasebbn/) is a research co
 
 ---
 
-### Macroeclogical Predictive Modeling from Microbial Community Data
-
-This is also associated with the [GenoPhenoEnvo NSF HDR award](https://genophenoenvo.github.io/). The project uses publicly available [NSF NEON](https://www.neonscience.org/) datasets to predict macroecological phenotypes from microbial data products. Project is in development  [here](https://www.github.com/rbartelme/NEON_metagenomics/).
-
-#### *Overview of the data processing:*
-
-<img src="images/NEON.svg" style="width:70%; border:1px solid">
-
-
----
 
 ### Microbial Communities in Controlled Environment Agriculture Systems
 
@@ -38,3 +28,10 @@ As a trained microbial ecologist and microbiologist, I am very interested in how
 ### Online Short-Course in Statistics
 
 Developed for the [University of Arizona Data Science Fellows Program](https://datascience.arizona.edu/data-science-fellows/) [this](https://github.com/rbartelme/rstudio-stats/) course uses the [CyVerse Discovery Environment](https://de.cyverse.org/de/) and [docker](https://www.docker.com/) to provide a brief introduction to statistical analyses in the R language for postdoctoral researchers in computer science and biology. Topics covered include basic regression, distribution modeling, markov chains, and Bayesian Belief Networks.
+
+---
+
+### Peer Reviewed Publications
+
+*For any recent publication activity please visit my [Google Scholar page](https://scholar.google.com/citations?user=zkKcdmcAAAAJ&hl=en).*
+<br><br>
