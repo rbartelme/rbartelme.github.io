@@ -1,5 +1,6 @@
 ---
 title: "Contact Me"
+layout: default
 output: html_document
 ---
 

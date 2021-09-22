@@ -1,5 +1,6 @@
 ---
 title: "About Ryan"
+layout: default
 output: html_document
 ---
 

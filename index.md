@@ -1,5 +1,6 @@
 ---
 title: 'Ryan P. Bartelme, Ph.D.'
+laout: default
 output: html_document
 ---
 
