@@ -3,9 +3,7 @@ title: "Projects"
 output: html_document
 ---
 
-<link rel="stylesheet" href="styles.css" type="text/css">
-
----
+{% include navigation.html %}
 
 ### Modeling *Sorghum bicolor* Phenotypes with Bayesian Belief Networks
 

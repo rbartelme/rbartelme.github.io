@@ -3,7 +3,7 @@ title: "Contact Me"
 output: html_document
 ---
 
-<link rel="stylesheet" href="styles.css" type="text/css">
+{% include navigation.html %}
 
 Feel free to reach out to me with any questions, collaborations, or general inquiries:
 

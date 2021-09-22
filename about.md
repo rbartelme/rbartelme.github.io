@@ -1,9 +1,9 @@
 ---
-title: "About Me"
+title: "About Ryan"
 output: html_document
 ---
 
-<link rel="stylesheet" href="styles.css" type="text/css">
+{% include navigation.html %}
 
 <img src="images/ryan.jpg" style="width:25%; border:10px solid; margin-right: 20px" align="left">
 
