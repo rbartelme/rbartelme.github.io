@@ -1,12 +1,10 @@
 ---
 title: 'Ryan P. Bartelme, Ph.D.'
-laout: default
+layout: default
 output: html_document
 ---
 
 
-
-
-Ryan Bartelme is a computational biologist and data scientist with a strong interest in synthesizing technology to create sustainable solutions to medical and environmental problems. 
+Ryan Bartelme is a computational biologist and data scientist interested in finding sustainable solutions to medical and environmental big data problems. 
 
 [contact](https://rbartelme.github.io/contact.html)
