@@ -21,4 +21,4 @@ He currently works at [Accelerate Diagnostics](https://acceleratediagnostics.com
 - Computer Vision
 - Microbiology
 
-[contact](https://rbartelme.github.io/contact.html)
+[Contact](https://rbartelme.github.io/contact.html)
