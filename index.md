@@ -3,22 +3,24 @@ title: 'Ryan P. Bartelme, Ph.D.'
 layout: default
 output: html_document
 ---
-
 # Who?
 
-***Ryan Bartelme is a computational biologist and data scientist interested in finding sustainable solutions to medical and environmental big data problems.***
+**Dr. Ryan Bartelme**, a data professional, focuses on creating sustainable solutions for agricultural, medical, and environmental big data challenges. His expertise extends to networking and DevOps, where he occasionally explores new ideas.
 
-He currently works at [Accelerate Diagnostics](https://acceleratediagnostics.com/) as a Staff Data Scientist in their research and development department to collaboratively create new hardware for antimicrobial suceptibility testing.
+He is currently a Bioinformatic Scientist at [Pivot Bio](https://pivotbio.com/), working within the Research and Development department. His role involves collaborative projects aimed at developing sustainable nitrogen solutions for agriculture.
 
 # What?
 
-***Ryan is interested in:***
+**Ryan's areas of interest include:**
 
-- Causal networks
+- Algorithm Development
+- Cloud and Container Technologies
+- Data Management: Databases, Data Structures, and Data Provenance
+- Causal Networks in Data Analysis
 - Information Theory
 - Quantitative Ecology
-- Deep Learning
-- Computer Vision
-- Microbiology
+- Advances in Deep Learning
+- Computer Vision Techniques
+- Microbiological Research
 
-[Contact](https://rbartelme.github.io/contact.html)
+For inquiries or collaboration opportunities, please [Contact](https://rbartelme.github.io/contact.html) Ryan.
