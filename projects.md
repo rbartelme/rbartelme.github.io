@@ -14,8 +14,9 @@ Since transitioning into the private sector in biotechnology, Dr. Ryan Bartelme 
 This [project](https://github.com/genophenoenvo/phenophasebbn) was a part of the [GenoPhenoEnvo NSF HDR award](https://genophenoenvo.github.io/). It involved developing a simplified proof of concept model in the R language, utilizing the `bnlearn` library to construct diacyclic graphs for the phenotypic, genomic, and environmental data from the [TERRA-REF Project](https://www.terraref.org/). The project expanded to experiment with the NO-TEARS DAG solving algorithm. However, it was ultimately unsuccessful in resolving the directed graph structure with this implementation. Despite the project not achieving its intended outcome, it provided significant insights into Bayesian statistics and highlighted how directed acyclic graph structure solving algorithms remain an active area of research.
 
 #### *An overview of the Bayesian Belief Network in the GenoPhenoEnvo code ecosystem:*
-
+<div class="image-container">
 <img src="images/sorghum_bnlearn.svg" style="width:70%; border:1px solid">
+</div>
 
 ---
 

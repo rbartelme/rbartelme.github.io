@@ -1,0 +1,33 @@
+.image-caption {
+    text-align: center;
+    font-style: italic;
+    margin-top: 8px;
+}
+
+.centered-figure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.centered-figure img {
+    max-width: 100%;
+    height: auto; /* Maintain aspect ratio */
+}
+
+.centered-figure .image-caption {
+    margin-top: 8px;
+    text-align: center;
+}
+
+.image-container {
+    width: 50%;
+    background-color: linen;
+    display: inline-block;
+}
+
+.image-container img {
+    width: 100%;
+    height: auto;
+}
