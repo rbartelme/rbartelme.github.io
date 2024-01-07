@@ -5,7 +5,7 @@ output: html_document
 ---
 ### Private Sector Biotechnology Research
 
-Since transitioning into the private sector in biotechnology, Dr. Ryan Bartelme has been involved in various innovative research projects. However, due to the sensitive nature of this work and existing nondisclosure agreements, the specific details of these projects cannot be publicly shared. This constraint underscores the commitment to maintaining the highest standards of confidentiality and integrity in research.
+Since transitioning into the private sector in biotechnology, I have been involved in various innovative research projects. However, due to the sensitive nature of this work and existing nondisclosure agreements, the specific details of these projects cannot be publicly shared. This constraint underscores my commitment to maintaining the highest standards of confidentiality and integrity in research.
 
 ---
 
@@ -22,7 +22,7 @@ This [project](https://github.com/genophenoenvo/phenophasebbn) was a part of the
 
 ### Microbial Communities in Controlled Environment Agriculture Systems
 
-As a trained microbial ecologist and microbiologist, I am deeply interested in the functioning of microbial communities. My doctoral research concentrated on the microbiomes of recirculating aquaculture systems and aquaponics. Previous work in this area is detailed [here](publications.html). This is an ongoing interest, and I am actively seeking funding to further this research.
+As a trained microbial ecologist and microbiologist, I am deeply interested in the functioning of microbial communities. My doctoral research concentrated on the microbiomes of recirculating aquaculture systems and aquaponics. Previous work in this area is detailed [here](https://scholar.google.com/citations?user=zkKcdmcAAAAJ&hl=en).
 
 ---
 
