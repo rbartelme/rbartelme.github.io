@@ -29,6 +29,9 @@ GEM
       rouge (~> 3.0)
       safe_yaml (~> 1.0)
       terminal-table (~> 2.0)
+    jekyll-feed (0.17.0)
+      jekyll (>= 3.7, < 5.0)
+    jekyll-paginate (1.1.0)
     jekyll-remote-theme (0.4.3)
       addressable (~> 2.0)
       jekyll (>= 3.5, < 5.0)
@@ -66,15 +69,19 @@ GEM
     terminal-table (2.0.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
     unicode-display_width (1.7.0)
+    webrick (1.8.2)
 
 PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
   jekyll
+  jekyll-feed
+  jekyll-paginate
   jekyll-remote-theme
   jekyll-sass-converter
   jekyll-seo-tag
+  webrick
 
 BUNDLED WITH
    2.2.25

@@ -1,7 +1,14 @@
 name: Ryan Bartelme
 description: Computational biologist and data scientist.
 remote_theme: pages-themes/hacker@v0.2.0
+permalink: /blog/:year/:month/:day/:title
+paginate: 5
+paginate_path: "/blog/page:num/"
 
 plugins:
     - jekyll-remote-theme
+    - jekyll-paginate
+    - jekyll-feed
+
+
 
