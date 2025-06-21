@@ -1,4 +1,3 @@
-```markdown
 ---
 title: "About Ryan"
 layout: default
@@ -9,7 +8,7 @@ output: html_document
 
 Ryan is a scientist and technologist who thrives at the intersection of biology and data science. His work spans from wet lab research to cloud infrastructure, always with an eye toward solving real biological problems through computational approaches.
 
-Currently bridging academia and industry, Ryan brings expertise in bioinformatics, data engineering, DevOps, and AI/machine learning to biological research challenges. His background gives him a unique perspective on how statistical thinking and systems approaches can transform scientific workflows.
+Currently bridging academia and industry, Ryan brings expertise in bioinformatics, data engineering, DevOps, and AI/machine learning to biological research challenges. Throughout his career, Ryan has remained committed to the idea that the most interesting problems exist at the boundaries between disciplines.
 
 ---
 
@@ -23,5 +22,4 @@ His work with the NSF's [CyVerse](https://www.cyverse.org/) Cyberinfrastructure 
 
 Ryan's academic foundation is equally interdisciplinary. His postdoctoral research at the University of Arizona explored data science applications in quantitative ecology and microbial physiology. He earned his PhD in Freshwater Science from the University of Wisconsin-Milwaukee's [School of Freshwater Sciences](https://uwm.edu/freshwater/), working with [Dr. Ryan J. Newton](https://www.newtonlabuwm.org/) on research that combined microbiology, computational biology, and aquacultural engineering.
 
-His journey began with a BS in Microbiology from UW-Madison, where he conducted undergraduate research in Medical Microbiology and Immunology while serving as Co-President of the ASM Undergraduate Microbiology Club. Throughout his career, Ryan has remained committed to the idea that the most interesting problems exist at the boundaries between disciplines.
-```
+His journey began with a BS in Microbiology from UW-Madison, where he conducted undergraduate research in Medical Microbiology and Immunology while serving as Co-President of the ASM Undergraduate Microbiology Club. His background gives him a unique perspective on how statistical thinking and systems approaches can transform scientific workflows.
