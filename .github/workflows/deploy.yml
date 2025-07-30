@@ -64,7 +64,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
           
       - name: Restore cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             .next/cache
@@ -82,7 +82,7 @@ jobs:
         run: ${{ steps.detect-package-manager.outputs.runner }} next lint
         
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./out
         # Only upload artifact if we're on main branch
@@ -137,4 +137,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
