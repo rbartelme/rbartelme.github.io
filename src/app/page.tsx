@@ -38,10 +38,10 @@ export default function Home() {
                 Read My Research
               </Link>
               <Link 
-                href="/about"
+                href="/contact"
                 className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
               >
-                About Me
+                Contact Me
               </Link>
             </div>
           </div>
