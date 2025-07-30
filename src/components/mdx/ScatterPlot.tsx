@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import * as d3 from 'd3'
 
 interface DataPoint {
@@ -30,7 +30,27 @@ export default function ScatterPlot({
   xScale = 'linear',
   yScale = 'linear'
 }: ScatterPlotProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
   const svgRef = useRef<SVGSVGElement>(null)
+  const [containerWidth, setContainerWidth] = useState(width)
+
+  // Calculate responsive dimensions while keeping aspect ratio
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        const available = containerRef.current.offsetWidth
+        setContainerWidth(Math.min(available, width))
+      }
+    }
+
+    updateWidth()
+    window.addEventListener('resize', updateWidth)
+    return () => window.removeEventListener('resize', updateWidth)
+  }, [width])
+
+  // Calculate scaled dimensions
+  const scale = containerWidth / width
+  const scaledHeight = height * scale
 
   useEffect(() => {
     if (!svgRef.current || !data.length) return
@@ -42,8 +62,10 @@ export default function ScatterPlot({
     const innerHeight = height - margin.top - margin.bottom
 
     const svg = d3.select(svgRef.current)
-      .attr('width', width)
-      .attr('height', height)
+      .attr('width', '100%')
+      .attr('height', '100%')
+      .attr('viewBox', `0 0 ${width} ${height}`)
+      .attr('preserveAspectRatio', 'xMidYMid meet')
 
     const g = svg.append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`)
@@ -167,8 +189,16 @@ export default function ScatterPlot({
   }, [data, width, height, xLabel, yLabel, title, xScale, yScale])
 
   return (
-    <div className="my-8 p-4 bg-white border rounded-lg shadow-sm">
-      <svg ref={svgRef}></svg>
+    <div 
+      ref={containerRef}
+      className="my-8 p-4 bg-white border rounded-lg shadow-sm w-full"
+      style={{ maxWidth: `${width}px` }}
+    >
+      <svg 
+        ref={svgRef}
+        className="w-full h-auto"
+        style={{ height: `${scaledHeight}px` }}
+      />
     </div>
   )
 }
