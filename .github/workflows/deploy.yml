@@ -82,7 +82,7 @@ jobs:
         run: ${{ steps.detect-package-manager.outputs.runner }} next lint
         
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./out
         # Only upload artifact if we're on main branch
