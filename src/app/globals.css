@@ -5,33 +5,84 @@
 /* Code highlighting styles */
 @import 'highlight.js/styles/github-dark.css';
 
-/* Custom styles for scientific content */
+/* Mobile responsiveness fixes */
+html, body {
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Base responsive text sizing */
+html {
+  @apply text-sm md:text-base;
+}
+
+body {
+  @apply text-sm md:text-base leading-relaxed;
+}
+
+/* Ensure all containers are responsive */
+.container {
+  @apply w-full max-w-7xl mx-auto px-4;
+}
+
+/* Mobile-first responsive container */
+@media (max-width: 768px) {
+  .container {
+    @apply px-2;
+  }
+}
+
+/* Mobile-first responsive text classes */
+.text-responsive-sm {
+  @apply text-sm md:text-base;
+}
+
+.text-responsive-base {
+  @apply text-base md:text-lg;
+}
+
+.text-responsive-lg {
+  @apply text-lg md:text-xl;
+}
+
+.text-responsive-xl {
+  @apply text-xl md:text-2xl;
+}
+
+.text-responsive-2xl {
+  @apply text-2xl md:text-3xl;
+}
+
+/* Custom styles for scientific content - now responsive */
 .prose {
   @apply text-gray-800;
 }
 
 .prose h1 {
-  @apply text-3xl font-bold text-gray-900 mb-6;
+  @apply text-2xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-6;
 }
 
 .prose h2 {
-  @apply text-2xl font-semibold text-gray-900 mt-8 mb-4;
+  @apply text-xl md:text-2xl font-semibold text-gray-900 mt-6 md:mt-8 mb-3 md:mb-4;
 }
 
 .prose h3 {
-  @apply text-xl font-semibold text-gray-900 mt-6 mb-3;
+  @apply text-lg md:text-xl font-semibold text-gray-900 mt-4 md:mt-6 mb-2 md:mb-3;
 }
 
 .prose p {
-  @apply mb-4 leading-relaxed;
+  @apply text-base md:text-lg mb-3 md:mb-4 leading-relaxed;
 }
 
 .prose code {
-  @apply bg-gray-100 px-2 py-1 rounded text-sm font-mono;
+  @apply bg-gray-100 px-2 py-1 rounded text-sm md:text-base font-mono;
 }
 
 .prose pre {
-  @apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto;
+  @apply bg-gray-900 text-gray-100 p-3 md:p-4 rounded-lg overflow-x-auto text-sm md:text-base;
 }
 
 .prose pre code {
@@ -39,25 +90,25 @@
 }
 
 .prose blockquote {
-  @apply border-l-4 border-blue-400 pl-4 italic my-6 text-gray-700;
+  @apply border-l-4 border-blue-400 pl-3 md:pl-4 italic my-4 md:my-6 text-gray-700 text-base md:text-lg;
 }
 
 .prose table {
-  @apply w-full border-collapse border border-gray-300 my-6;
+  @apply w-full border-collapse border border-gray-300 my-4 md:my-6 text-sm md:text-base;
 }
 
 .prose th,
 .prose td {
-  @apply border border-gray-300 px-4 py-2 text-left;
+  @apply border border-gray-300 px-2 md:px-4 py-1 md:py-2 text-left;
 }
 
 .prose th {
   @apply bg-gray-50 font-semibold;
 }
 
-/* Sequence viewer styles */
+/* Sequence viewer styles - responsive */
 .sequence-base {
-  @apply inline-block w-6 h-6 text-center text-xs font-mono leading-6 rounded;
+  @apply inline-block w-5 md:w-6 h-5 md:h-6 text-center text-xs font-mono leading-5 md:leading-6 rounded;
 }
 
 .sequence-base.adenine {

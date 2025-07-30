@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   keywords: ['bioinformatics', 'data science', 'computational biology', 'agriculture', 'microbial ecology'],
   authors: [{ name: 'Ryan Bartelme' }],
   creator: 'Ryan Bartelme',
+  viewport: 'width=device-width, initial-scale=1',
   openGraph: {
     type: 'website',
     locale: 'en_US',
