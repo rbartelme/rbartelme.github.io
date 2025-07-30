@@ -2,6 +2,7 @@ import Layout from '@/components/ui/Layout'
 import Link from 'next/link'
 import { getAllPosts } from '@/lib/content'
 import { formatDate } from '@/lib/content'
+import OptimizedImage from '@/components/mdx/OptimizedImage'
 
 export default function Home() {
   const posts = getAllPosts().slice(0, 3) // Show latest 3 posts
@@ -12,6 +13,15 @@ export default function Home() {
         {/* Hero Section */}
         <section className="text-center py-16 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 rounded-xl">
           <div className="max-w-4xl mx-auto px-8">
+            <OptimizedImage 
+              src="/images/dalle-landing.png"
+              alt="Dr. Ryan Bartelme"
+              width={1280}
+              height={720}
+              className="mx-auto mb-6"
+            />
+
+
             <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-6">
               Ryan Bartelme, Ph.D.
             </h1>
