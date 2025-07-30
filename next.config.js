@@ -14,8 +14,7 @@ const nextConfig = {
   images: {
     unoptimized: true
   },
-  basePath: process.env.NODE_ENV === 'production' ? '/rbartelme.github.io' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/rbartelme.github.io/' : '',
+  // No basePath or assetPrefix needed for main GitHub Pages site
 }
 
 module.exports = withMDX(nextConfig)
