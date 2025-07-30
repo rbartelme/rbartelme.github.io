@@ -21,44 +21,43 @@ export default function Home() {
             </div>
             <div className="grid gap-6 md:gap-8">
               {posts.map((post) => (
-                <article key={post.slug} className="bg-white dark:bg-gray-800 p-4 md:p-8 rounded-xl shadow-sm border dark:border-gray-600 hover:shadow-md transition-shadow">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">
-                        <Link 
-                          href={`/blog/${post.slug}`}
-                          className="text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                          >
-                          {post.title}
-                        </Link>
-                      </h3>
-                      <p className="text-gray-600 dark:text-gray-200 mb-3 md:mb-4 leading-relaxed text-sm md:text-base">{post.description}</p>
-                      <div className="flex flex-col sm:flex-row sm:items-center text-xs md:text-sm text-gray-500 space-y-2 sm:space-y-0 sm:space-x-4">
-                        <div className="flex items-center space-x-4">
-                          <time dateTime={post.date}>{formatDate(post.date)}</time>
-                          <span>{post.readingTime}</span>
-                        </div>
-                        {post.tags && post.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-2">
-                            {post.tags.slice(0, 3).map((tag) => (
-                              <span 
-                                key={tag}
-                                className="bg-gray-100 px-2 py-1 rounded text-xs font-medium"
-                              >
-                                {tag}
-                              </span>
-                            ))}
+                <Link key={post.slug} href={`/blog/${post.slug}`} className="block">
+                  <article className="bg-white dark:bg-gray-800 p-4 md:p-8 rounded-xl shadow-sm border dark:border-gray-600 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 cursor-pointer">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">
+                          <span className="text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                            {post.title}
+                          </span>
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-200 mb-3 md:mb-4 leading-relaxed text-sm md:text-base">{post.description}</p>
+                        <div className="flex flex-col sm:flex-row sm:items-center text-xs md:text-sm text-gray-500 space-y-2 sm:space-y-0 sm:space-x-4">
+                          <div className="flex items-center space-x-4">
+                            <time dateTime={post.date}>{formatDate(post.date)}</time>
+                            <span>{post.readingTime}</span>
                           </div>
-                        )}
+                          {post.tags && post.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                              {post.tags.slice(0, 3).map((tag) => (
+                                <span 
+                                  key={tag}
+                                  className="bg-gray-100 px-2 py-1 rounded text-xs font-medium"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </article>
+                  </article>
+                </Link>
               ))}
             </div>
           </section>
         )}
-        
+                
         {/* Hero Section */}
         <section className="text-center py-8 md:py-16 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 rounded-xl">
           <div className="max-w-4xl mx-auto px-4 md:px-8">
