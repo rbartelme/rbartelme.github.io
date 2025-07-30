@@ -1,0 +1,81 @@
+---
+title: "Hello Data Blog!"
+date: "2025-07-30"
+description: "Introduction to my data science journey and what you can expect from this blog about computational biology, data science, and biotechnology."
+tags: ["data-science", "bioinformatics", "introduction", "computational-biology", "agriculture", "biotechnology"]
+abstract: "This inaugural post introduces my research focus areas and the types of content you can expect from this blog, covering bioinformatics methodologies, data science writ large, and computational methods in biotechnology."
+---
+
+# Hello Data Blog
+
+I'm excited to launch this blog as a platform to share my professional insights informed by my work in bioinformatics, data science, and biotechnology. 
+
+## What You'll Find Here
+
+This blog will cover several key areas where I spend my research time:
+
+### Bioinformatics Methodologies
+
+I'll share practical approaches to analyzing biological data, from sequence analysis to phylogenetic reconstruction. Expect tutorials, code examples, and discussions of best practices.
+
+<SequenceViewer 
+  sequence="ATCGATCGTAGCATGCATCGATCG" 
+  type="dna" 
+  showComplement={true}
+  title="Example DNA Sequence Analysis"
+/>
+
+### Data Science in General
+
+I frequently read research in large language and numerical modeling methods. In this blog I will explore emergening methods and preprints, particularly those crossing domains (ex. bioinformatics LLM's, ensemble AI modeling for ecology, etc.).
+
+## Interactive Content
+
+One of the exciting aspects of moving my GitHub pages from Jekyll to Next.js + MDX is the ability to create interactive content. I'm thrilled to finally have an excuse to learn interactive web graphics for data visualization. I recently acquired all of Edward Tufte's [data visualization books](https://www.edwardtufte.com/books/) and look forward to applying what I learned from them in more technical blog posts than this one.
+
+Here's a simple example with D3, plotting a small amount of synthetic differential transcription data:
+
+<ScatterPlot 
+  data={[
+    {x: 2.3, y: 0.001, label: "Gene A", category: "Upregulated"},
+    {x: -1.8, y: 0.01, label: "Gene B", category: "Downregulated"},
+    {x: 3.2, y: 0.0001, label: "Gene C", category: "Upregulated"},
+    {x: 0.1, y: 0.5, label: "Gene D", category: "No change"},
+    {x: -2.1, y: 0.005, label: "Gene E", category: "Downregulated"}
+  ]}
+  xLabel="Log2 Fold Change"
+  yLabel="P-value"
+  title="Example Volcano Plot: Differential Gene Expression"
+  yScale="log"
+/>
+
+## My Background
+
+My journey in bioinformatic data science began with my doctoral work in Freshwater Science at the University of Wisconsin-Milwaukee, where I studied microbial communities in recirculating aquaculture systems. This interdisciplinary foundation, spanning microbiology, ecology, and computational biology, has shaped my approach to tackling complex biological problems.
+
+I believe the best way to learn data science & bioinformatics is through practical application. Throughout this blog, I'll emphasize hands-on open-source examples of analysis and opinions of emergening research or technologies.
+
+
+## What's Coming Next
+
+In upcoming posts, you can expect:
+
+- **Methodological deep-dives**: Detailed explanations of scientific computing techniques with reproducible examples
+- **Case studies**: Real research problems and how computational approaches solve them  
+- **Tool reviews**: Evaluations of new software and databases in the bioinformatics & data science ecosystems
+- **Data visualization tutorials**: Creating effective graphics for biological data
+- **Biotechnology applications**: How computation is revolutionizing biotechnology
+
+## Get Involved
+
+Science is collaborative, and I'd love to hear from you! Whether you have questions about specific methods, suggestions for topics, or want to discuss potential collaborations, feel free to reach out.
+
+<Alert type="info">
+All code examples in this blog will be available on GitHub, and I encourage you to experiment with the methods and data I discuss.
+</Alert>
+
+Thank you for joining me on this journey. I'm looking forward to sharing the exciting world of computational biology and sustainable agriculture with you!
+
+---
+
+*Have a question or topic suggestion? [Contact me](/contact) - I'd love to hear from you!*

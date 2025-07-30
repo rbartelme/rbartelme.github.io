@@ -29,13 +29,13 @@ export default function SequenceViewer({
 
   const getBaseColor = (base: string): string => {
     const colors: Record<string, string> = {
-      'A': 'bg-red-100 text-red-800 border-red-200',
-      'T': 'bg-blue-100 text-blue-800 border-blue-200',
-      'U': 'bg-blue-100 text-blue-800 border-blue-200',
-      'G': 'bg-green-100 text-green-800 border-green-200',
-      'C': 'bg-purple-100 text-purple-800 border-purple-200'
+      'A': 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 border-red-200 dark:border-red-700',
+      'T': 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-700',
+      'U': 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-700',
+      'G': 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 border-green-200 dark:border-green-700',
+      'C': 'bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200 border-purple-200 dark:border-purple-700'
     }
-    return colors[base.toUpperCase()] || 'bg-gray-100 text-gray-800 border-gray-200'
+    return colors[base.toUpperCase()] || 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-600'
   }
 
   const complement = showComplement && type !== 'protein' 
@@ -43,13 +43,13 @@ export default function SequenceViewer({
     : null
 
   return (
-    <div className="my-6 p-6 bg-white border rounded-lg shadow-sm">
-      {title && <h4 className="font-semibold text-lg mb-4">{title}</h4>}
+    <div className="my-6 p-6 bg-white dark:bg-gray-800 border dark:border-gray-600 rounded-lg shadow-sm">
+      {title && <h4 className="font-semibold text-lg mb-4 text-gray-900 dark:text-white">{title}</h4>}
       
-      <div className="text-sm text-gray-600 mb-4">
+      <div className="text-sm text-gray-600 dark:text-gray-300 mb-4">
         {type.toUpperCase()} Sequence ({sequence.length} {type === 'protein' ? 'residues' : 'bases'})
         {selectedBase !== null && (
-          <span className="ml-4 font-medium">
+          <span className="ml-4 font-medium text-gray-900 dark:text-gray-100">
             Position {selectedBase + 1}: {sequence[selectedBase]}
             {complement && ` → ${getComplement(sequence[selectedBase])}`}
           </span>
@@ -63,7 +63,7 @@ export default function SequenceViewer({
               key={index}
               onClick={() => setSelectedBase(selectedBase === index ? null : index)}
               className={`w-8 h-8 text-sm font-bold rounded border-2 cursor-pointer transition-all ${
-                selectedBase === index ? 'border-gray-600 shadow-md' : 'border-transparent'
+                selectedBase === index ? 'border-gray-600 dark:border-gray-400 shadow-md' : 'border-transparent'
               } ${getBaseColor(base)} hover:shadow-sm`}
             >
               {base.toUpperCase()}
@@ -72,13 +72,13 @@ export default function SequenceViewer({
         </div>
 
         {complement && (
-          <div className="flex flex-wrap gap-1 pt-2 border-t">
-            <span className="text-xs text-gray-500 w-full mb-1">Complement:</span>
+          <div className="flex flex-wrap gap-1 pt-2 border-t dark:border-gray-600">
+            <span className="text-xs text-gray-500 dark:text-gray-400 w-full mb-1">Complement:</span>
             {complement.split('').map((base, index) => (
               <div
                 key={index}
                 className={`w-8 h-8 text-sm font-bold rounded border flex items-center justify-center ${
-                  selectedBase === index ? 'border-gray-600 shadow-md' : 'border-transparent'
+                  selectedBase === index ? 'border-gray-600 dark:border-gray-400 shadow-md' : 'border-transparent'
                 } ${getBaseColor(base)}`}
               >
                 {base.toUpperCase()}
@@ -88,7 +88,7 @@ export default function SequenceViewer({
         )}
       </div>
 
-      <div className="mt-4 text-xs text-gray-500">
+      <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
         Click on any base to see its position{complement && ' and complement'}.
       </div>
     </div>

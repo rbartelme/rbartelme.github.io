@@ -24,7 +24,7 @@ export default function OptimizedImage({
         alt={alt}
         width={width}
         height={height}
-        className="rounded-lg shadow-sm dark:shadow-gray-700"
+        className="rounded-lg shadow-sm dark:shadow-gray-700/50"
       />
       {caption && (
         <figcaption className="text-sm text-gray-600 dark:text-gray-400 mt-3 text-center italic">

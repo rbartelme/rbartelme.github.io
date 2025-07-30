@@ -46,9 +46,9 @@ export default function BlogPost({ params }: BlogPostProps) {
     <Layout>
       <article className="max-w-4xl mx-auto">
         <header className="mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-6">{post.title}</h1>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">{post.title}</h1>
           
-          <div className="flex items-center text-gray-600 space-x-6 mb-6">
+          <div className="flex items-center text-gray-600 dark:text-gray-300 space-x-6 mb-6">
             <time dateTime={post.date} className="font-medium">
               {formatDate(post.date)}
             </time>
@@ -56,9 +56,9 @@ export default function BlogPost({ params }: BlogPostProps) {
           </div>
           
           {post.abstract && (
-            <div className="bg-blue-50 border-l-4 border-blue-400 p-6 mb-8">
-              <h2 className="text-lg font-semibold text-blue-900 mb-3">Abstract</h2>
-              <p className="text-blue-800 leading-relaxed">{post.abstract}</p>
+            <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-400 dark:border-blue-500 p-6 mb-8">
+              <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-200 mb-3">Abstract</h2>
+              <p className="text-blue-800 dark:text-blue-200 leading-relaxed">{post.abstract}</p>
             </div>
           )}
           
