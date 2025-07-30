@@ -29,7 +29,7 @@ export default function Home() {
               </Link>
               <Link 
                 href="/about"
-                className="border-2 border-gray-300 px-8 py-3 rounded-lg hover:border-gray-400 transition-colors font-medium"
+                className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
               >
                 About Me
               </Link>

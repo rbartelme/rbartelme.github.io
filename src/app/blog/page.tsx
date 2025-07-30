@@ -29,14 +29,14 @@ export default function BlogPage() {
             {posts.map((post) => (
               <article key={post.slug} className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm border dark:border-gray-600 hover:shadow-md transition-shadow">
                 <header className="mb-4">
-                  <h2 className="text-2xl font-semibold mb-3">
-                    <Link 
-                      href={`/blog/${post.slug}`}
-                      className="text-gray-900 hover:text-blue-600 transition-colors"
-                    >
-                      {post.title}
-                    </Link>
-                  </h2>
+                <h2 className="text-2xl font-semibold mb-3">
+                  <Link 
+                    href={`/blog/${post.slug}`}
+                    className="text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                  >
+                    {post.title}
+                  </Link>
+                </h2>
                   <div className="flex items-center text-sm text-gray-500 space-x-4 mb-4">
                     <time dateTime={post.date}>{formatDate(post.date)}</time>
                     <span>{post.readingTime}</span>
@@ -44,12 +44,12 @@ export default function BlogPage() {
                 </header>
                 
                 {post.abstract && (
-                  <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
-                    <p className="text-blue-800 text-sm leading-relaxed">{post.abstract}</p>
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-400 dark:border-blue-500 p-4 mb-4">
+                    <p className="text-blue-800 dark:text-blue-200 text-sm leading-relaxed">{post.abstract}</p>
                   </div>
                 )}
                 
-                <p className="text-gray-600 mb-4 leading-relaxed">{post.description}</p>
+                <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">{post.description}</p>
                 
                 {post.tags && post.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">
