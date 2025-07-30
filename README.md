@@ -13,3 +13,4 @@ A modern Next.js + MDX blog focused on bioinformatics, data science, and sustain
 - 📱 **Responsive design**
 - ⚡ **Static site generation**
 - 🚀 **Automated deployment** with GitHub Actions
+
