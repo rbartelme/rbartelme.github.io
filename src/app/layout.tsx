@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Ryan Bartelme - Computational Biologist & Data Scientist',
-  description: 'Bioinformatics research, data science insights, and computational biology from Dr. Ryan Bartelme at Pivot Bio.',
+  description: 'Bioinformatics research, data science insights, and computational biology from Dr. Ryan Bartelme.',
   keywords: ['bioinformatics', 'data science', 'computational biology', 'agriculture', 'microbial ecology'],
   authors: [{ name: 'Ryan Bartelme' }],
   creator: 'Ryan Bartelme',

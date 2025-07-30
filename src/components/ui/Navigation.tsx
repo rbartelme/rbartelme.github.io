@@ -14,14 +14,14 @@ export default function Navigation() {
   ]
 
   return (
-    <nav className="bg-white shadow-sm border-b">
+    <nav className="bg-white dark:bg-gray-900 shadow-sm border-b dark:border-gray-700">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href="/" className="text-xl font-bold text-gray-900 hover:text-blue-600">
+            <Link href="/" className="text-xl font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400">
               Ryan Bartelme
             </Link>
-            <span className="ml-3 text-sm text-gray-500">Computational Biologist & Data Scientist</span>
+            <span className="ml-3 text-sm text-gray-500 dark:text-gray-300">Computational Biologist & Data Scientist</span>
           </div>
           <div className="flex items-center space-x-8">
             {navItems.map(({ href, label }) => (
@@ -30,8 +30,8 @@ export default function Navigation() {
                 href={href}
                 className={`transition-colors ${
                   pathname === href 
-                    ? 'text-blue-600 font-medium' 
-                    : 'text-gray-700 hover:text-gray-900'
+                    ? 'text-blue-600 dark:text-blue-400 font-medium' 
+                    : 'text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
                 {label}

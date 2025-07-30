@@ -76,7 +76,7 @@ export default function BlogPost({ params }: BlogPostProps) {
           )}
         </header>
         
-        <div className="prose prose-lg max-w-none">
+        <div className="prose prose-lg dark:prose-invert max-w-none">
           <MDXRemote source={post.content} components={mdxComponents} />
         </div>
         
@@ -84,8 +84,7 @@ export default function BlogPost({ params }: BlogPostProps) {
           <div className="bg-gray-50 p-6 rounded-lg">
             <h3 className="font-semibold text-gray-900 mb-2">About the Author</h3>
             <p className="text-gray-600">
-              Dr. Ryan Bartelme is a Bioinformatic Scientist at Pivot Bio, working on sustainable 
-              nitrogen solutions for agriculture. His expertise spans bioinformatics, data science, 
+              Dr. Ryan Bartelme is the founder and principal data scientist at Informatic Edge, LLC. His expertise spans bioinformatics, data science, 
               microbial ecology, and controlled environment agriculture.
             </p>
           </div>

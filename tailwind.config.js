@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'media', // This line enables automatic dark mode based on browser preference
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -28,33 +29,27 @@ module.exports = {
               color: '#111827',
               fontWeight: '600',
             },
-            'ol[type="A"]': {
-              '--list-counter-style': 'upper-alpha',
-            },
-            'ol[type="a"]': {
-              '--list-counter-style': 'lower-alpha',
-            },
-            'ol[type="A" s]': {
-              '--list-counter-style': 'upper-alpha',
-            },
-            'ol[type="a" s]': {
-              '--list-counter-style': 'lower-alpha',
-            },
-            'ol[type="I"]': {
-              '--list-counter-style': 'upper-roman',
-            },
-            'ol[type="i"]': {
-              '--list-counter-style': 'lower-roman',
-            },
-            'ol[type="I" s]': {
-              '--list-counter-style': 'upper-roman',
-            },
-            'ol[type="i" s]': {
-              '--list-counter-style': 'lower-roman',
-            },
-            'ol[type="1"]': {
-              '--list-counter-style': 'decimal',
-            },
+          },
+        },
+        // Dark mode styles for prose content
+        invert: {
+          css: {
+            '--tw-prose-body': '#d1d5db',
+            '--tw-prose-headings': '#f9fafb',
+            '--tw-prose-lead': '#9ca3af',
+            '--tw-prose-links': '#60a5fa',
+            '--tw-prose-bold': '#f9fafb',
+            '--tw-prose-counters': '#9ca3af',
+            '--tw-prose-bullets': '#6b7280',
+            '--tw-prose-hr': '#374151',
+            '--tw-prose-quotes': '#f3f4f6',
+            '--tw-prose-quote-borders': '#374151',
+            '--tw-prose-captions': '#9ca3af',
+            '--tw-prose-code': '#f9fafb',
+            '--tw-prose-pre-code': '#d1d5db',
+            '--tw-prose-pre-bg': '#1f2937',
+            '--tw-prose-th-borders': '#374151',
+            '--tw-prose-td-borders': '#4b5563',
           },
         },
       },

@@ -10,15 +10,15 @@ export default function Home() {
     <Layout>
       <div className="space-y-16">
         {/* Hero Section */}
-        <section className="text-center py-16 bg-gradient-to-r from-blue-50 to-green-50 rounded-xl">
+        <section className="text-center py-16 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 rounded-xl">
           <div className="max-w-4xl mx-auto px-8">
-            <h1 className="text-5xl font-bold text-gray-900 mb-6">
+            <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-6">
               Ryan Bartelme, Ph.D.
             </h1>
-            <p className="text-xl text-gray-700 mb-8 leading-relaxed">
-              Bioinformatic Scientist at <span className="font-semibold text-green-600">Pivot Bio</span>
+            <p className="text-xl text-gray-700 dark:text-gray-100 mb-8 leading-relaxed">
+              Founder of <span className="font-semibold text-blue-600">Informatic Edge, LLC</span>
               <br />
-              Creating sustainable solutions for agricultural, medical, and environmental big data challenges
+              Full-stack data scientist specializing in bioinformatics and computational biology
             </p>
             <div className="flex justify-center space-x-6">
               <Link 
@@ -39,25 +39,25 @@ export default function Home() {
 
         {/* Research Focus Areas */}
         <section className="grid md:grid-cols-3 gap-8">
-          <div className="bg-white p-8 rounded-xl shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm border dark:border-gray-600">
             <div className="text-3xl mb-4">🧬</div>
-            <h3 className="text-xl font-semibold mb-3">Bioinformatics</h3>
-            <p className="text-gray-600">
-              Developing computational approaches to understand complex biological systems and agricultural challenges.
+            <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Bioinformatics</h3>
+            <p className="text-gray-600 dark:text-gray-200">
+              Developing computational approaches to understand complex biological systems and solve real-world challenges.
             </p>
           </div>
-          <div className="bg-white p-8 rounded-xl shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm border dark:border-gray-600">
             <div className="text-3xl mb-4">📊</div>
-            <h3 className="text-xl font-semibold mb-3">Data Science</h3>
-            <p className="text-gray-600">
-              Applying statistical thinking and machine learning to extract insights from biological and agricultural data.
+            <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Data Science</h3>
+            <p className="text-gray-600 dark:text-gray-200">
+              Full-stack data solutions combining statistical thinking, machine learning, and algorithmic innovation.
             </p>
           </div>
-          <div className="bg-white p-8 rounded-xl shadow-sm border">
-            <div className="text-3xl mb-4">🌱</div>
-            <h3 className="text-xl font-semibold mb-3">Sustainable Agriculture</h3>
-            <p className="text-gray-600">
-              Working on nitrogen solutions and sustainable practices for modern agriculture at Pivot Bio.
+          <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm border dark:border-gray-600">
+            <div className="text-3xl mb-4">🎯</div>
+            <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Consulting & Contracting</h3>
+            <p className="text-gray-600 dark:text-gray-200">
+              Strategic consulting and project-based solutions for research institutions and biotechnology companies.
             </p>
           </div>
         </section>
@@ -73,18 +73,18 @@ export default function Home() {
             </div>
             <div className="grid gap-8">
               {posts.map((post) => (
-                <article key={post.slug} className="bg-white p-8 rounded-xl shadow-sm border hover:shadow-md transition-shadow">
+                <article key={post.slug} className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm border dark:border-gray-600 hover:shadow-md transition-shadow">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <h3 className="text-xl font-semibold mb-3">
                         <Link 
                           href={`/blog/${post.slug}`}
-                          className="text-gray-900 hover:text-blue-600 transition-colors"
-                        >
+                          className="text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                          >
                           {post.title}
                         </Link>
                       </h3>
-                      <p className="text-gray-600 mb-4 leading-relaxed">{post.description}</p>
+                      <p className="text-gray-600 dark:text-gray-200 mb-4 leading-relaxed">{post.description}</p>
                       <div className="flex items-center text-sm text-gray-500 space-x-4">
                         <time dateTime={post.date}>{formatDate(post.date)}</time>
                         <span>{post.readingTime}</span>
@@ -112,17 +112,17 @@ export default function Home() {
         {/* Call to Action */}
         <section className="bg-blue-50 p-12 rounded-xl text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Interested in Collaboration?
+            Ready to Tackle Your Data Challenges?
           </h2>
           <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
-            I'm always excited to discuss bioinformatics challenges, sustainable agriculture solutions, 
-            and data science applications in biological systems.
+            Whether you need strategic consulting, custom algorithm development, or end-to-end project execution, 
+            Informatic Edge combines deep biological expertise with cutting-edge computational methods.
           </p>
           <Link 
             href="/contact"
             className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
           >
-            Get in Touch
+            Let's Collaborate
           </Link>
         </section>
       </div>
