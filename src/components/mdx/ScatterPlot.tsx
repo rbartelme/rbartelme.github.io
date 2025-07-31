@@ -18,6 +18,7 @@ interface ScatterPlotProps {
   title?: string
   xScale?: 'linear' | 'log'
   yScale?: 'linear' | 'log'
+  legendWidth?: number
 }
 
 export default function ScatterPlot({ 
@@ -28,40 +29,76 @@ export default function ScatterPlot({
   yLabel = 'Y Axis',
   title,
   xScale = 'linear',
-  yScale = 'linear'
+  yScale = 'linear',
+  legendWidth = 120
 }: ScatterPlotProps) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const svgRef = useRef<SVGSVGElement>(null)
-  const [containerWidth, setContainerWidth] = useState(width)
+  const plotSvgRef = useRef<SVGSVGElement>(null)
+  const legendSvgRef = useRef<SVGSVGElement>(null)
+  const [dimensions, setDimensions] = useState({
+    containerWidth: width,
+    isMobile: false
+  })
 
+  // Get unique categories
+  const categories = Array.from(new Set(
+    data.map(d => d.category).filter((cat): cat is string => Boolean(cat))
+  ))
+  const hasCategories = categories.length > 0
+
+  // Mobile breakpoint
+  const MOBILE_BREAKPOINT = 768
+
+  // Calculate the total width needed
+  const totalDesiredWidth = width + (hasCategories ? legendWidth + 20 : 0) // 20px gap
+  
   // Calculate responsive dimensions while keeping aspect ratio
   useEffect(() => {
-    const updateWidth = () => {
+    const updateDimensions = () => {
       if (containerRef.current) {
-        const available = containerRef.current.offsetWidth
-        setContainerWidth(Math.min(available, width))
+        const parentWidth = containerRef.current.parentElement?.offsetWidth || window.innerWidth
+        const availableWidth = parentWidth - 32 // Account for padding (16px * 2)
+        const isMobile = window.innerWidth < MOBILE_BREAKPOINT
+        
+        let containerWidth
+        if (isMobile) {
+          // On mobile, use full available width and stack vertically
+          containerWidth = Math.min(availableWidth, width)
+        } else {
+          // On desktop, use normal responsive scaling
+          containerWidth = Math.min(availableWidth, totalDesiredWidth)
+        }
+        
+        setDimensions({ containerWidth, isMobile })
       }
     }
 
-    updateWidth()
-    window.addEventListener('resize', updateWidth)
-    return () => window.removeEventListener('resize', updateWidth)
-  }, [width])
+    updateDimensions()
+    window.addEventListener('resize', updateDimensions)
+    return () => window.removeEventListener('resize', updateDimensions)
+  }, [totalDesiredWidth, width])
 
   // Calculate scaled dimensions
-  const scale = containerWidth / width
-  const scaledHeight = height * scale
+  const { containerWidth, isMobile } = dimensions
+  const scale = isMobile 
+    ? containerWidth / width  // On mobile, scale based on plot width only
+    : containerWidth / totalDesiredWidth  // On desktop, scale based on total width
+  
+  const scaledPlotWidth = width * scale
+  const scaledPlotHeight = height * scale
+  const scaledLegendWidth = hasCategories ? (isMobile ? containerWidth : legendWidth * scale) : 0
 
+  // Render the main plot
   useEffect(() => {
-    if (!svgRef.current || !data.length) return
+    if (!plotSvgRef.current || !data.length) return
 
-    d3.select(svgRef.current).selectAll("*").remove()
+    d3.select(plotSvgRef.current).selectAll("*").remove()
 
     const margin = { top: title ? 40 : 20, right: 20, bottom: 60, left: 80 }
     const innerWidth = width - margin.left - margin.right
     const innerHeight = height - margin.top - margin.bottom
 
-    const svg = d3.select(svgRef.current)
+    const svg = d3.select(plotSvgRef.current)
       .attr('width', '100%')
       .attr('height', '100%')
       .attr('viewBox', `0 0 ${width} ${height}`)
@@ -79,10 +116,6 @@ export default function ScatterPlot({
     xScaleFunc.domain(xExtent).range([0, innerWidth])
     yScaleFunc.domain(yExtent).range([innerHeight, 0])
 
-    // Fix the TypeScript issue here
-    const categories = Array.from(new Set(
-      data.map(d => d.category).filter((cat): cat is string => Boolean(cat))
-    ))
     const colorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(categories)
 
     // Add axes
@@ -108,6 +141,7 @@ export default function ScatterPlot({
       .style('font-size', '12px')
       .text(yLabel)
 
+    // Add title
     if (title) {
       svg.append('text')
         .attr('x', width / 2)
@@ -157,48 +191,97 @@ export default function ScatterPlot({
         d3.select(this).attr('r', 4)
       })
 
-    // Add legend if categories exist
-    if (categories.length > 0) {
-      const legend = svg.append('g')
-        .attr('transform', `translate(${width - 120}, 30)`)
-
-      legend.selectAll('.legend-item')
-        .data(categories)
-        .enter().append('g')
-        .attr('class', 'legend-item')
-        .attr('transform', (d, i) => `translate(0, ${i * 20})`)
-        .each(function(d) {
-          const item = d3.select(this)
-          item.append('circle')
-            .attr('r', 4)
-            .attr('fill', colorScale(d))
-          item.append('text')
-            .attr('x', 10)
-            .attr('y', 0)
-            .attr('dy', '0.35em')
-            .style('font-size', '12px')
-            .text(d)
-        })
-    }
-
     // Cleanup function
     return () => {
       d3.selectAll('.d3-tooltip').remove()
     }
 
-  }, [data, width, height, xLabel, yLabel, title, xScale, yScale])
+  }, [data, width, height, xLabel, yLabel, title, xScale, yScale, categories, isMobile])
+
+  // Render the legend
+  useEffect(() => {
+    if (!legendSvgRef.current || !hasCategories) return
+
+    d3.select(legendSvgRef.current).selectAll("*").remove()
+
+    const legendHeight = Math.max(categories.length * 25 + 20, 100) // Dynamic height based on categories
+    const colorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(categories)
+
+    const svg = d3.select(legendSvgRef.current)
+      .attr('width', '100%')
+      .attr('height', '100%')
+      .attr('viewBox', `0 0 ${legendWidth} ${legendHeight}`)
+      .attr('preserveAspectRatio', 'xMidYMid meet')
+
+    // Add legend title
+    svg.append('text')
+      .attr('x', 10)
+      .attr('y', 15)
+      .style('font-size', '12px')
+      .style('font-weight', 'bold')
+      .text('Categories')
+
+    // Add legend items
+    const legend = svg.append('g')
+      .attr('transform', 'translate(10, 25)')
+
+    legend.selectAll('.legend-item')
+      .data(categories)
+      .enter().append('g')
+      .attr('class', 'legend-item')
+      .attr('transform', (d, i) => `translate(0, ${i * 25})`)
+      .each(function(d) {
+        const item = d3.select(this)
+        item.append('circle')
+          .attr('r', 4)
+          .attr('fill', colorScale(d))
+          .attr('cx', 5)
+          .attr('cy', 0)
+        item.append('text')
+          .attr('x', 15)
+          .attr('y', 0)
+          .attr('dy', '0.35em')
+          .style('font-size', '12px')
+          .text(d)
+      })
+
+  }, [categories, legendWidth, hasCategories, isMobile, containerWidth])
 
   return (
     <div 
       ref={containerRef}
-      className="my-8 p-4 bg-white border rounded-lg shadow-sm w-full"
-      style={{ maxWidth: `${width}px` }}
+      className="my-8 p-4 bg-white border rounded-lg shadow-sm w-full max-w-full"
     >
-      <svg 
-        ref={svgRef}
-        className="w-full h-auto"
-        style={{ height: `${scaledHeight}px` }}
-      />
+      <div 
+        className={`flex items-start gap-5 ${isMobile ? 'flex-col' : 'flex-row'}`}
+        style={{ width: 'fit-content', margin: '0 auto' }}
+      >
+        {/* Main plot SVG */}
+        <div className={`${isMobile ? 'w-full' : 'flex-shrink-0'}`}>
+          <svg 
+            ref={plotSvgRef}
+            className="w-full h-auto"
+            style={{ 
+              width: `${scaledPlotWidth}px`,
+              height: `${scaledPlotHeight}px` 
+            }}
+          />
+        </div>
+        
+        {/* Legend SVG - only render if categories exist */}
+        {hasCategories && (
+          <div className={`${isMobile ? 'w-full flex justify-center' : 'flex-shrink-0'}`}>
+            <svg 
+              ref={legendSvgRef}
+              className="h-auto"
+              style={{ 
+                width: `${scaledLegendWidth}px`,
+                height: `${Math.max(categories.length * 25 + 20, 100) * scale}px`
+              }}
+            />
+          </div>
+        )}
+      </div>
     </div>
   )
 }
