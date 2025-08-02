@@ -17,18 +17,7 @@ export default function SequenceViewer({
   const [selectedBase, setSelectedBase] = useState<number | null>(null)
   const [isMobile, setIsMobile] = useState(false)
 
-  // Early return if no sequence provided
-  if (!sequence || sequence.length === 0) {
-    return (
-      <div className="my-6 p-6 bg-white dark:bg-gray-800 border dark:border-gray-600 rounded-lg shadow-sm">
-        <div className="text-center text-gray-500 dark:text-gray-400">
-          No sequence provided
-        </div>
-      </div>
-    )
-  }
-
-  // Mobile detection
+  // Mobile detection - moved before early return
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768)
@@ -38,6 +27,17 @@ export default function SequenceViewer({
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
+
+  // Early return if no sequence provided - moved after hooks
+  if (!sequence || sequence.length === 0) {
+    return (
+      <div className="my-6 p-6 bg-white dark:bg-gray-800 border dark:border-gray-600 rounded-lg shadow-sm">
+        <div className="text-center text-gray-500 dark:text-gray-400">
+          No sequence provided
+        </div>
+      </div>
+    )
+  }
 
   const getComplement = (base: string): string => {
     const complements: Record<string, string> = {
