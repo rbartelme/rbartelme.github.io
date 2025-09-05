@@ -47,3 +47,7 @@ _site/
 .jekyll-cache/
 .jekyll-metadata
 Gemfile.lock
+
+#VS Code configs
+.vscode/
+.vscode/*
