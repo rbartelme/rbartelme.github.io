@@ -1,76 +1,130 @@
 ---
 title: "Beyond Programming Language Maximalism in Data Science and Bioinformatics: The Case for Polyglot Programming"
-date: "2025-09-10"
-description: ""
+date: "2025-10-01"
+description: "Why choosing the right tool for each job beats forcing everything through your favorite programming language"
 tags: ["data-science", "bioinformatics", "programming-languages", "computational-biology", "biotechnology"]
-abstract: ""
+abstract: "An exploration of language maximalism in scientific computing and the benefits of strategic polyglot programming approaches"
 ---
 
 # The Maximalist Trap in Scientific Computing
 
 There is a tendency in data science communities to stretch their favorite programming languages well beyond their optimal use cases.
-Maybe this can be equated to a "comfort zone" problem.
-I think both the R and Python data science and/or bioinformatics communities fall into maximalist patterns that compromise performance and maintainability.
-*When your only tool is R/Python, every problem can look like a dataframe.*
+Maybe this can be equated to a "comfort zone" problem, or it's the depth vs. breadth tendency as one climbs the STEM degree ladder.
+I think both the R and Python data science and/or bioinformatics communities fall into maximalist patterns that can compromise performance and maintainability.
+*When your preferred tool is R/Python, every problem can look like a dataframe (I started here too!).*
+When problems are consistently distilled through the lens of a tabular dataset, or packages abstract everything away, you fundamentally miss learning where to apply more efficient data structures.
 
-# The Dual Kingdoms: Where R and Python Legitimately Excel
 
-## R's statistical domain
-- Statistical distribution simulation and Bayesian inference
-- Bioconductor ecosystem for genomics
-- Statistical research community tie-ins
+# Data Science Duality: Where R and Python Legitimately Excel
+I'll admit, I learned R before Python.
+My training in quantitative ecology and bioinformatics necessitated a moderate amount of [shell scripting](https://www.gnu.org/software/bash/manual/bash.html) with a heavy dose of R + tabular count data.
+I too was an R maximalist for a while.
+Exploratory data analysis is still easier for me in R due to familiarity, but as I collaborated on python codebases I began to appreciate the python ecosystem more.
+Python does not really follow a quasi-functional programming paradigm like R's [tidyverse](https://www.tidyverse.org/).
+R does not use [object class methods](https://docs.python.org/3/tutorial/classes.html) as heavily as python's ecosystem, which I personally found to be the most difficult concept to master since R end users rarely build object classes with methods.
+
+## R in the Statistical Domain
+R's power lies in its statistical distribution simulation, Bayesian inference ecosystem, and one line linear regression capabilities.
+The Bioconductor packages use all these great traits for bioinformatics applications.
+For example, simulating a negative binomial distribution in python requires an external package, [numpy](https://numpy.org/) and looks like this:
+
+```python
+import numpy as np
+
+# set seed
+np.random.seed(42)
+
+# distribution parameters
+n = 10 # number of successes
+p = 0.3 # probability of success
+
+# generate sample distribution with 1000 samples
+samples = np.random.negative_binomial(n, p, size=1000) 
+```
+
+While we can do the same thing in base R without any external package imports
+
+```R
+# set seed
+set.seed(42)
+
+# parameters
+s <- 10 # successes (changed for clarity in the function that follows)
+p <- 0.3 # probability of success 
+
+# Generate distribution with our parameters
+# Note: in this case n = 1000 samples, hence the variable assignment change
+samples <- rnbinom(n = 1000, size = s, prob = p)
+
+```
+
+If we want to extend this to counts data, like in RNAseq analyses, we'll require [`scipy.stats`](https://docs.scipy.org/doc/scipy/reference/stats.html) in python and [`MASS`](https://cran.r-project.org/web/packages/MASS/index.html) in R.
+Instead of successes (n or s) and probability of success (p), the counts case changes our simulation parameters to mean (μ) and dispersion (r).
+I digress--the point being, a lot of statistical research ends up in R first.
+[ggplot2](https://ggplot2.tidyverse.org/) is also very robust for creating figures quickly and iteratively through functional programming paradigms.
 
 ## Python's versatility sweet spots
-- Machine learning pipelines (scikit-learn, PyTorch, TensorFlow)
-- General-purpose scripting and automation
-- API development and web services
+Admittedly, if you talk to me lately I sound like a shill for "Big Python".
+I think I appreciate it for general purpose scripting and automation of tasks.
+[`argparse`](https://docs.python.org/3/library/argparse.html) is delightful to work with and I made my first "real" command-line interface (CLI) program with it.
+Python also gets the most depth in terms of machine learning and AI extensibility (ex. [scikit-learn](https://scikit-learn.org/), [torch](https://pytorch.org/), [TensorFlow](https://www.tensorflow.org/), and much more).
+Application Program Interface (API) development and web services are made significantly easier.
+I found working with [R shiny](https://shiny.posit.co/) to be a miserable experience, but your mileage may vary. 
+
+
+# The Hidden Costs of Maximalism
+
+Specialization is great until it isn't.
+Consider each programming language as an island community.
+We can say that each programming language community yields its own paradigms and best practices on their islands.
+Maybe on each "programming langauge island" their are special needs or the language randomly asserts itself.
+As a trained ecologist, this reminds me of [niche theory](https://en.wikipedia.org/wiki/Ecological_niche) vs. [neutral theory](https://en.wikipedia.org/wiki/Unified_neutral_theory_of_biodiversity).
+Briefly, niche theory asserts that species have unique and defined ecological niches, while neutral theory allows for randomized functional equivalency and similar chances of survival.
+Consider language maximalism representative of niche theory--hyperspecialized, and adept at bending a particular language to one's goals.
+The polyglot approach to data science coding allows for functional equivalency and robust problem solving.
 
 ## The R and Python Overlap
-- Data manipulation (tidyverse vs pandas)
-- Visualization (ggplot2 vs matplotlib/seaborn)
-- Where choice becomes preference rather than necessity
-- Sometimes using both can produce interesting results [see this blogpost]()
-
-# III. Workflow Managers: A Microcosm of Language Maximalism
-
-## The Snakemake phenomenon
-- Python-based "ease" vs. performance trade-offs
-- Trying to be everything: config management, execution, monitoring
-- Performance penalties compared to specialized alternatives
-
-## Language-agnostic alternatives and their advantages
-- WDL: Designed for cloud-scale genomics
-- Nextflow: JVM-based with better parallelization
-- Airflow: When you need enterprise-grade orchestration
-- Makeflow: Simplicity and Unix philosophy
-
-## The pattern: Comfort over optimization
-- Choosing Snakemake because "I already know Python"
-- Missing out on domain-specific optimizations
-
-# IV. The Hidden Costs of Maximalism
+There is a lot of functional overlap between R and Python--differing only in syntax.
+Some examples: Data manipulation (tidyverse vs pandas), Visualization (ggplot2 vs matplotlib/seaborn)
+In my experience the choice then becomes driven by preference rather than necessity.
+Sometimes using both can produce interesting results [see this blogpost](https://medium.com/@ben.roston/r-vs-python-more-like-r-and-python-4f015fa57b6a).
 
 ## Performance penalties at scale
-- Memory management in R for large genomic datasets
-- Python's GIL limitations for parallel processing
-- Case study: Genome assembly pipelines hitting language limits
+Memory management in R for large genomic datasets can be poor (need a good example here??), but can be equally poor in python, ex. [pysam]()
+Python was designed on single core CPU's and therefore has many limitations for parallel processing.
+This is hampered by the [global interpreter lock (GIL for short)]().
+The GIL's purpose in modern python is [hotly debated](), since it requires complex module management and a deeper understanding of [concurrency]() and [parallelism]()
+- Need a Case study: Genome assembly pipelines hitting language limits
 
 ## Maintenance and technical debt
-- Complex workarounds for language limitations
-- Difficulty onboarding team members when code fights the language
-- Example: R packages wrapping C++ because pure R can't handle the task
+Sometimes you need bits of many languages to build something interesting and the programmatic link between languages might be more common than you think.
+A lot of scripting languages like R and Python are [syntactic sugar](https://en.wikipedia.org/wiki/Syntactic_sugar) that make calls behind the scenes to other languages via foreign function interfaces.
+For example, a lot of R packages call C++ via `Rcpp` and FORTRAN subroutines via the `.Fortran()` base R function.
+In Python, we can call Rust code via `pyo3` or use R code via `rpy2`.
+These interoperations are complex in my personal experience, but if you've read this far you're probably curious enough to continue.
 
 ## Innovation bottlenecks
-- Missing out on emerging tools and paradigms
-- Reinventing wheels that exist in other ecosystems
+Language maximalism is missing out on emerging tools and paradigms.
+There are complex work arounds for language limitations and difficulty onboarding team members when the codebase spans many languages.
+However, many langauges wrap others for performance purposes as I previously described 
+If you don't know python, it's hard to stay on the bleeding edge of LLM's, AI, etc., since academic research is often siloed here.
+Reinventing wheels that exist in other ecosystems is a huge time cost.
+Consider making an R library to do something that already exists in python, by the time CRAN approves it, you could have spent time learning python!!
 
-# V. The Polyglot Advantage: Strategic Language Selection
+## Complexity as a Case Against Polyglot Programming
+Doesn't polyglot programming add to cognitive overhead and maintenance complexity??
+Yes, but sometimes learning other approaches/languages makes you appreciate the features of your favorite languages more.
+Learning another language might inspire you to mix and match like Ben Roston's article above.
+What data scientists and bioinformaticians do is complex in nature and growing your skills is paramount to longevity in a rapidly changing field.
+
+# The Polyglot Advantage: Strategic Language Selection
+
 
 ## Performance-critical components
 - C/C++ for algorithmic cores (alignment, variant calling)
 - Rust for memory-safe systems programming
 - Go for concurrent processing pipelines
-- GPU languages (CUDA/OpenCL) for massively parallel tasks
+- GPU languages (CUDA/OpenCL) or language wrappers for massively parallel tasks
 
 ## Data engineering layer
 - Scala/Java for Spark clusters
@@ -82,15 +136,14 @@ I think both the R and Python data science and/or bioinformatics communities fal
 - Domain-specific languages (DSLs) for configuration
 - Appropriate workflow managers for specific contexts
 
-# VI. Breaking Free: Practical Polyglot Strategies
+# Breaking Free: Practical Polyglot Strategies
 
 ## Identifying maximalist anti-patterns
-- Performance profiling reveals the breaking points
+Performance profiling languages reveals their breaking points
 - Team velocity slows due to language-fighting code
 - "We need a package for that" becomes too frequent
 
 ## Gradual adoption patterns
-- Start with foreign function interfaces (Rcpp, Cython, PyO3)
 - Microservices approach: each service in its optimal language
 - Pipeline decomposition: right tool for each step
 
@@ -99,23 +152,7 @@ I think both the R and Python data science and/or bioinformatics communities fal
 - Building bridges between R and Python camps
 - Establishing polyglot best practices
 
-# VII. Case Studies: Maximalism vs. Polyglot Approaches
-
-## Case 1: Single-cell RNA-seq pipeline
-- Maximalist: Force everything through Seurat/R or Scanpy/Python
-- Polyglot: R for statistics, Python for orchestration, C++ for compute-intensive steps
-
-## Case 2: Bioinformatics web platform
-- Maximalist: Shiny app doing everything or Django handling all computation
-- Polyglot: API in Go, compute in appropriate languages, frontend in modern JavaScript
-
-## Case 3: Large-scale genomics workflow
-- Maximalist: Snakemake managing hundreds of parallel jobs
-- Polyglot: Nextflow orchestrating, language-specific tools for each task
-
-# VIII. The Polyglot Mindset: Beyond Tribalism
-
-## Recognizing language tribalism in ourselves
+## Recognizing language biases in ourselves
 - R vs. Python debates miss the point
 - Each language as a tool, not an identity
 
@@ -127,15 +164,9 @@ I think both the R and Python data science and/or bioinformatics communities fal
 - Cross-pollination of ideas between ecosystems
 - Better collaboration across teams with different backgrounds
 
-# IX. Conclusion: The Complete Toolbox
-- Recap: Both R and Python are powerful but not universal solutions
-- The real competition isn't R vs. Python, but maximalism vs. appropriate tool selection
-- Workflow managers as a perfect example of where maximalism hurts
-- Call to action: Audit your current pipeline for maximalist bottlenecks
-- Final thought: Expanding beyond the comfort zone leads to better science and better software
-
-# X. Resources and Further Reading
-- Performance benchmarking tools and studies
-- Language interoperability resources
-- Polyglot programming patterns for scientific computing
+# Resources and Further Reading
+- [The R Inferno](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf) - Performance pitfalls in R
+- [Rcpp documentation](https://www.rcpp.org/) - R and C++ integration
+- [rpy2 documentation](https://rpy2.github.io/) - Python and R integration
+- [PyO3 User Guide](https://pyo3.rs/) - Rust bindings for Python
 - Community forums that embrace language diversity
