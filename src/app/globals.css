@@ -77,12 +77,14 @@ body {
   @apply text-base md:text-lg mb-3 md:mb-4 leading-relaxed;
 }
 
-.prose code {
+/* Inline code (not in pre blocks) */
+.prose :not(pre) > code {
   @apply bg-gray-100 px-2 py-1 rounded text-sm md:text-base font-mono;
 }
 
+/* Code blocks - let highlight.js handle styling */
 .prose pre {
-  @apply bg-gray-900 text-gray-100 p-3 md:p-4 rounded-lg overflow-x-auto text-sm md:text-base;
+  @apply p-3 md:p-4 rounded-lg overflow-x-auto text-sm md:text-base;
 }
 
 .prose pre code {
@@ -150,7 +152,8 @@ body {
     @apply text-gray-300 border-blue-500 !important;
   }
   
-  .prose code {
+  /* Inline code in dark mode */
+  .prose :not(pre) > code {
     @apply bg-gray-800 text-gray-200 !important;
   }
   
