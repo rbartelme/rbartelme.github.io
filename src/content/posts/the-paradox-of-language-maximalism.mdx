@@ -58,7 +58,7 @@ samples <- rnbinom(n = 1000, size = s, prob = p)
 
 ```
 
-If we want to extend this to counts data, like in RNAseq analyses, we'll require [`scipy.stats`](https://docs.scipy.org/doc/scipy/reference/stats.html) in python and [`MASS`](https://cran.r-project.org/web/packages/MASS/index.html) in R.
+If we want to extend this to counts data, like in RNAseq analyses, we'll require [scipy.stats](https://docs.scipy.org/doc/scipy/reference/stats.html) in python and [MASS](https://cran.r-project.org/web/packages/MASS/index.html) in R.
 Instead of successes (n or s) and probability of success (p), the counts case changes our simulation parameters to mean (μ) and dispersion (r).
 I digress--the point being, a lot of statistical research ends up in R first.
 [ggplot2](https://ggplot2.tidyverse.org/) is also very robust for creating figures quickly and iteratively through functional programming paradigms.
@@ -66,7 +66,7 @@ I digress--the point being, a lot of statistical research ends up in R first.
 ## Python's versatility sweet spots
 Admittedly, if you talk to me lately I sound like a shill for "Big Python".
 I think I appreciate it for general purpose scripting and automation of tasks.
-[`argparse`](https://docs.python.org/3/library/argparse.html) is delightful to work with and I made my first "real" command-line interface (CLI) program with it.
+[argparse](https://docs.python.org/3/library/argparse.html) is delightful to work with and I made my first "real" command-line interface (CLI) program with it.
 Python also gets the most depth in terms of machine learning and AI extensibility (ex. [scikit-learn](https://scikit-learn.org/), [torch](https://pytorch.org/), [TensorFlow](https://www.tensorflow.org/), and much more).
 Application Program Interface (API) development and web services are made significantly easier.
 I found working with [R shiny](https://shiny.posit.co/) to be a miserable experience, but your mileage may vary. 
