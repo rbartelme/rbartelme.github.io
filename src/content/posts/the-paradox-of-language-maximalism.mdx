@@ -1,6 +1,6 @@
 ---
 title: "Beyond Programming Language Maximalism in Data Science and Bioinformatics: The Case for Polyglot Programming"
-date: "2025-10-01"
+date: "2025-10-02"
 description: "Why choosing the right tool for each job beats forcing everything through your favorite programming language"
 tags: ["data-science", "bioinformatics", "programming-languages", "computational-biology", "biotechnology"]
 abstract: "An exploration of language maximalism in scientific computing and the benefits of strategic polyglot programming approaches"
@@ -77,7 +77,7 @@ I found working with [R shiny](https://shiny.posit.co/) to be a miserable experi
 Specialization is great until it isn't.
 Consider each programming language as an island community.
 We can say that each programming language community yields its own paradigms and best practices on their islands.
-Maybe on each "programming langauge island" their are special needs or the language randomly asserts itself.
+Maybe on each "programming language island" there are special needs or the language randomly asserts itself.
 As a trained ecologist, this reminds me of [niche theory](https://en.wikipedia.org/wiki/Ecological_niche) vs. [neutral theory](https://en.wikipedia.org/wiki/Unified_neutral_theory_of_biodiversity).
 Briefly, niche theory asserts that species have unique and defined ecological niches, while neutral theory allows for randomized functional equivalency and similar chances of survival.
 Consider language maximalism representative of niche theory--hyperspecialized, and adept at bending a particular language to one's goals.
@@ -90,11 +90,23 @@ In my experience the choice then becomes driven by preference rather than necess
 Sometimes using both can produce interesting results [see this blogpost](https://medium.com/@ben.roston/r-vs-python-more-like-r-and-python-4f015fa57b6a).
 
 ## Performance penalties at scale
-Memory management in R for large genomic datasets can be poor (need a good example here??), but can be equally poor in python, ex. [pysam]()
-Python was designed on single core CPU's and therefore has many limitations for parallel processing.
-This is hampered by the [global interpreter lock (GIL for short)]().
-The GIL's purpose in modern python is [hotly debated](), since it requires complex module management and a deeper understanding of [concurrency]() and [parallelism]()
-- Need a Case study: Genome assembly pipelines hitting language limits
+Let's consider a bioinformatics use case where both R and python have performance bottlenecks--parsing sequencing alignment files (ex. [BAM](https://samtools.github.io/hts-specs/SAMv1.pdf), [SAM](https://samtools.github.io/hts-specs/SAMv1.pdf), [CRAM](https://samtools.github.io/hts-specs/CRAMv3.pdf))
+
+Memory management in R for large alignment file datasets can be surprisingly inefficient.
+R's copy-on-write semantics and vector-based memory allocation create overhead that becomes problematic with alignment data.
+For instance, working with BAM files in R through Bioconductor's GenomicRanges requires loading entire genomic positions into memory, and converting between specialized objects like GPos and standard GRanges can inflate memory usage by thousands of times.
+
+Python fares no better in this use case.
+While [pysam](https://pysam.readthedocs.io/) provides a wrapper around the C-based htslib library, naïve usage patterns can still lead to memory bloat.
+For example, when users store entire dictionaries of reads as Python objects rather than streaming files through their analysis code.
+The iterative BAM file processing approach that works well in pure C becomes memory-intensive when mediated through Python's object overhead.
+
+Python was designed for single-core CPUs and therefore has many limitations for parallel processing.
+This is hampered by the [Global Interpreter Lock (GIL)](https://realpython.com/python-gil/), which prevents multiple Python threads from executing bytecode simultaneously.
+The GIL's purpose in modern Python is [hotly debated](https://peps.python.org/pep-0703/), since working around it requires complex module management and a deeper understanding of [concurrency vs. parallelism](https://realpython.com/python-concurrency/).
+These process scaling concepts push many data scientists beyond their comfort zones into multiprocessing or distributed computing frameworks (not that this is a bad thing, but you might not really need it).
+
+Don't let performance entirely dictate your development, sometimes it's faster to try something in a scripting language first before investing more time into building a tool with a more performant language.
 
 ## Maintenance and technical debt
 Sometimes you need bits of many languages to build something interesting and the programmatic link between languages might be more common than you think.
@@ -104,69 +116,111 @@ In Python, we can call Rust code via `pyo3` or use R code via `rpy2`.
 These interoperations are complex in my personal experience, but if you've read this far you're probably curious enough to continue.
 
 ## Innovation bottlenecks
-Language maximalism is missing out on emerging tools and paradigms.
-There are complex work arounds for language limitations and difficulty onboarding team members when the codebase spans many languages.
-However, many langauges wrap others for performance purposes as I previously described 
-If you don't know python, it's hard to stay on the bleeding edge of LLM's, AI, etc., since academic research is often siloed here.
+Language maximalism means missing out on emerging tools and paradigms.
+There are complex workarounds for language limitations and difficulty onboarding team members when the codebase spans many languages.
+For example, [Polars](https://pola.rs/) is gaining traction in both R and Python's ecosystems due to its Rust-based performance and memory safety.
+Polars alleviates a lot of performance pain points, with a small time investment in learning the API for either language's interface.
+However, many languages wrap others for performance purposes as I previously described. 
+If you don't know python, it's hard to stay on the bleeding edge of LLMs, AI, etc., since academic research is often siloed here.
 Reinventing wheels that exist in other ecosystems is a huge time cost.
-Consider making an R library to do something that already exists in python, by the time CRAN approves it, you could have spent time learning python!!
+Consider making an R library to do something that already exists in python--by the time CRAN approves it, you could have spent that time learning python!!
 
 ## Complexity as a Case Against Polyglot Programming
-Doesn't polyglot programming add to cognitive overhead and maintenance complexity??
+Doesn't polyglot programming add to cognitive overhead and maintenance complexity?
 Yes, but sometimes learning other approaches/languages makes you appreciate the features of your favorite languages more.
 Learning another language might inspire you to mix and match like Ben Roston's article above.
 What data scientists and bioinformaticians do is complex in nature and growing your skills is paramount to longevity in a rapidly changing field.
 
 # The Polyglot Advantage: Strategic Language Selection
-
+My Dad always joked that you could nail a screw into a wall with a hammer if you tried hard enough, but it was going to be a long and messy process.
+The more familiar one becomes with programming languages' particular strengths and weaknesses, the more diverse the toolbox becomes.
+Once we venture out of the safe confines of scripting languages like python or R, suddenly we need to worry about [memory management](https://en.wikipedia.org/wiki/Memory_management), [static type systems](https://en.wikipedia.org/wiki/Type_system#Static_type_checking), [compilers](https://en.wikipedia.org/wiki/Compiler), etc., as we wade deeper into the computer's physical structure.
+Let's consider a few different pieces of our analyses, and in general what we can learn from [microservice architectures](https://microservices.io/).
 
 ## Performance-critical components
-- C/C++ for algorithmic cores (alignment, variant calling)
-- Rust for memory-safe systems programming
-- Go for concurrent processing pipelines
-- GPU languages (CUDA/OpenCL) or language wrappers for massively parallel tasks
+[C](https://en.wikipedia.org/wiki/C_(programming_language))/[C++](https://isocpp.org/) are historically the languages of choice for performance critical components, like the sequence alignment example from before, while [Rust](https://www.rust-lang.org/) adds [memory-safety](https://www.memorysafety.org/docs/memory-safety/) to our programming toolbox.
+[Go](https://go.dev/) can be useful for concurrent processing development and has a significantly easier learning curve than the aforementioned languages.
+GPU languages (CUDA/OpenCL) or language wrappers for massively parallel tasks can speed up parallel tasks like linear algebra computations (AI is after all, a bunch of linear algebra operations in a trenchcoat).
+And may [FORTRAN](https://fortran-lang.org/), an array-first language that inspired much of mathematical operations on the computer, never die!
 
 ## Data engineering layer
-- Scala/Java for Spark clusters
-- SQL for what it's designed for (not forcing everything through dataframes)
-- Shell scripting for simple file operations (not subprocess.call())
+Maybe you're already using shell scripting for simple file operations, pipelining, etc., but part of the art of data engineering is the organization and [database schemas](https://en.wikipedia.org/wiki/Database_schema).
+Data engineering might be the least cool sounding discipline, but its skillset is a fantastic addition to any data practitioner's toolset.
+I've learned Groovy while working with [Jenkins](https://www.jenkins.io/) and [Nextflow](https://www.nextflow.io/) as well as a little Scala/Java for Spark clusters like [Databricks](https://www.databricks.com/).
+SQL databases allow you to not force everything through disparate dataframes and effectively do SQL joins from CSV files with [pandas](https://pandas.pydata.org/) or [tidyverse](https://www.tidyverse.org/).
+Data warehousing/lakehousing/whatever-buzz-word is a great way of connecting databases, especially with the complexity of a biotech or engineering organization.
+I've personally deployed [Redash](https://redash.io/) and worked with an already deployed [Databricks](https://www.databricks.com/) instance, which really lets you bring together databases with proper SQL or [SparkSQL](https://spark.apache.org/sql/) syntax.
 
-## Modern infrastructure
-- JavaScript/TypeScript for interactive visualizations
-- Domain-specific languages (DSLs) for configuration
-- Appropriate workflow managers for specific contexts
+## Modern Infrastructure: Workflows, Containers, and IaC
+Workflow management is always context dependent.
+I've worked with something as simple as a shell script, a hacked together [Jenkins](https://www.jenkins.io/)/Python job scheduler, to my own implementation of a serverless [Nextflow](https://www.nextflow.io/) workflow manager on [AWS](https://aws.amazon.com/).
+Shell scripts are shell scripts, they kind of work, as long as all the software stack is installed on a system.
+Whenever my colleagues and I had to touch the Jenkins/Python workflow manager, it was terrifying to write Groovy in the control pane to reset stuck clusters.
+All of these workflow management systems got the job done, with varying levels of complexity and maintainability.
+I very infrequently use HPC schedulers like [PBS](https://www.openpbs.org/) or [SLURM](https://slurm.schedmd.com/) anymore, since I don't generally use university HPC systems.
+They are conceptually the same as local or cloud schedulers--have workflow, will travel across compute resources.
+
+While at [CyVerse](https://cyverse.org/) I was heavily involved in teaching academics how to use software [containers](https://www.docker.com/resources/what-container/) like [Docker](https://www.docker.com/) or [Singularity](https://sylabs.io/singularity/) to create reproducible environments to solve the "it runs on my machine" problem.
+I think it's easy to view these as monolithic, bring-your-analysis, to jam into a container.
+Once I started working with [Kubernetes](https://kubernetes.io/) and serverless deployments like [AWS Fargate](https://aws.amazon.com/fargate/), I started to see the value in [microservices](https://microservices.io/).
+In the context of containers within data science and bioinformatics, this means each step in a workflow gets its own discrete container.
+This allows you to swap out bits and pieces as packages become deprecated or workflow bottlenecks are identified.
+
+When I was building workflows, I got exposed to [infrastructure-as-code (IaC)](https://en.wikipedia.org/wiki/Infrastructure_as_code) tools like [Vagrant](https://www.vagrantup.com/) and [Terraform](https://www.terraform.io/).
+This really helped with the IT side of things and allowed me to securely and safely store security credentials without [publishing them to a public repository](https://github.blog/security/secrets-security/securing-your-github-repositories-comprehensive-guide/).
+Not to mention, this allows you to integrate [CI/CD](https://about.gitlab.com/topics/ci-cd/) into your workflows and expands that thinking into the coding processes too.
+
 
 # Breaking Free: Practical Polyglot Strategies
+You will always work with people of varying experience levels (outside of being a solo developer).
+This situation is advantageous, since you can learn while doing.
+I learned a lot of my C++/CUDA from collaborating on refactoring python proof-of-concepts into production code free of GIL bottlenecks.
+
 
 ## Identifying maximalist anti-patterns
-Performance profiling languages reveals their breaking points
-- Team velocity slows due to language-fighting code
-- "We need a package for that" becomes too frequent
+Performance profiling languages and scripts reveals their breaking points.
+For example, within a [Nextflow](https://www.nextflow.io/) pipeline I was able to see very clearly that one python script was looping through a large tabular file--line-by-line.
+This script was also recalculating the same values every time it was run, when that particular calculation only needed to be done once!
+I broke it up into two scripts, one to calculate my target values, and another to parallel process the lines in the file with [concurrent futures](https://docs.python.org/3/library/concurrent.futures.html).
+
+In other cases, team velocity on a project can slow due to language-fighting or when "We need a package for that" becomes too frequent.
+There is always a trade-off between mixing languages and getting work done in a timely manner.
 
 ## Gradual adoption patterns
-- Microservices approach: each service in its optimal language
-- Pipeline decomposition: right tool for each step
+As mentioned before, the microservices approach allows room for each analysis or service to be written and deployed in its optimal language.
+Pipelining lets you glue your microservices together and iteratively build toward the right tool for each step of an analysis pipeline.
 
 ## Team and cultural considerations
-- Overcoming "not invented here" syndrome
-- Building bridges between R and Python camps
-- Establishing polyglot best practices
+Sometimes it's difficult to overcome the "not invented here" syndrome--if your team consistently reinvents the wheel, that's a huge time sink.
+In one role I worked, it was important to build bridges between the R and Python camps within the department.
+It was often good to allow people to do their data analyses in whatever scripting language was fastest and familiar for them.
+However, when it came time to work on prototyping code for physical devices, we agreed on a python → C++ workflow with adherence to particular styles of python [docstrings](https://peps.python.org/pep-0257/) and [PEP8](https://peps.python.org/pep-0008/).
+I think this environment was great for establishing polyglot best practices.
 
 ## Recognizing language biases in ourselves
-- R vs. Python debates miss the point
-- Each language as a tool, not an identity
+I think it's important, since I'm still writing about it in 2025, to realize the R vs. Python debates miss the plot entirely.
+Each language is a tool, not an identity.
+As I mentioned before, the time spent reinventing a package in your favorite language clutters the package ecosystem, contributes to the growth of [abandonware](https://en.wikipedia.org/wiki/Abandonware), and is time that could be spent broadening your skillset.
 
 ## Building complementary skill sets
-- Learning languages that fill gaps, not duplicating capabilities
-- Focus on paradigms, not just syntax
+Learn other programming languages that fill performance or implementation gaps, while not duplicating capabilities for the sake of language aestheticism.
+Focus on paradigms, not just syntax.
+Like I said before, if you're a statistician you probably can get away with an R heavy workflow for a long time.
+However, it's important to realize when you've "walked to the edge of the map".
 
-## Community benefits
-- Cross-pollination of ideas between ecosystems
-- Better collaboration across teams with different backgrounds
+Cross-pollination of ideas between ecosystems benefits all communities greatly.
+I've found this to be particularly true on my journey learning [Rust](https://www.rust-lang.org/).
+Better collaboration transpires across teams with different backgrounds.
+Treat everything as a learning opportunity and a way to cultivate a growth mindset.
 
 # Resources and Further Reading
 - [The R Inferno](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf) - Performance pitfalls in R
 - [Rcpp documentation](https://www.rcpp.org/) - R and C++ integration
 - [rpy2 documentation](https://rpy2.github.io/) - Python and R integration
 - [PyO3 User Guide](https://pyo3.rs/) - Rust bindings for Python
-- Community forums that embrace language diversity
+- [Top Community forums that embrace programming language diversity](https://www.notchup.com/insights/best-developer-forums)
+
+---
+
+*Note: This post was written by me based on my own experiences and perspectives.
+In all transparency, I used [Claude](https://claude.ai/) (Anthropic's AI assistant) to help with link population, grammar checking, and spelling corrections, but not for content generation or overall structure.*
