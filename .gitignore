@@ -51,3 +51,6 @@ Gemfile.lock
 #VS Code configs
 .vscode/
 .vscode/*
+
+#log files from github
+.logs/
