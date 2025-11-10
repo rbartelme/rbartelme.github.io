@@ -1,0 +1,116 @@
+---
+title: "The Cost of 'Waiting for the Data': Why Curiosity Without Guardrails Undermines Research"
+date: "2025-11-10"
+description: "What's worse? Wait-and-see or p-hacking"
+tags: ["design-of-experiments","data-science", "bioinformatics", "programming-languages", "computational-biology", "biotechnology"]
+abstract: ""
+---
+
+# Introduction
+
+I get the appeal of data-driven discovery, letting the data speak for itself can be exhilarating and can lead you down unforeseen paths.
+Making novel scientific discoveries is why many people get into basic scientific research.
+However, you tend to need a lot of information and a little bit of luck to get there.
+I remember very vividly trying to jam out my first research paper in grad school, but ended up getting rejected--my advisor was very kind about it.
+We went back to woodshed the ideas a little more and comb through the freezer full of samples for more data.
+I think it was maybe at this time [my advisor](https://www.newtonlabuwm.org/people) introduced me to what he called "stamp collecting".
+My paraphrased definition of what was posited, "survey data for the sake of broadening knowledge".
+The key is really in being honest about this survey nature, which, for microbial ecology is relatively common.
+The problem really doesn't lie within the intent of these sorts of projects, but in the systematic biases that creep in when we're not intentional about our analysis.
+Fundamentally, as [Arcadia Science's](https://www.arcadiascience.com/) [Prachee Avashti](https://www.linkedin.com/in/prachee-avasthi/)and co-authors pointed out there are some serious [gaps to close between analysis and publication](https://research.arcadiascience.com/pub/perspective-notebook-pub-format/release/2/).
+
+# Why Modeling Matters and Needs to Happen Earlier
+
+As someone who has walked in both wet-lab and computational science worlds, I think modeling is underappreciated or, at worst, mistrusted by wet-lab scientists.
+Entering the bioinformatics and computational biology modeling world in my career outside academic I often acted as "the bridge" across the divides.
+I've witnessed bench scientists spiral downward into experimental design with a complete lack of clarity on the statistical power and sample sizes required to answer their question.
+Additionally, effect sizes, measurement theory, noise levels, correlations between variables--all are glossed over in favor of a comfortable replicate number like `n=3 or n=4` per condition.
+[Study Preregistration]() should emerge *after* you think about the modeling work that you've already done.
+In computational biology, even a rough idea of a generative model will let you know if your experimental design is adequate to answer your question.
+Modeling helps to scope the wet lab work.
+Simulating different measurement strategies may provide enough insight into your effect of interest's signal detection to winnow your methods before commiting resources to data capture.
+Modeling constrains costs.
+Using [statistical design of experiments](), [power analysis](), and a range of sample sizes *in silico* is much more cost effective than running 200 replicates with the wrong assay entirely.
+For example, in a proteomics study, modeling target mass spec vs. immunoassay vs. aptamer arrays to find adequate precision for your effect size saves a lot of runaway costs.
+In practice, this allows the feedback loop more honesty.
+If you model first, then pre-register, then collect data, you can catch misalignments far earlier.
+In bioinformatics/data science specifically, this is already implicitly baked in with validation, cross-validation, and hold-out test sets.
+Using this same hold out approach can help with the modeling process 
+
+# The Real Problem: Arbitrary Choices Made After Data Collection
+
+Many wet-lab studies use arbitrary sample sizes ("we ran n=10 because that's what fit in one batch," or "n=30 because that's what the last study did"), avoid Bayesian methods due to perceived complexity, and apply frequentist nonparametric statistics *ad hoc* without specifying the analysis plan upfront.
+It makes sense, time pressure, funding constraints, comfort with "traditional" methods, lack of collaboration with computational specialists--all play a role here.
+Without knowing your analysis strategy before data collection, you can't design intelligently.
+You pick sample size divorced from statistical power.
+You default to nonparametric tests not because your data requires them, but because "the data will tell us."
+You avoid Bayesian methods because they require you to articulate priors, which forces you to think about your assumptions.
+Running nonparametric tests ad hoc ("try Wilcoxon, try Kruskal-Wallis, see what sticks") without pre-specification is p-hacking dressed up as robustness.
+I'm not without fault here, since a lot of quantitative approaches to ecology rest on squishy foundations.
+Bayesian methods matter a lot here.
+They force you to be honest about what you expect before seeing data (your priors), and they give you what you actually want (posterior probability of your hypothesis given the data) rather than p-values that require tortured interpretation.
+At worst, you may perpetuate the over excitement surrounding a p-value and gloss over its meaning.
+For example, if you set `α=0.05` for a differential expression RNAseq study, you're fully admitting that 5% of your "significant genes" are false positives.
+
+# The Slippery Slope: From Exploration to P-Hacking
+
+Let's be honest when we're "stamp collecting" as this is the principle distinction between exploratory and confirmatory analysis.
+If instead researchers have a vague idea of a study design and "wait to see what the data say" this boundary collapses.
+In bioinformatics/data science, methodos like, multiple hypothesis testing, feature selection without validation, *post-hoc* variable transformations; all begin as exporation. 
+I think sometimes exploratory data analysis leads to the trap of: "We're being data-driven" vs. "We're letting our biases guide which patterns we highlight".
+Without upfront modeling, before data collection, you often over-commit to measurement methods that turn out to be inadequate.
+Then you're tempted to lower thresholds, combine datasets, redefine your outcome, or apply statistical tests in sequence until something works
+Now we're in classic p-hacking territory.
+The "we'll see what the data say" wanders from exploratory to the retroactive justification of choices.
+If they can't specify their sample size or statistical approach before data collection, that's when you know the hypothesis has not been rigorously thought through.
+This isn't to say you cannot be open about your assumptions, but I think that the academic grant and publication system reward novelty too freely to incintivize people away from these malpractices.
+
+# Pre-Registration as a Natural Outcome of Good Design
+
+Pre-registration isn't bureaucracy, it's the documentation of technical work you've already done or should have done.
+What pre-registration actually is (and isn't):
+    - You document sample size justification
+    - Your primary and secondary outcomes
+    - Your statistical approach (including whether you'll use frequentist, Bayesian, or both), and any sensitivity analyses planned
+How it protects researchers:
+    - Forces specificity
+    - Documents the "garden of forking paths"
+    - Separates discovery from confirmation
+I think for wet-lab teams this turns "arbitrary n=30" into "we need n=47 to detect a 1.5-fold difference with 80% power given our expected noise."
+Maybe "we'll try a few statistical tests" further morphs into "we pre-specified Bayesian hierarchical regression with weakly informative priors".
+There are practical barriers in computational research (timelines, funding structures, tool availability), but I think this is why collaboration outside your immediate domain of science is so critical.
+Go to a talk from a field 2 degrees separate from your own subdomain and seek someone to broaden your approach.
+When I interviewed for a post-doc lab, I thought it was very novel they had an applied mathematician as a collaborator and it really shouldn't be that way.
+Preregistration early adopters in microbial ecology, agriculture, and molecular biology are already showing what rigorous methods design looks like.
+Furthermore, Nature Ecology & Evolution now accepts [Registered Reports](https://www.nature.com/natecolevol/submission-guidelines/registeredreports), where methods and proposed analyses are pre-registered and peer-reviewed prior to research being conducted, with protocols provisionally accepted for publication before data collection commences.
+Nature Communications also began welcoming [Registered Report submissions](https://www.nature.com/articles/s41467-022-32900-1) from all fields.
+Conservation scientists and ecologists can preregister their research on platforms like the [Open Science Framework](https://osf.io/) (OSF), and practical guidance exists for common concerns in field-based ecology—such as methods refinement through pilot studies before formal preregistration, and handling unexpected methodological changes through transparent protocol amendments.
+
+# Honest Assessment of Survey Studies As-Is
+
+The current state--many survey/observational studies lack pre-registration but publish anyway.
+I'll admit, I've also contributed works that could fall into this category.
+I think this matters a lot as readers and other researchers can't distinguish signal from noise.
+At the very least, my advisor always warned me about the overinterpretation of survey studies and to temper sensationalist language in the "next steps" part of a manuscript's discussion section.
+The replicability crisis is real evidence, studies that weren't pre-registered replicate at lower rates.
+As practitioners, we're both consumers and producers of this work, let's not add garbage to the pile.
+Or, as Paul Feyerabend put it bluntly, "Most scientists today are devoid of ideas, full of fear, intent on producing some paltry result so that they can add to the flood of inane papers that now constitutes 'scientific progress' in many areas."
+We can actually address Feyerabend's critique directly through honest assessment of methods and intent.
+
+# Parting Thoughts and Practical Recommendations
+
+Pre-registration isn't rigid, unexciting science.
+I don't know about you, but I'd rather be scientifically honest than paranoid about "getting scooped", if anything, pre-registering *beforehand* strengthens your own claims of novelty or intellectual property basis.
+Exploratory work is valuable, but it should be labeled as such and not over interpretted.
+No company will give you a budget for, or granting agency will assume you have, no prelimnary data.
+It's all two-stage designs: exploratory phase + confirmatory phase with fresh data.
+Computational professionals can be the bridge between preliminary data and getting approval.
+
+If you're designing studies use modeling to justify sample sizes and measurement choices, involve computational collaborators before wet lab work starts, & consider Bayesian approaches for their interpretability and transparency in assumptions.
+As a computational scientist collaborating with wet lab teams: show them that pre-specifying their analysis strategy (including statistical method) isn't a constraint—it's what lets them design adequate experiments and truly test hypotheses rigorously.
+When analyzing existing data: document your analytical decisions transparently; distinguish exploratory from confirmatory results; be explicit about *ad hoc* statistical choices and flag them as exploratory when necessary.
+As a peer reviewer look for: arbitrary sample sizes without justification, statistical testing without methodological explanation, or avoidance of methods that require transparency (Ex. e-mail author for data, custom analysis code with no public source, etc.)
+Ultimately it's about building team norms and cultures around pre-analysis plans that include wet lab scope, measurement strategy, and statistical approaches.
+The stakes for individual credibility, for field credibility, for decision-making based on research are always evolving.
+I invite computational and mathematical professionals that have the tools and rigor to lead change here, help wet lab teams think rigorously about measurement strategy and statistical analysis upfront, and turn arbitrary choices into justified designs.
+As a former bench scientists, I invite my wet-lab colleagues to have a more open mind to modeling and mathetmatical approaches outside of the frequentist statistical toolbox.
