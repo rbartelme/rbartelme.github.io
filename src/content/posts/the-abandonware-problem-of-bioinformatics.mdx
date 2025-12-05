@@ -1,0 +1,300 @@
+---
+title: "Bioinformatics Code Rot: Do We Have an Abandonware Problem?"
+date: "2025-12-5"
+description: "Graduate students need novel tools to publish. Labs lack funding for maintenance. How can we build sustainable bioinformatics software without fixing the incentive structure?"
+tags: ["scientific computing", "bioinformatics", "abandonware", "computational biology", "software engineering"]
+abstract: "The bioinformatics community faces a sustainability crisis: graduate students must publish novel tools to graduate, but no one funds long-term maintenance. This creates an ecosystem of abandonware that breaks microservices architectures and wastes researcher time. Without wholesale funding reform, we need to raise our engineering standards and lower the bar for what counts as 'publishable.' This post examines what bioinformatics can learn from mature open source communities and offers practical steps toward more sustainable software development."
+---
+
+# Introduction
+
+The timing of this post comes a bit late—the 24th Genomic Standards Consortium Meeting has long since passed.
+However, I can't stop thinking about a conversation I had with [Tim Van Den Bossche](https://www.linkedin.com/in/vandenbosschetim/) about the fundamental misalignment of incentives in bioinformatics software development.
+
+We discussed a familiar duality: graduate students need to publish novel tools to finish their degrees, while labs generally lack funding to maintain scientific software.
+These pressures are fundamentally at odds with sustainable open source development.
+Without wholesale changes to funding schemes, how can we incentivize academic labs to make maintainable software?
+
+**The answer isn't exciting**:
+*We need to simultaneously lower the bar for what counts as "publishable software" and raise the bar for software engineering practices.*
+This post explores what that looks like in practice.
+
+# The Novelty Treadmill and Its Consequences
+
+## How Low is the Threshold for Novelty?
+
+The bar for publishing bioinformatics tools appears simultaneously too low and too high.
+Nearly anything qualifies as publishable these days...yet another wrapper, yet another pipeline, yet another "improvement" with marginal gains.
+I'm not exempt from this criticism myself.
+
+But here's the problem: **the wrong things are being published as papers**.
+Do we really need wrappers for tools written in our [favorite language](https://rbartelme.github.io/blog/the-paradox-of-language-maximalism/)?
+Wrapping existing scientific software in R or Python almost always primes the repository for [code rot](https://en.wikipedia.org/wiki/Software_rot). 
+
+Is a Nextflow pipeline truly a publishable event worthy of a journal article?
+Or is it something that should simply be [assigned a Zenodo DOI](https://help.zenodo.org/docs/deposit/describe-records/reserve-doi/) for citation purposes and move on?
+Does DOI assignment meet a university's novel scientific contributions criteria?
+
+## Breaking Microservices Architecture, One Wrapper at a Time
+
+These wrapper scripts and pipeline publications actively break good software architecture principles.
+They bloat [containerization](https://www.docker.com/resources/what-container/) through a unique flavor of [dependency hell](https://en.wikipedia.org/wiki/Dependency_hell).
+
+One salient example of a widely used wrapper with deep dependencies is [QIIME2](https://qiime2.org/).
+If you've never heard of it, QIIME2 is a metawrapper for microbiome analysis methods.
+I'm not saying that QIIME2 is incorrect in its analysis capabilities, but rather that it is obtuse in its back-end implementation.
+It wraps software like [DADA2](https://benjjneb.github.io/dada2/), [FastTree](http://www.microbesonline.org/fasttree/), [BLAST](https://blast.ncbi.nlm.nih.gov/Blast.cgi), and [VSEARCH](https://github.com/torognes/vsearch) into a one-stop shop for people to either use or abuse.
+As a somewhat former microbial ecologist who has reviewed many manuscripts using this tool, it's interesting in that it gives access to researchers wishing to do microbiome work without deep expertise in quantitative ecology.
+This is, of course, akin to a borrowed [foot-gun](https://en.wiktionary.org/wiki/footgun) in the wrong context or [experimental design](https://rbartelme.github.io/blog/is-wait-and-see-worse/).
+Software like this is diametrically opposed to microservices, creates gigabyte-sized containers, and creates a dependency on developers to implement changes as the wrapped software becomes deprecated.
+The required database filesystem is the stuff of nightmares when these wrapper programs expect different directory structures than those available at runtime inside a spinning container.
+
+I want a performant bioinformatics system where I can swap out tools as they become deprecated—a true [microservices architecture](https://microservices.io/).
+[nf-core](https://nf-co.re/) does this reasonably well, giving you fine-grained control over execution contexts for each pipeline step.
+But even Nextflow + nf-core has a steep learning curve, and wrapper tools still cause filesystem mounting complexities and container bloat.
+
+**Why does bioinformatics keep making these mistakes when other software communities have solved them?**
+
+# What Works Elsewhere: Learning from Mature Open Source
+
+Maybe the bioinformatics software development community skews too academic or too commercial, with little middle ground compared to system-level open source tools.
+If you browse [Hacker News](https://news.ycombinator.com) long enough, there's clearly programmer interest in biology.
+But we're not learning from them.
+
+Here's the thing: **most bioinformatics problems aren't uniquely biological in their software architecture needs**.
+At the end of the day, most bioinformatics problems involve natural language processing and generic string matching algorithms.
+It gets more exotic when we use Dayhoff-derived methods like the [BLOSUM matrix in the heuristic BLAST+ algorithm](https://www.ncbi.nlm.nih.gov/pubmed/2231712), but the software engineering principles remain universal.
+
+## Case Study: The Rust Ecosystem
+
+1. **Cargo enforces [semantic versioning](https://semver.org/) as a first-class citizen.**
+
+When you publish a crate to [crates.io](https://crates.io/), Cargo actively checks for breaking changes and will refuse to let you publish a patch version with breaking API changes.
+This isn't just a suggestion—it's enforced at the toolchain level.
+Imagine if Bioconda or PyPI rejected packages that broke backward compatibility without a major version bump.
+
+2. **Dependency resolution that actually works.**
+
+Cargo's resolver can handle complex dependency graphs without the "works on my machine" syndrome that plagues Python virtual environments or Conda.
+When version conflicts arise, you get clear error messages explaining exactly which packages are incompatible and why.
+Compare this to the cryptic "solving environment" failures that can take hours to debug in bioinformatics workflows.
+
+3. **Cultural emphasis on documentation through [docs.rs](https://docs.rs/).**
+
+Every crate automatically gets free documentation hosting with examples, type signatures, and searchable content.
+The culture expects inline documentation, and tools like `cargo doc` make it trivial to generate beautiful, comprehensive documentation.
+Bioinformatics tools often have a single README with installation instructions—if you're lucky.
+
+**What bioinformatics could adopt:**
+Imagine a world where Bioconda packages were required to pass a "semantic versioning lint" before acceptance, where dependency conflicts gave you actionable error messages instead of mysterious failures, and where every tool had auto-generated documentation with working examples.
+The technology exists—we just need to adopt it.
+
+## Case Study: Python Packaging Evolution
+
+1. **The painful evolution from setup.py to pyproject.toml.**
+
+Python's packaging went through years of fragmentation: `setup.py` with its executable configuration, `setuptools` with its baroque options, `poetry` and `pipenv` competing for adoption.
+This caused real pain, but the community eventually converged on [PEP 517](https://peps.python.org/pep-0517/) and [PEP 518](https://peps.python.org/pep-0518/), establishing `pyproject.toml` as the standard.
+The lesson? Fragmentation is expensive, but standardization requires patience and buy-in.
+
+2. **How the community converged through governance.**
+
+The Python Enhancement Proposal (PEP) process allowed competing ideas to be formally proposed, debated, and voted on by core developers.
+Bioinformatics has no equivalent, and we have competing standards (BAM vs CRAM, GFF vs GTF) with no formal process to converge on best practices.
+The [Genomic Standards Consortium](https://www.gensc.org/) tries, but lacks enforcement mechanisms.
+
+3. **PyPI's evolving quality mechanisms.**
+
+[PyPI](https://pypi.org/) now encourages (and sometimes requires) type hints, unit tests, and continuous integration for ["Trusted Publishers"](https://docs.pypi.org/trusted-publishers/).
+Projects with these markers get better visibility and user trust.
+Bioconda and BioContainers could adopt similar quality tiers—mark packages as "production-ready" only if they pass linting, have CI, and maintain documentation.
+
+**The key lesson: standards emerge slowly but community consensus beats the wild west.**
+Python didn't fix packaging overnight, and bioinformatics won't either.
+But we need venues for formal standardization discussions, not just ad-hoc decisions by individual labs.
+
+## Case Study: Linux Kernel Maintainership
+
+1. **Long-term support (LTS) branches and dedicated maintainers.**
+
+The Linux kernel maintains [LTS versions](https://www.kernel.org/category/releases.html) for 2-6 years, with designated maintainers for each branch.
+Greg Kroah-Hartman maintains multiple LTS kernels simultaneously, backporting security fixes and critical updates.
+Bioinformatics tools rarely have this—when the grad student graduates, the tool dies or, infrequently, the lab maintains it.
+What if major tools like BWA or samtools had formal LTS branches with funded maintainers?
+Wouldn't that make more sense?
+
+2. **Corporate backing provides sustainability.**
+
+Companies like Red Hat, Canonical, and SUSE employ full-time kernel developers who maintain subsystems critical to their business.
+They don't publish papers about their patches; they're paid to keep the system running.
+Bioinformatics has some corporate involvement (Illumina funds DRAGEN, PacBio funds pbmm2, general investment in Rust for bioinformatics by biotech companies), but most tools lack this stable funding model.
+
+3. **Clear maintainer hierarchies and succession planning.**
+
+The kernel has a well-defined [MAINTAINERS](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/MAINTAINERS) file listing who owns each subsystem.
+When someone steps down, there's a process for handing off responsibilities.
+Bioinformatics projects typically have one maintainer (the PI, PhD student, or postdoc who built it), and no succession plan.
+When they leave academia, the tool becomes abandonware.
+
+4. **What this reveals about the missing "corporate middle ground."**
+
+The kernel succeeds because it has a mix of academic research (new algorithms), corporate maintenance (stability and security), and community governance (formal review processes).
+Bioinformatics skews heavily toward academic research with little corporate maintenance outside of commercial tools.
+We need more organizations like the [Chan Zuckerberg Initiative](https://chanzuckerberg.com/science/programs-resources/open-science/) funding maintenance of critical open source tools, and fewer papers about incremental wrapper improvements.
+
+**These communities succeeded because they built governance structures and cultural norms, not just technical solutions.**
+
+# Practical Steps Forward (Without Fixing Funding)
+
+Since we can't wait for funding agencies to create maintenance-specific grant mechanisms, here's what we *can* do:
+
+## For Individual Developers
+
+1. **Publish your pipeline/wrapper as a Zenodo DOI, not a paper**
+
+I think a good question to ask is: did I write a new implementation of a bioinformatics algorithm that addresses performance or an open question in the field?
+If so, then a methods paper is justified.
+Otherwise, it's probably worth getting a Zenodo DOI assigned.
+If you did both—i.e., a new algorithm in a pipeline—publish the algorithm as a methods paper and the pipeline with a Zenodo DOI.
+Your repository's README should answer the same questions a methods section would:
+  - What problem does this solve?
+  - What are the inputs and outputs?
+  - What are the parameters and what do they mean biologically (not just computationally)?
+  - Include a quickstart example with real (or realistic test) data that shows expected input format and output interpretation.
+  - Add a "Limitations" section that explicitly states what your tool doesn't do; this prevents misuse and saves you from answering the same GitHub issues repeatedly.
+  - Include citation information and a brief comparison to alternative approaches so users understand when to use your tool versus others.
+
+A well-structured README with these elements provides more practical value than a paywalled methods paper that most users won't read.
+
+2. **Design for modularity from day one**
+
+The [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single-responsibility_principle) for bioinformatics tools is massively underrated.
+I want my bioinformatics tools to be as simple as my coffee maker—it just makes coffee.
+More aptly, the tool should utilize clear input/output contracts without assumptions about file paths.
+Cloud storage systems like [S3](https://aws.amazon.com/s3/) use object storage protocols rather than traditional filesystems, and tools that hardcode paths like `/data/input.fastq` will fail in containerized or cloud environments.
+Using [stdin/stdout](https://en.wikipedia.org/wiki/Standard_streams) whenever possible makes tools composable via [Unix pipes](https://en.wikipedia.org/wiki/Pipeline_(Unix)) and eliminates filesystem coupling—you can pipe data between tools without creating intermediate files, reducing both filesystem overhead and I/O bottlenecks.
+This is especially important when working with large genomic datasets where writing intermediate files can be slower than keeping data in memory buffers between processing steps.
+
+Don't build a tool that "does QC, trimming, alignment, and variant calling"—build four tools that do each step well and can be composed together.
+This makes testing easier, maintenance simpler, and allows users to swap out individual components as better alternatives emerge.
+When you design for modularity, your tool remains useful even when parts of the workflow evolve.
+  
+3. **Write actual documentation and tests**
+
+**Documentation-driven development (write docs first, then code)**:
+Before writing a single line of implementation code, write the documentation for how your tool *should* work.
+What does the command look like?
+What are the required and optional parameters?
+What does the output look like?
+This forces you to think through the user experience and API design before you're committed to implementation details.
+If you can't explain clearly how the tool should work, you're not ready to build it yet.
+Tools like [doctest](https://docs.python.org/3/library/doctest.html) in Python even let you turn your documentation examples into executable tests.
+Effectively, your docs become your test suite.
+
+**Minimal viable testing (input validation, output format checks)**:
+You don't need 100% test coverage to have useful tests.
+Start with the basics: does your tool handle malformed input gracefully (corrupted FASTQ, truncated BAM files)?
+Does it produce valid output format (can downstream tools parse your GFF3)?
+Does it fail appropriately with clear error messages rather than cryptic stack traces?
+These simple tests catch the majority of real-world breakage.
+Use tools like [pytest](https://pytest.org/) for Python or [testthat](https://testthat.r-lib.org/) for R to make testing trivial.
+Five good tests are infinitely better than zero tests, and catching 80% of bugs is better than catching none.
+
+## For PIs and Labs
+
+**Budget for maintenance in grants.**
+When writing grants that include software development, explicitly budget for ongoing maintenance as a separate line item.
+If you're requesting two years of programmer time to build a tool, request an additional 6 months spread over the following three years for bug fixes, dependency updates, and user support.
+Reviewers increasingly recognize that unmaintained software wastes the initial investment.
+Try to frame maintenance as protecting the ROI of the development work.
+Funding agencies care about reproducibility, and maintenance isn't just "keeping the lights on"—it's ensuring that analyses remain reproducible as underlying dependencies change.
+When conda updates Python from 3.9 to 3.12, someone needs to verify your tool still works.
+When a critical dependency gets a security patch, someone needs to update your containers.
+Call this what it is: essential infrastructure for computational reproducibility, not optional upkeep.
+
+**Value software maintenance in hiring and promotion.**
+When evaluating candidates or reviewing tenure cases, look at their GitHub activity.
+Did they respond to issues promptly?
+Did they merge pull requests from external contributors?
+Did they keep dependencies up to date? 
+These contributions often represent more impact than yet another incremental methods paper.
+A researcher who maintains a widely-used tool, like `samtools` or `bedtools`, serves thousands of scientists, and that should count more than a third-author paper on a wrapper tool.
+Academic incentive structures reward novelty, but the community needs stability.
+If a postdoc spends a year maintaining and improving an existing tool rather than building something new, that should be viewed as a valuable contribution to scientific infrastructure.
+Include "software stewardship" as an explicit evaluation criterion in hiring rubrics and promotion guidelines.
+The Chan Zuckerberg Initiative's [Essential Open Source Software for Science](https://chanzuckerberg.com/eoss/) program recognizes this—academic institutions should too.
+
+## For Journals and Reviewers
+
+**Require formal code review, not just "code available at hosted git service X".**
+Reviewers should actually download the code and attempt to run the examples in the README or methods section.
+This sounds obvious, but most reviews don't include this step.
+Many published tools fail immediately on a fresh install because of undocumented dependencies, hardcoded file paths, or version incompatibilities.
+Journals could require that at least one reviewer successfully executes the code on test data before acceptance.
+This single step would eliminate a shocking percentage of unusable bioinformatics publications.
+Use a clean Docker container or virtual machine to test installation from scratch.
+Better yet, try reproducing the execution context and the dependencies with [NixOS](https://nixos.org/)—its [reproducible builds](https://nixos.org/manual/nixos/stable/#sec-building-nixos) approach makes dependency management truly deterministic.
+The authors tested it on their system with 47 pre-installed dependencies, but does it work for anyone else?
+Check that the installation instructions are complete, that dependency versions are specified, and that the tool actually produces the claimed output format.
+If the paper claims "easy installation via conda," then `conda install tool-name` should actually work without cryptic solver failures.
+
+**Reject pure wrapper programs unless they solve real interoperability problems.**
+Reviewers should ask critical questions about wrapper justification:
+Does this wrapper enable a capability that didn't exist before, or does it just translate between languages?
+Does it solve a genuine interoperability problem (e.g., allowing R users to access a C++ library that previously required manual compilation), or is it just convenience for the author's preferred language?
+Does it add value through better error handling, input validation, or workflow integration?
+If the answer is "it makes tool X available in language Y," that's probably not sufficient justification for a paper—that's a git repo with a Zenodo DOI.
+Legitimate wrappers solve real problems: they might provide a unified interface to multiple tools (like how `Biopython.Align` provides a consistent API across different alignment algorithms), handle complex I/O or format conversions, add robust error checking and input validation, or integrate tools into existing workflow ecosystems.
+Feature duplication is when you reimplement BLAST in Python because you prefer Python, or wrap FastQC in R just to avoid calling it from the command line.
+*The test*: would removing this wrapper meaningfully harm the ecosystem, or would people just use the original tool?
+
+## For the Community at Large
+
+**Build shared infrastructure.**
+The [nf-core](https://nf-co.re/) community has shown that collaborative pipeline development works.
+They maintain high-quality, peer-reviewed workflows with shared standards and continuous integration.
+We need similar consortiums for other domains: a "py-bioinf" for curated Python packages with enforced quality standards, a "biocontainers-validated" tier for containers that pass automated testing, or a "bioconda-stable" channel for tools with proven maintenance records.
+These consortiums provide the governance and shared infrastructure that individual labs can't sustain alone.
+Most bioinformatics tools lack automated testing, and we need community-maintained test datasets and CI pipelines that any tool can plug into.
+Imagine a service where you could submit your tool and it automatically gets tested against standard datasets (synthetic metagenomes, reference genomes, benchmark RNA-seq data) with results publicly displayed.
+This exists in other domains—the [PyPI](https://pypi.org/) ecosystem has [tox](https://tox.wiki/) and [GitHub Actions](https://github.com/features/actions), web frameworks have [Lighthouse scores](https://developer.chrome.com/docs/lighthouse/overview/).
+Bioinformatics needs similar shared testing infrastructure, which in turn would lead to more universal performance benchmarking.
+
+**Establish conventions and standards.**
+We have too many competing standards that fragment the ecosystem.
+BAM vs CRAM vs SAM, GFF vs GTF vs GFF3, FASTA vs FASTQ vs uBam for unmapped reads.
+The [Genomic Standards Consortium](https://www.gensc.org/) and [GA4GH](https://www.ga4gh.org/) try to establish standards, but lack enforcement mechanisms.
+We need community consensus on preferred formats for common data types, and tools should default to these formats.
+More importantly, we need reference implementations and validators—i.e., "does this claim to be a valid GFF3 file? Run it through the validator."
+Standards without validation are just suggestions.
+Bioinformatics tools also reinvent the wheel constantly when it comes to API design.
+Should a sequence alignment tool return an object, write to a file, or output to stdout?
+Should parameters be specified in a config file, command-line flags, or environment variables?
+We need established patterns like web development has (REST APIs, HTTP status codes, JSON response schemas).
+For example: "All sequence processing tools should accept input via stdin or file, emit valid SAM/BAM to stdout, log to stderr, use exit code 0 for success, and support a `--version` flag."
+Simple conventions that, if universally adopted, would make tools composable and pipelines maintainable.
+
+# Conclusion
+
+Circling back to my conversation with Tim: we both knew there's no silver bullet.
+The incentive structure that rewards novelty over maintenance isn't changing tomorrow.
+Funding agencies move slowly.
+Academic culture moves even slower.
+
+But we can raise our own standards.
+We can stop treating every Nextflow pipeline as a publication-worthy event.
+We can learn from communities that solved these problems decades ago.
+We can build the middle ground between "academic prototype" and "commercial black box."
+
+**The next time you're tempted to wrap a tool in your favorite language, ask yourself**:
+Does this genuinely improve the ecosystem, or am I just chasing a publication?
+
+*Your future self, and everyone who has to maintain your code, will thank you for answering honestly.*
+
+---
+
+*Have thoughts on sustainable bioinformatics software?
+Find me on [Bluesky](https://bsky.app/profile/microbialbart.bsky.social) or [LinkedIn](https://www.linkedin.com/in/ryan-bartelme/).*
+
+*Note: This post was written by me based on my own experiences and perspectives.
+In all transparency, I used [Claude](https://claude.ai/) (Anthropic's AI assistant) to help with link population, grammar checking, and spelling corrections, but not for content generation or overall structure.*
