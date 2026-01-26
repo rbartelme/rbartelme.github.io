@@ -1,0 +1,105 @@
+---
+title: "Self-Hosting is a Beautiful Black Hole"
+date: "2026-01-26"
+description: "How far do you want to take your DIY approach to services?"
+tags: ["infrastructure", "IT", "data-science", "bioinformatics", "programming-languages", "computational-biology", "biotechnology"]
+abstract: "Self-hosting—running your own services on hardware you control—offers a DIY path to digital autonomy. From firewalls and home automation to NAS systems and git servers, the spectrum of possibilities is vast. This post explores what self-hosting means, shares personal experiences from academia to home labs, and honestly examines the trade-offs. Whether you want to fight platform enshittification, own your data, or just tinker with hardware for fun, self-hosting rewards curiosity and patience in equal measure."
+---
+
+# Introduction
+
+Sometimes I feel extremely fortunate I grew up in a very Do-It-Yourself (DIY) family and discovered the DIY music scene in my hometown.
+All these experiences showed me at a young age that you can bootstrap and will most things into existence.
+I sit here writing this introduction to the soundtrack of [Fugazi Live in Houston 1996](https://www.youtube.com/watch?v=LSJjNAQgG3g).
+Their vocalist/guitarist Ian MacKaye started [Dischord Records](https://dischord.com/) with Jeff Nelson out of their home in the Washington DC metro area.
+Fugazi never charged more than $5 for a show, and their concerts were all-ages to give young kids a third space and something to do.
+To me, the analogy here is that with enough time, learning, and sweat equity, you can DIY pretty much anything.
+The real crux of it all is figuring out when it is worth doing something yourself.
+Starting a band, a business, or any technical or creative project requires a certain amount of DIY willingness on some level.
+Maybe for technological projects, you want to self-host services to fight the [enshittification of the internet](https://en.wikipedia.org/wiki/Enshittification), own more of your own data, and learn a little something along the way.
+All roads lead to DIY from here, it's just a matter of how deep down the beautiful black hole you want to go.
+Just don't cross the [Schwarzschild Radius](https://en.wikipedia.org/wiki/Schwarzschild_radius) too lightly—self-hosting is liberating, befuddling, and sometimes just plain fun.
+
+
+# What Is Self-Hosting
+
+At its core, self-hosting means running and maintaining your own services on hardware you own or control, rather than relying on third-party providers.
+Instead of using Google Drive, you might run [Nextcloud](https://nextcloud.com/) on a server in your closet.
+Instead of paying for a streaming service, you might set up [Jellyfin](https://jellyfin.org/) or [Plex](https://www.plex.tv/) to serve your own media library.
+The spectrum ranges from simple single-board computer projects to full-blown server racks.
+
+**Networking and Firewalls**: Most self-hosting journeys start with taking control of your home network. Consumer routers from ISPs are often limited in features, security, and configurability. Open-source firewall solutions like [OPNsense](https://opnsense.org/) or [pfSense](https://www.pfsense.org/) running on dedicated hardware give you fine-grained control over your network traffic, VPN capabilities, ad-blocking at the DNS level, and intrusion detection.
+
+**Home Automation**: Smart home devices from major manufacturers often require cloud connectivity, phone home with your usage data, and can become e-waste when the company decides to sunset support. Self-hosted alternatives like [Home Assistant](https://www.home-assistant.io/) give you local control over your smart devices. Combined with [ESPHome](https://esphome.io/), you can even build your own sensors and switches using inexpensive microcontrollers.
+
+**Home Security**: Commercial security systems often come with monthly subscription fees and cloud dependencies. Self-hosted solutions like [Frigate](https://frigate.video/) for network video recording give you local storage and AI-powered detection without sending your camera feeds to someone else's servers.
+
+**Weather Stations**: For the data-curious, personal weather stations with tools like [Weewx](https://weewx.com/) let you collect hyperlocal environmental data. It's a fun entry point into self-hosting that combines hardware tinkering with data visualization.
+
+**Data Backups and NAS**: Network Attached Storage (NAS) systems are perhaps the most practical self-hosting gateway. Solutions like [TrueNAS](https://www.truenas.com/) turn old hardware into robust storage servers with features like ZFS, RAID, and automated backups. Owning your data means not worrying about a cloud provider changing their pricing or terms of service overnight.
+
+# My Experiences Self-Hosting at Home & Work
+
+I was fortunate enough to be present in places that gradually filled my self-hosting toolbox over my life and career.
+Grad school reinvigorated my curiosity in computation as a science and led me on the path I walk today.
+Circumstance led me on a path to the Tucson [Arizona Research Bazaar](https://researchbazaar.arizona.edu/) organization, which eventually led to my working for an NSF cloud computing project as an educator.
+I was rapidly exposed to more modern cyber infrastructure than I had previously experienced in my career and actually had to start using `git` in a more professional capacity.
+After leaving the [CyVerse](https://cyverse.org/) NSF project, I took my toolbox on the road and advocated for `git` adoption at another employer.
+Little did I know that part of moving to `git` at this company was my suddenly being in charge of self-hosting GitLab via [ESXi](https://www.vmware.com/products/cloud-infrastructure/esxi-and-esx) hosted virtual machines and [Docker Compose](https://docs.docker.com/compose/) behind the company firewall in a blade server in my cubicle.
+I was completely hooked on hardware/self-hosting after this.
+
+More recently I've tinkered with simple Raspberry Pi clusters inspired by people like [Jeff Geerling](https://www.jeffgeerling.com/), which led to many home projects.
+I recently assembled an [ARM64](https://en.wikipedia.org/wiki/AArch64) small board computer low-power self-hosted git server with [Gitea](https://about.gitea.com/), [Docker Compose](https://docs.docker.com/compose/), and a little firewall networking black magic.
+Seems like Gitea will adequately reproduce the [GitLab](https://about.gitlab.com/) experience without the memory overhead of GitLab.
+This has led to a lot of home projects surrounding small, contained services, utilizing automation tools like [Ansible](https://www.ansible.com/).
+
+# Self-Hosting Limitations
+
+I think the biggest limitation, as a buddy of mine pointed out, is that now you have to maintain all this infrastructure—the hardware, the code, the databases, all of it.
+If you also happen to do this as a day job, it can get taxing. Sometimes I've had to step away from my own projects AND work to go outside and touch grass.
+You also probably need more than an Internet Service Provider (ISP) supplied gateway/router to get started.
+Some ISPs may lock you in to using their gateway (this happened to someone I know who had a fiber optic connection).
+If you work or study in an academic lab, you are probably at the behest of your IT department, so getting outside access to your services might be tricky.
+
+
+# Parting Thoughts
+
+If you want total creative, operational, and technical control—maybe you bootstrap everything yourself.
+There's a middle ground here: by mixing and matching commercially available products and rolling your own services, you might get better results than your gateway alone.
+I've taken the longer road in terms of "smart home" projects and have methodically expanded the scope at various stages of my life.
+This was a purposeful decision, and I think it's kind of fun to take a little moment every day and look at something you really put effort into because it was fun and you learned something.
+Large language model (LLM, or more pejoratively "AI") self-hosting with tools like [llama.cpp](https://github.com/ggerganov/llama.cpp), [Ollama](https://ollama.com/), [MLX](https://github.com/ml-explore/mlx), etc. is definitely an interesting area I'm actively exploring.
+Does self-hosting AI make it a little more sustainable? Depends on a lot of factors, most principally your LLM use case.
+
+
+## Additional Resources
+
+**Communities:**
+- [r/homelab](https://www.reddit.com/r/homelab/) — The homelab subreddit is a great place to see what others are building and get advice on hardware and software choices.
+- [r/selfhosted](https://www.reddit.com/r/selfhosted/) — A community focused specifically on self-hosted software alternatives to commercial services.
+- [Awesome-Selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted) — A curated list of self-hosted software organized by category.
+
+**Networking and Firewalls:**
+- [OPNsense](https://opnsense.org/) — Open-source firewall and routing platform based on FreeBSD.
+- [pfSense](https://www.pfsense.org/) — Another popular open-source firewall/router software distribution.
+- [OpenWrt](https://openwrt.org/) — Linux-based firmware for embedded devices, great for turning consumer routers into more capable network appliances.
+
+**Home Automation:**
+- [Home Assistant](https://www.home-assistant.io/) — Open-source home automation platform with support for thousands of devices.
+- [ESPHome](https://esphome.io/) — System for controlling ESP8266/ESP32 microcontrollers for DIY smart home sensors and devices.
+
+**Hardware:**
+- [Raspberry Pi](https://www.raspberrypi.com/) — The classic single-board computer for hobbyists and self-hosters alike.
+- [Orange Pi](http://www.orangepi.org/) — Alternative single-board computers, often with more RAM or storage options at competitive prices.
+- [Jeff Geerling's YouTube](https://www.youtube.com/@JeffGeerling) — Excellent content on Raspberry Pi clusters, home servers, and general self-hosting projects.
+
+**Storage:**
+- [TrueNAS](https://www.truenas.com/) — Enterprise-grade open-source storage operating system (formerly FreeNAS for the CORE edition).
+- [OpenMediaVault](https://www.openmediavault.org/) — Lightweight NAS solution based on Debian Linux.
+
+---
+
+*Have thoughts on self-hosting hardware or software?
+Find me on [Bluesky](https://bsky.app/profile/microbialbart.bsky.social) or [LinkedIn](https://www.linkedin.com/in/ryan-bartelme/).*
+
+*Note: This post reflects my own experiences and perspectives. In all transparency, I used [Claude](https://claude.ai/) (Anthropic's AI assistant) to help with link population, grammar checking, and spelling corrections—not for content generation or overall structure.*
