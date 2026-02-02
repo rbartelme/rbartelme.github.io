@@ -21,6 +21,14 @@ export default function Layout({ children }: LayoutProps) {
             <p className="text-sm">
               Full-stack data scientist specializing in bioinformatics and computational biology.
             </p>
+            <p className="text-sm mt-2">
+              <a
+                href="/feed.xml"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                RSS Feed
+              </a>
+            </p>
           </div>
         </div>
       </footer>

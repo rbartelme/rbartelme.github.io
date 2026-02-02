@@ -23,6 +23,11 @@ export const metadata: Metadata = {
     title: 'Ryan Bartelme - Computational Biologist & Data Scientist',
     description: 'Bioinformatics research, data science insights, and computational biology.',
   },
+  alternates: {
+    types: {
+      'application/rss+xml': 'https://rbartelme.github.io/feed.xml'
+    },
+  },
 }
 
 export const viewport = {
