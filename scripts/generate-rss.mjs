@@ -50,6 +50,19 @@ const feed = new Feed({
     },
 })
 
+// --- Prepare content for RSS ---
+// Replace interactive JSX components with a placeholder linking to the post.
+// RSS readers can't render React components, so we swap them for a friendly note.
+function prepareContentForRss(mdxContent, postUrl) {
+    // Match self-closing JSX tags: <ComponentName ... />
+    // and block JSX tags: <ComponentName ...>...</ComponentName>
+    return mdxContent
+        .replace(/<([A-Z]\w+)\b[^]*?\/>/g,
+            (_, name) => `\n\n> [Interactive ${name} - view on site](${postUrl})\n\n`)
+        .replace(/<([A-Z]\w+)\b[^]*?>[^]*?<\/\1>/g,
+            (_, name) => `\n\n> [Interactive ${name} - view on site](${postUrl})\n\n`)
+}
+
 // --- Add each post as an item ---
 // Each post becomes an <item> in RSS or an <entry> in Atom.
 
@@ -62,7 +75,7 @@ for (const post of posts) {
         id: url,
         link: url,
         description: post.description,
-        content: post.content,
+        content: prepareContentForRss(post.content, url),
         date: new Date(post.date),
         category: (post.tags || []).map(tag => ({ name: tag})),
     })
