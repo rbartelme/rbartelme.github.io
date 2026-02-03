@@ -6,7 +6,7 @@ import json from "@eslint/json";
 import markdown from "@eslint/markdown";
 
 export default [
-  { ignores: ["**/package-lock.json"] },
+  { ignores: [".next/**", "**/package-lock.json"] },
   { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], ...js.configs.recommended, languageOptions: { globals: globals.browser } },
   { files: ["**/*.{js,cjs}"], languageOptions: { globals: globals.node } },
   { files: ["scripts/**/*.mjs"], languageOptions: { globals: globals.node } },
