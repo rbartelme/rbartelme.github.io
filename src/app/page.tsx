@@ -82,7 +82,7 @@ export default function Home() {
                 href="/blog"
                 className="bg-blue-600 text-white px-6 md:px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm md:text-base"
               >
-                Read My Research
+                Read My Blog
               </Link>
               <Link 
                 href="/contact"
