@@ -25,8 +25,8 @@ const posts = fileNames
     .map(fileName => {
         const slug = fileName.replace(/\.mdx$/, '')
         const raw = fs.readFileSync(path.join(postsDirectory, fileName), 'utf8')
-        const { data } = matter(raw)
-        return { slug, ...data}
+        const { data, content } = matter(raw)
+        return { slug, content, ...data}
     })
     // Filter out any drafts
     .filter(post => !post.draft)
@@ -62,6 +62,7 @@ for (const post of posts) {
         id: url,
         link: url,
         description: post.description,
+        content: post.content,
         date: new Date(post.date),
         category: (post.tags || []).map(tag => ({ name: tag})),
     })
