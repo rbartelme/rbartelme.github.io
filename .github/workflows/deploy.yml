@@ -57,9 +57,6 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
-        with:
-          # Automatically inject basePath in your Next.js configuration file
-          static_site_generator: next
         # Only run this step if we're on main branch (for deployment)
         if: github.ref == 'refs/heads/main'
 
