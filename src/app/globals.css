@@ -1,9 +1,8 @@
+@import 'highlight.js/styles/github-dark.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Code highlighting styles */
-@import 'highlight.js/styles/github-dark.css';
 
 /* Mobile responsiveness fixes */
 html, body {

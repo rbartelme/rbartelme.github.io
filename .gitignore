@@ -54,3 +54,6 @@ Gemfile.lock
 
 #log files from github
 .logs/
+
+# rss local build ignore
+public/feed.xml

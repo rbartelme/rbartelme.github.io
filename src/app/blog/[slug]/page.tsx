@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation'
 import { mdxComponents } from '@/components/mdx/MDXComponents'
 
 interface BlogPostProps {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export async function generateStaticParams() {
@@ -16,7 +16,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: BlogPostProps) {
-  const post = getPostBySlug(params.slug)
+  const { slug } = await params
+  const post = getPostBySlug(slug)
   
   if (!post) return {}
   
@@ -35,8 +36,9 @@ export async function generateMetadata({ params }: BlogPostProps) {
   }
 }
 
-export default function BlogPost({ params }: BlogPostProps) {
-  const post = getPostBySlug(params.slug)
+export default async function BlogPost({ params }: BlogPostProps) {
+  const { slug } = await params
+  const post = getPostBySlug(slug)
 
   if (!post) {
     notFound()
