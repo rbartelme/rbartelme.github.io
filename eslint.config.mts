@@ -4,16 +4,25 @@ import tseslint from "typescript-eslint";
 import pluginReact from "eslint-plugin-react";
 import json from "@eslint/json";
 import markdown from "@eslint/markdown";
-import css from "@eslint/css";
-import { defineConfig } from "eslint/config";
 
-export default defineConfig([
-  { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], plugins: { js }, extends: ["js/recommended"], languageOptions: { globals: globals.browser } },
-  tseslint.configs.recommended,
-  { files: ["**/*.{js,mjs,cjs,jsx,tsx,ts,mts,cts}"], ...pluginReact.configs.flat.recommended },
-  { files: ["**/*.json"], plugins: { json }, language: "json/json", extends: ["json/recommended"] },
-  { files: ["**/*.jsonc"], plugins: { json }, language: "json/jsonc", extends: ["json/recommended"] },
-  { files: ["**/*.json5"], plugins: { json }, language: "json/json5", extends: ["json/recommended"] },
-  { files: ["**/*.md"], plugins: { markdown }, language: "markdown/gfm", extends: ["markdown/recommended"] },
-  { files: ["**/*.css"], plugins: { css }, language: "css/css", extends: ["css/recommended"] },
-]);
+export default [
+  { ignores: ["**/package-lock.json"] },
+  { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], ...js.configs.recommended, languageOptions: { globals: globals.browser } },
+  { files: ["**/*.{js,cjs}"], languageOptions: { globals: globals.node } },
+  { files: ["scripts/**/*.mjs"], languageOptions: { globals: globals.node } },
+  ...tseslint.configs.recommended,
+  { files: ["**/*.{js,cjs}"], rules: { "@typescript-eslint/no-require-imports": "off" } },
+  {
+    files: ["**/*.{js,mjs,cjs,jsx,tsx,ts,mts,cts}"],
+    plugins: { react: pluginReact },
+    settings: { react: { version: "detect" } },
+    rules: {
+      ...pluginReact.configs.flat.recommended.rules,
+      "react/react-in-jsx-scope": "off",
+    },
+  },
+  { files: ["**/*.json"], plugins: { json }, language: "json/json", rules: json.configs.recommended.rules },
+  { files: ["**/*.jsonc"], plugins: { json }, language: "json/jsonc", rules: json.configs.recommended.rules },
+  { files: ["**/*.json5"], plugins: { json }, language: "json/json5", rules: json.configs.recommended.rules },
+  { files: ["**/*.md"], plugins: { markdown }, language: "markdown/gfm", rules: markdown.configs.recommended[0]?.rules },
+];

@@ -47,7 +47,7 @@ export function getPostBySlug(slug: string): FullPost | null {
       content,
       readingTime: readingTime(content).text,
     }
-  } catch (error) {
+  } catch {
     return null
   }
 }
@@ -62,7 +62,7 @@ export function getPageContent(slug: string): { frontmatter: PageFrontmatter; co
       frontmatter: data as PageFrontmatter,
       content
     }
-  } catch (error) {
+  } catch {
     return null
   }
 }
