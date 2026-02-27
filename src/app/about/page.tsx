@@ -20,7 +20,7 @@ export default function AboutPage() {
     <Layout>
       <div className="max-w-4xl mx-auto">
         <div className="prose prose-lg max-w-none">
-          <MDXRemote source={pageData.content} components={mdxComponents} />
+          <MDXRemote source={pageData.content} components={mdxComponents} options={{ blockJS: false }} />
         </div>
       </div>
     </Layout>

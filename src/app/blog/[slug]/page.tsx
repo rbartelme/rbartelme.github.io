@@ -80,7 +80,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
         
         {/* IMPORTANT: This is where D3 plots will be rendered - added responsive wrapper */}
         <div className="prose prose-sm sm:prose-base md:prose-lg dark:prose-invert max-w-none overflow-x-auto">
-          <MDXRemote source={post.content} components={mdxComponents} />
+          <MDXRemote source={post.content} components={mdxComponents} options={{ blockJS: false }} />
         </div>
         
         <footer className="mt-8 md:mt-12 pt-6 md:pt-8 border-t">
