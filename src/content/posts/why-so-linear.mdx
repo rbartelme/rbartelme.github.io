@@ -1,0 +1,348 @@
+---
+title: "Why So Linear: How is Everything a Line in a Non-Linear World?"
+date: "2026-02-23"
+description: "From Taylor series to GWAS, linearity dominates science and computation. Why we default to lines, what we lose, and where causal inference offers a way forward."
+tags: ["data-science", "applied-math", "computational-biology", "statistics", "AI"]
+abstract: "Linear methods pervade nearly every quantitative discipline, from the fundamental theorem of calculus to genome-wide association studies. This isn't an accident: linearity is computationally tractable, mathematically elegant, and deeply wired into our hardware. But biology is nonlinear, and the gap between our linear tools and nonlinear reality has consequences. The missing heritability problem in genomics, the limitations of GWAS and TWAS, and the inability of associational methods to produce causal claims all trace back to our dependence on linearity. This post explores why we default to lines, what that costs us in applied genetics and data science, and how causal inference frameworks offer a path beyond association."
+---
+
+# Introduction
+
+I think my interest in applied mathematics really coalesced during graduate school.
+While sitting reading papers on phylogenetic methods (evolutionary tree building), I felt my eyes glaze over at the symbolic mathematics.
+However, rather than feel dettered by a lack of understanding, I made a list of mathematics branches to self-study.
+Maybe it was this interest combined with my interest in bioinformatics research software engineering that made me put down my pipettes and leave lavbwork behind me.
+
+I feel an immense gratitude to my postdoctoral mentors/advisors after I moved to the University of Arizona School of Information.
+A shout out and thank you in no particular order goes out to: [P. Bryan Heidorn](), [David Lebauer](), [Eric Lyons](), [Maliaca Oxnam](), [Tyson Swetnam](), & [Nirav Merchant]()
+Without their support I wouldn't have had the space to explore alternatives to Genome-Wide Association Studies (GWAS) or Transcriptome-Wide Association Studies (TWAS).
+While I was familiar with GWAS/TWAS, I immediately saw it as a milieu of linear algebra operations that spit out a Manhattan plot of p-values.
+
+From my training in quantitative ecology, I knew that you *needed* to reduce dimensionality of data and attempt to make some sense of how the measurments interacted.
+In our graduate ecological statistics course  I saw first hand how overfit linear modeling was on complex data.
+We live in a non-linear world, so why do we reach for `sklearn` `LinearRegression` or a quick one-liner in `R`.
+Why do we do this? What information do we lose?
+
+    "Linear systems are important because we can solve them."
+    — Richard Feynman, *The Feynman Lectures on Physics*, [Vol. I, Ch. 25](https://www.feynmanlectures.caltech.edu/I_25.html)
+
+While I do not care for Richard Feynman [the person](https://thebaffler.com/outbursts/surely-youre-a-creep-mr-feynman-mcneill), the quote above surely is apt in summarizing the "why".
+
+# The Mathematics of "Close Enough": Linearization and Taylor's Theorem
+
+{/* [TODO] Maybe good to add a D3 animation of this for a visual cue??
+*/}
+
+The why, (un)fortunately begets *some* calculus.
+The [fundamental theorem of calculus]() and [Taylor series]() give us mathematical license to approximate any smooth function as a line (or polynomial) near a point.
+This is perhaps the deepest reason linearity is everywhere -- it's the first order approximation that *works* locally.
+Taylor's theorem: `f(x) ≈ f(a) + f'(a)(x - a) for x near a`
+
+When we expand to look at sytems of [differential equations]() we treat these systems in a similar linear fashion around equilibria (Jacobian matrices).
+The entire foundation of differential calculus rests on the idea that smooth functions are "locally linear".
+
+TLDR: Calculus is often the art of zooming in until curves look like lines.
+
+
+**References to read:**
+- James Stewart, *Calculus: Early Transcendentals*, 9th ed. — Ch. 11 on Taylor/Maclaurin series; Ch. 3 on linear approximations and differentials ([stewartcalculus.com](https://www.stewartcalculus.com/))
+- [Feynman Lectures on Physics, Vol. I, Ch. 25: "Linear Systems and Review"](https://www.feynmanlectures.caltech.edu/I_25.html)
+- Gilbert Strang, [*Introduction to Linear Algebra*](https://math.mit.edu/~gs/linearalgebra/), 6th ed. — for the connection between linear algebra and linearization
+
+# Why Computers Love Lines: Hardware, Bits, and Linear Algebra
+
+Current classical bit driven compute is fundamentally optimized to linear algebra operations.
+Classical [bits]() are binary which arithmetically reduces to linear algebra over finite fields.
+Matrix multiplication is the atomic operation of modern computing paradigms (deep learning, graphics, simulation, fluid dynamics).
+Deep learning is also an interesting case in that it relies on a [manifold]() distilling the [tangent space]() into a [Jacobian matrix]().
+These operations are so fundamental to computers, that the [FORTRAN]() libraries [BLAS]() and [LAPACK]() underpin everything from numpy to TensorFlow.
+Consider the physical geometry of NVIDIA's CUDA cores-- it is entirely designed around linear algebra operations.
+I've always quipped that deep learning is a large number of linear algebra operations in a trenchcoat.
+Floating point linear operations are numerically stable, while nonlinear operations tend to compound rounding errors.
+
+- Is this due to typesystem changes and memory addressing??
+
+
+Classical metabolic modeling relies heavily on [convexity optimization]() applied to matrices.
+By guaranteeing global optima through linear and convex optimization, you can estimate the metabolic state of an organism from the data gathered.
+If you delve deep enough into metabolic modeling you start to see that commercial solvers are effectively FORTRAN code for hire--and yet more linear algebra operations.
+Now, if we were to apply nonlinear optimization we can find local minima but there are no guarantees that the search doesn't drag on toward infinity.
+I think metabolic modeling is one of the fields I'm more excited about people applying quantum compute to it.
+Qubits inherently represent nonlinear state spaces while in superposition.
+However, even some quantum algorithms use linear algebra--just in an exponentially larger vector space
+
+- what algorithm does this??
+
+
+**References to read:**
+- Lawson, Hanson, Kincaid, Krogh (1979), ["Basic Linear Algebra Subprograms for Fortran Usage"](https://dl.acm.org/doi/10.1145/567806.567807), *ACM TOMS* — the original BLAS paper
+- Dongarra et al. (1990), "LAPACK Users' Guide", [SIAM](https://epubs.siam.org/doi/book/10.1137/1.9780898719604)
+- Jouppi et al. (2017), ["In-Datacenter Performance Analysis of a Tensor Processing Unit"](https://dl.acm.org/doi/10.1145/3079856.3080246), *ISCA* — the original TPU paper; demonstrates hardware designed around matrix multiplication
+- [NVIDIA Tensor Core architecture](https://developer.nvidia.com/blog/programming-tensor-cores-cuda-9/) — 4x4x4 MAC units
+- Boyd & Vandenberghe, [*Convex Optimization*](https://web.stanford.edu/~boyd/cvxbook/) (2004) — free textbook; explains why convex (including linear) problems are tractable
+
+# The Statistics of Linearity: Why OLS Rules the World
+
+{/* [TODO] Explain why linear models dominate statistics, from
+    Gauss through modern machine learning.
+
+    Key ideas:
+    - Gauss-Markov theorem: among all linear unbiased estimators,
+      OLS has the minimum variance (BLUE). This is a *mathematical
+      guarantee* — you literally cannot do better within the class
+      of linear unbiased estimators
+    - Generalized linear models (GLMs) extend linearity through
+      link functions — logistic regression, Poisson regression, etc.
+      are "linear" in the sense that the link-transformed mean is
+      a linear function of predictors
+    - Linear mixed models: random effects are additive/linear
+    - Interpretability: coefficients in linear models have direct
+      interpretations ("a one-unit increase in X is associated with
+      a β-unit change in Y"). Nonlinear models sacrifice this
+    - Identifiability: linear model parameters are uniquely
+      determined by the data (given sufficient rank). Nonlinear
+      models often have multiple parameter configurations that
+      fit equally well
+    - Convergence: linear model fitting is a single matrix
+      inversion (or SVD). No iterative optimization, no
+      hyperparameter tuning, no convergence failure
+    - The Shmueli distinction: prediction vs. explanation. Linear
+      models are often chosen for *explanation*, even when nonlinear
+      models predict better
+
+    For biologists: "When your statistician collaborator runs a
+    'regression,' they're fitting a line. When they run a 'mixed
+    model,' they're fitting a line with random wobble. When they
+    run 'logistic regression,' they're fitting a line on a
+    transformed scale. It's lines all the way down."
+*/}
+
+**References to read:**
+- Galit Shmueli (2010), ["To Explain or to Predict?"](https://doi.org/10.1214/10-STS330), *Statistical Science* — foundational paper on the distinction between explanatory and predictive modeling
+- Hastie, Tibshirani, Friedman, [*The Elements of Statistical Learning*](https://hastie.su.domains/ElemStatLearn/), 2nd ed. (2009) — free textbook; Ch. 3 on linear methods for regression
+- McCullagh & Nelder, *Generalized Linear Models*, 2nd ed. (1989) — the original GLM textbook
+- [Gauss-Markov theorem](https://en.wikipedia.org/wiki/Gauss%E2%80%93Markov_theorem) — Wikipedia is actually a decent starting point here
+
+# Fisher's Infinite Line: The Additive Model in Quantitative Genetics
+
+{/* [TODO] This is where you connect the mathematical/computational
+    story to biology. Fisher's 1918 infinitesimal model is the
+    founding assumption of quantitative genetics — and it's linear.
+
+    Key ideas:
+    - Fisher (1918): phenotype = sum of infinitely many small
+      additive genetic effects + environment. This is a *linear*
+      decomposition
+    - The infinitesimal model assumes traits are the sum of
+      contributions from many loci, each of small effect, with
+      additive (i.e., linear) contributions
+    - Barton, Etheridge & Véber (2017) rigorously derived the
+      infinitesimal model as the limit of Mendelian inheritance
+      with many loci — the additivity emerges mathematically as
+      M → ∞
+    - This additive assumption is baked into GWAS: the standard
+      GWAS model tests each SNP for a linear (additive) effect on
+      phenotype, one at a time
+    - Heritability (h²) is defined as the proportion of phenotypic
+      variance attributable to *additive* genetic variance — it's
+      a linear quantity by definition
+    - The entire breeding value concept (used in animal/plant
+      breeding) is a linear predictor
+
+    The punchline: "We didn't choose linear models for genetics
+    because biology is linear. We chose them because Fisher showed
+    that under certain conditions, the *additive* component is what
+    selection acts on — and because linear models were the only
+    ones we could compute in 1918."
+*/}
+
+**References to read:**
+- R.A. Fisher (1918), ["The Correlation Between Relatives on the Supposition of Mendelian Inheritance"](https://doi.org/10.1017/S0080456800012163), *Transactions of the Royal Society of Edinburgh* — the founding paper of quantitative genetics
+- Barton, Etheridge & Véber (2017), ["The infinitesimal model: Definition, derivation, and implications"](https://doi.org/10.1016/j.tpb.2017.06.001), *Theoretical Population Biology* — rigorous modern treatment
+- Hill & Barton (2019), ["From R.A. Fisher's 1918 Paper to GWAS a Century Later"](https://pmc.ncbi.nlm.nih.gov/articles/PMC6456325/), *Genetics* — connects the infinitesimal model directly to modern GWAS methodology
+- Lynch & Walsh, *Genetics and Analysis of Quantitative Traits* (1998) — the standard textbook; heavily linear algebra throughout
+
+# GWAS and TWAS: Linear Tools for a Nonlinear Genome
+
+{/* [TODO] Now the critique. GWAS and TWAS are fundamentally
+    linear methods, and this has consequences.
+
+    GWAS:
+    - Standard model: y = Xβ + Zu + e, where β are fixed SNP
+      effects (tested one at a time) and u is a random polygenic
+      effect (linear mixed model)
+    - Tests for *marginal* additive effects — misses epistasis,
+      dominance, gene-gene interactions
+    - The "missing heritability" problem: GWAS hits explain only
+      a fraction of estimated heritability. Where's the rest?
+    - Manolio et al. (2009): coined "missing heritability" — GWAS
+      variants explain ~5-10% of variance for most complex traits
+      despite high heritability estimates
+    - Zuk et al. (2012): "phantom heritability" — epistatic
+      interactions inflate heritability estimates, making the
+      "missing" portion partly an artifact of the additive
+      assumption itself
+
+    TWAS:
+    - Two-stage approach: (1) train a linear model predicting gene
+      expression from genotype, (2) test association between
+      predicted expression and trait
+    - Both stages are linear — Gusev et al. (2016) used elastic
+      net (linear penalty) and BLUP (linear mixed model)
+    - TWAS inherits all GWAS limitations plus adds the assumption
+      that genotype → expression → trait is a *linear chain*
+    - Cannot distinguish causation from pleiotropy or linkage
+      without additional tests (HEIDI, colocalization)
+
+    What's missing:
+    - Epistasis (gene-gene interactions)
+    - Gene-environment interactions
+    - Nonlinear dose-response relationships
+    - Network effects / pathway-level biology
+    - Causal direction (is gene expression causing the trait,
+      or does the trait affect expression?)
+*/}
+
+**References to read:**
+- Manolio et al. (2009), ["Finding the missing heritability of complex diseases"](https://www.nature.com/articles/nature08494), *Nature* — the landmark missing heritability paper
+- Zuk, Hechter, Sunyaev, Lander (2012), ["The mystery of missing heritability: Genetic interactions create phantom heritability"](https://www.pnas.org/doi/10.1073/pnas.1119675109), *PNAS* — epistasis inflates heritability estimates
+- Gusev et al. (2016), ["Integrative approaches for large-scale transcriptome-wide association studies"](https://doi.org/10.1038/ng.3506), *Nature Genetics* — the original TWAS/FUSION paper
+- Zhu et al. (2016), ["Integration of summary data from GWAS and eQTL studies predicts complex trait gene targets"](https://pubmed.ncbi.nlm.nih.gov/27019110/), *Nature Genetics* — SMR/HEIDI method
+- Wainberg et al. (2019), ["Opportunities and challenges for transcriptome-wide association studies"](https://doi.org/10.1038/s41588-019-0385-z), *Nature Genetics* — TWAS limitations review
+- Yang et al. (2010), ["Common SNPs explain a large proportion of the heritability for human height"](https://www.nature.com/articles/ng.608), *Nature Genetics* — GCTA showing most heritability is captured by common SNPs collectively, just not individually significant
+- Palmer et al. (2023), ["Discovering non-additive heritability using additive GWAS summary statistics"](https://elifesciences.org/articles/90459), *eLife* — evidence of pairwise epistasis across 25/25 UK Biobank traits
+
+# Beyond Lines: Toward Causal Models
+
+{/* [TODO] This is where you pivot from critique to aspiration.
+    The desire for causal output, not just association.
+
+    Key ideas:
+    - Association ≠ causation, but our entire GWAS/TWAS framework
+      produces *associations*. The Manhattan plot is a map of
+      correlation, not causation
+    - Judea Pearl's causal hierarchy: (1) seeing/association,
+      (2) doing/intervention, (3) imagining/counterfactual.
+      GWAS operates at level 1. We want level 2 or 3.
+    - Directed Acyclic Graphs (DAGs): make causal assumptions
+      explicit. A DAG for GWAS would show genotype → expression →
+      trait, but also confounders, reverse causation, pleiotropy
+    - Mendelian randomization (MR): uses genetic variants as
+      "instrumental variables" to estimate causal effects. It's
+      still fundamentally linear (IV regression), but it gives
+      you a causal *direction*
+    - Colocalization (Giambartolomei et al. 2014): Bayesian test
+      for whether two traits share a causal variant — helps
+      distinguish pleiotropy from linkage
+    - Structural equation models (SEMs): can encode nonlinear
+      causal relationships, but require strong assumptions
+    - Kernel methods: "linear in a transformed space" — the
+      kernel trick lets you fit nonlinear decision boundaries
+      using linear algebra in a higher-dimensional feature space.
+      This is a clever middle ground
+    - Deep learning for genomics: can capture nonlinear
+      interactions but sacrifices interpretability and often
+      requires enormous datasets
+    - Visible Neural Networks (VNNs) use biological pathway
+      structure to define sparse, interpretable architectures —
+      a promising middle ground (Huang et al. 2025)
+    - BUT: a sobering 2025 Nature Comms result (Kerin et al.)
+      found that neural networks "detect limited nonlinearity
+      and do not outperform linear models" for polygenic score
+      prediction — for many traits, the additive signal dominates
+    - The tension: as we move from linear to nonlinear to causal,
+      we gain realism but lose tractability, interpretability,
+      and statistical power
+
+    The honest assessment: "We don't yet have a method that gives
+    us nonlinear causal genomics at scale. But understanding *why*
+    we've been stuck on lines is the first step toward getting
+    past them."
+*/}
+
+**References to read:**
+- Judea Pearl, [*The Book of Why*](https://www.basicbooks.com/titles/judea-pearl/the-book-of-why/9780465097616/) (2018) — accessible introduction to causal inference for a general audience
+- Pearl (2009), [*Causality: Models, Reasoning, and Inference*](https://doi.org/10.1017/CBO9780511803161), 2nd ed. — the technical treatment of do-calculus and structural causal models
+- Giambartolomei et al. (2014), ["Bayesian Test for Colocalisation between Pairs of Genetic Association Studies Using Summary Statistics"](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1004383), *PLOS Genetics*
+- Davey Smith & Hemani (2014), ["Mendelian randomization: genetic anchors for causal inference in epidemiological studies"](https://doi.org/10.1093/hmg/ddu328), *Human Molecular Genetics*
+- Schölkopf & Smola, [*Learning with Kernels*](https://mitpress.mit.edu/9780262536578/learning-with-kernels/) (2002), MIT Press — kernel methods as "linear in a transformed space"
+- Morrison et al. (2020), ["Mendelian randomization accounting for correlated and uncorrelated pleiotropic effects using genome-wide summary statistics"](https://doi.org/10.1038/s41588-020-0631-4), *Nature Genetics* — the CAUSE method
+- Greenland, Pearl & Robins (1999), ["Causal diagrams for epidemiologic research"](https://journals.lww.com/epidem/abstract/1999/01000/causal_diagrams_for_epidemiologic_research.8.aspx), *Epidemiology* — seminal paper on DAGs for causal inference
+- Huang et al. (2025), ["Detecting genetic interactions with visible neural networks"](https://www.nature.com/articles/s42003-025-08157-x), *Communications Biology* — VNNs for interpretable epistasis detection
+- Kerin et al. (2025), ["Performance of deep-learning-based approaches to improve polygenic scores"](https://www.nature.com/articles/s41467-025-60056-1), *Nature Communications* — neural nets don't outperform linear models for most polygenic traits
+
+# Conclusion
+
+{/* [TODO] Tie it together.
+
+    - Linearity isn't a failure of imagination — it's a rational
+      response to computational, mathematical, and statistical
+      constraints
+    - But mistaking the map for the territory is dangerous:
+      biology doesn't care about our computational convenience
+    - The path forward isn't abandoning linear methods — it's
+      knowing when they're appropriate and when they're hiding
+      the biology
+    - For GWAS/TWAS specifically: we need methods that can
+      (a) capture nonlinear genetic architecture,
+      (b) provide causal direction, and
+      (c) remain computationally tractable at biobank scale
+    - That's a tall order. But being honest about the limitations
+      of our current tools is how science advances.
+
+    End with something that connects back to both audiences:
+    biologists who want actionable mechanisms, and data scientists
+    who want principled methodology.
+*/}
+
+---
+
+## Consolidated Reading List
+
+### Mathematics and Computation
+- Stewart, *Calculus: Early Transcendentals*, 9th ed. — [stewartcalculus.com](https://www.stewartcalculus.com/)
+- Strang, *Introduction to Linear Algebra*, 6th ed. — [math.mit.edu/~gs/linearalgebra](https://math.mit.edu/~gs/linearalgebra/)
+- Boyd & Vandenberghe, *Convex Optimization* (2004) — [web.stanford.edu/~boyd/cvxbook](https://web.stanford.edu/~boyd/cvxbook/)
+- Feynman, *The Feynman Lectures on Physics*, Vol. I, Ch. 25 — [feynmanlectures.caltech.edu](https://www.feynmanlectures.caltech.edu/I_25.html)
+- Lawson et al. (1979), ["Basic Linear Algebra Subprograms"](https://dl.acm.org/doi/10.1145/567806.567807), *ACM TOMS*
+- Jouppi et al. (2017), ["In-Datacenter Performance Analysis of a Tensor Processing Unit"](https://dl.acm.org/doi/10.1145/3079856.3080246), *ISCA*
+
+### Statistics
+- Shmueli (2010), ["To Explain or to Predict?"](https://doi.org/10.1214/10-STS330), *Statistical Science*
+- Hastie, Tibshirani & Friedman, *The Elements of Statistical Learning*, 2nd ed. — [hastie.su.domains/ElemStatLearn](https://hastie.su.domains/ElemStatLearn/)
+- McCullagh & Nelder, *Generalized Linear Models*, 2nd ed. (1989)
+
+### Quantitative Genetics and Genomics
+- Fisher (1918), ["The Correlation Between Relatives on the Supposition of Mendelian Inheritance"](https://doi.org/10.1017/S0080456800012163), *Trans. Royal Society of Edinburgh*
+- Barton, Etheridge & Véber (2017), ["The infinitesimal model"](https://doi.org/10.1016/j.tpb.2017.06.001), *Theoretical Population Biology*
+- Hill & Barton (2019), ["From R.A. Fisher's 1918 Paper to GWAS a Century Later"](https://pmc.ncbi.nlm.nih.gov/articles/PMC6456325/), *Genetics*
+- Lynch & Walsh, *Genetics and Analysis of Quantitative Traits* (1998)
+- Manolio et al. (2009), ["Finding the missing heritability of complex diseases"](https://www.nature.com/articles/nature08494), *Nature*
+- Yang et al. (2010), ["Common SNPs explain a large proportion of the heritability for human height"](https://www.nature.com/articles/ng.608), *Nature Genetics*
+- Zuk et al. (2012), ["The mystery of missing heritability: Genetic interactions create phantom heritability"](https://www.pnas.org/doi/10.1073/pnas.1119675109), *PNAS*
+- Gusev et al. (2016), ["Integrative approaches for large-scale TWAS"](https://doi.org/10.1038/ng.3506), *Nature Genetics*
+- Zhu et al. (2016), ["Integration of summary data from GWAS and eQTL studies"](https://pubmed.ncbi.nlm.nih.gov/27019110/), *Nature Genetics*
+- Wainberg et al. (2019), ["Opportunities and challenges for TWAS"](https://doi.org/10.1038/s41588-019-0385-z), *Nature Genetics*
+- Palmer et al. (2023), ["Discovering non-additive heritability using additive GWAS summary statistics"](https://elifesciences.org/articles/90459), *eLife*
+
+### Causal Inference
+- Pearl, *The Book of Why* (2018) — accessible introduction
+- Pearl, *Causality*, 2nd ed. (2009) — technical reference
+- Greenland, Pearl & Robins (1999), ["Causal diagrams for epidemiologic research"](https://journals.lww.com/epidem/abstract/1999/01000/causal_diagrams_for_epidemiologic_research.8.aspx), *Epidemiology*
+- Giambartolomei et al. (2014), ["Bayesian Test for Colocalisation"](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1004383), *PLOS Genetics*
+- Davey Smith & Hemani (2014), ["Mendelian randomization: genetic anchors for causal inference"](https://doi.org/10.1093/hmg/ddu328), *Human Molecular Genetics*
+- Morrison et al. (2020), ["CAUSE method"](https://doi.org/10.1038/s41588-020-0631-4), *Nature Genetics*
+
+### Machine Learning and Nonlinear Methods
+- Schölkopf & Smola, *Learning with Kernels* (2002), MIT Press
+- Hastie, Tibshirani & Friedman, *The Elements of Statistical Learning* — Ch. 12 on kernel methods, Ch. 11 on neural networks
+- Huang et al. (2025), ["Detecting genetic interactions with visible neural networks"](https://www.nature.com/articles/s42003-025-08157-x), *Communications Biology*
+- Kerin et al. (2025), ["Performance of deep-learning-based approaches to improve polygenic scores"](https://www.nature.com/articles/s41467-025-60056-1), *Nature Communications*
+
+---
+
+*Have thoughts on linearity, causality, or genomics methodology?
+Find me on [Bluesky](https://bsky.app/profile/microbialbart.bsky.social) or [LinkedIn](https://www.linkedin.com/in/ryan-bartelme/).*
+
+*Note: This post was written by me based on my own research interests and perspectives.
+In all transparency, I used [Claude](https://claude.ai/) (Anthropic's AI assistant) to help with outlining, link population, grammar checking, and spelling corrections, but not for content generation or overall argument structure.*
