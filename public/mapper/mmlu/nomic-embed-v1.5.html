@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="KeplerMapper">
+  <title>Mapper — nomic-embed-v1.5 (seed=42) | KeplerMapper</title>
+
+  <link rel="icon" type="image/png" href="http://i.imgur.com/axOG6GJ.jpg" />
+
+  <link href='https://fonts.googleapis.com/css?family=Roboto+Mono:700,300' rel='stylesheet' type='text/css'>
+  <style>* {
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: "Roboto Mono", "Helvetica", sans-serif;
+  font-size: 14px;
+}
+
+#logo {
+  width:  85px;
+  height: 85px;
+}
+
+#display {
+  color: #95A5A6;
+  background: #212121;
+}
+
+#header {
+  background: #111111;
+}
+
+#print {
+  color: #000;
+  background: #FFF;
+}
+
+h1 {
+  font-size: 21px;
+  font-weight: 300;
+  font-weight: 300;
+}
+
+h2 {
+  font-size: 18px;
+  padding-bottom: 20px;
+  font-weight: 300;
+}
+
+h3 {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding-bottom:0px;
+}
+
+
+#meta_content h3 {
+  float: left;
+  padding-right: 8px;
+}
+
+p, #tooltip_content h3, ol, ul, table {
+  padding-bottom: 10px;
+}
+
+ol, ul {
+  padding-left: 20px;
+}
+
+ol b {
+  display: block;
+}
+
+a {
+  color: #16a085;
+  text-decoration: none;
+}
+
+.pane {
+  position: relative;
+}
+
+.pane-left {
+  float: left;
+}
+
+.pane-right {
+  float: right;
+}
+
+a:hover {
+  color: #2ecc71;
+}
+
+.banner {
+  /* height: 35px; */
+  padding: 10px 0px;
+}
+
+
+#print #header {
+  background: #FFF;
+}
+
+
+#canvas {
+  width: 100%;
+}
+
+#svg {
+  position: absolute;
+}
+
+#toolbar {
+  padding-top: 5px;
+  margin-bottom: 5px;
+  width: 100%;
+}
+
+#display #toolbar {
+}
+
+#display .banner {
+  border-top: 1px solid #000;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.tool_item {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.pane_content {
+  width: 300px;
+  height:100%;
+  padding: 20px;
+  overflow: auto;
+  display: none;
+}
+
+.pane {
+  z-index: 1;
+}
+
+#display .pane_content {
+  background: #191919;
+}
+
+#print .pane_content{
+  background: #FFF;
+}
+
+#meta_content::-webkit-scrollbar, #tooltip_content::-webkit-scrollbar {
+  width: 1em;
+}
+
+#meta_content::-webkit-scrollbar-track, #tooltip_content::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+#meta_content::-webkit-scrollbar-thumb, #tooltip_content::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+
+.histogram {
+  display: block;
+  height: 100px;
+  padding-top: 50px;
+  clear: both;
+}
+
+#display .histogram {
+  opacity: 0.68;
+}
+
+.bin {
+  width: 10%;
+  float: left;
+}
+
+.bin div {
+  font-size: 10px;
+  display: block;
+  width: 35px;
+  margin-top: -30px;
+  text-align: right;
+  margin-left: -3px;
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+}
+
+.histogram:hover {
+  opacity: 1.;
+}
+
+#display .circle {
+  stroke-opacity: 0.18;
+  stroke-width: 7px;
+  stroke: #000;
+}
+
+#print .circle {
+  stroke-opacity: 1;
+  stroke-width: 2px;
+  stroke: #000;
+  stroke-linecap: round;
+}
+
+#print .link {
+  stroke: #000;
+}
+
+#display .link {
+  stroke: rgba(160, 160, 160, 0.5);
+}
+
+table {
+  border-collapse: collapse;
+  display: table;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+td, th {
+  padding: 5px;
+  text-align: left;
+}
+
+#display th {
+  background: #212121
+}
+
+td {
+  border-bottom: 1px solid #111;
+}
+
+.highlight {
+  filter: url(#drop-shadow-pulse);
+}
+
+.control-row {
+  padding: 5px 0px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.35em 1.2em;
+  border: 0.1em solid #FFFFFF;
+  margin: 0 0.3em 0.3em 0;
+  border-radius: 0.12em;
+  box-sizing: border-box;
+  text-decoration: none;
+  background-color: transparent;
+  font-weight: 300;
+  color: #FFFFFF;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  color: #000000;
+  background-color: #FFFFFF;
+}
+
+.btn:disabled {
+  color: #FFFFFF;
+  opacity: .35;
+}
+
+#print .btn {
+  color: #000;
+  border-color: #000
+}
+
+#print .btn:hover {
+  color: #FFFFFF;
+  background-color: #000000
+}
+
+#print .btn:disabled {}
+
+#toolbar .btn {
+  padding: 0 1.2em;
+}
+
+label {
+  display: inline-block;
+  margin-bottom: .5rem;
+}
+
+#config-file-loader {
+  margin-bottom: .5em;
+}
+
+.btn:not(:disabled):not(.disabled) {
+    cursor: pointer;
+}
+
+.wrap {
+  display: flex;
+}
+
+.wrap-header div:last-child {
+  margin-left: auto;
+}
+
+.wrap-end {
+  justify-content: flex-end;
+}
+
+.wrap-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.wrap-logo .logo {
+  margin: auto;
+}
+
+.wrap-header {
+  /* padding: 5px 10px; */
+  padding: 5px 5px 5px 10px;
+  justify-content: space-between;
+}
+
+#display .wrap-header {
+  box-shadow: 0px 0px 4px #000;
+}
+
+.toolbar-container {
+  margin-left: -10px;
+}
+</style>
+
+</head>
+
+<body id="display">
+
+  <!-- Variables used later -->
+  <script>
+    const graph = {"links": [{"source": 0, "target": 2, "width": 1}, {"source": 1, "target": 3, "width": 1}, {"source": 16, "target": 21, "width": 1}, {"source": 20, "target": 23, "width": 1}, {"source": 24, "target": 28, "width": 1}, {"source": 24, "target": 29, "width": 1}, {"source": 30, "target": 35, "width": 1}, {"source": 31, "target": 35, "width": 1}], "nodes": [{"color": [[0.21106293214578695]], "id": "", "name": "cube3_cluster0", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 14}, "custom_tooltips": ["This question refers to the following information.\nOne of the rights which the freeman has always guarded with most jealous care is that of enjoying the rewards of his own industry. Realizing that the", "This question refers to the following information.\nOne of the rights which the freeman has always guarded with most jealous care is that of enjoying the rewards of his own industry. Realizing that the", "This question refers to the following information.\n\"Whereas it is expedient that new provisions and regulations should be established for improving the revenue of this kingdom, and for extending and s", "This question refers to the following information.\n\"Whereas it is expedient that new provisions and regulations should be established for improving the revenue of this kingdom, and for extending and s", "This question refers to the following information.\n\"I marvel not a little, right worshipful, that since the first discovery of America (which is now full four score and ten years), after so great conq", "This question refers to the following information.\n\"I marvel not a little, right worshipful, that since the first discovery of America (which is now full four score and ten years), after so great conq", "This question refers to the following information.\nOf all the band of adventurous cavaliers, whom Spain, in the sixteenth century, sent forth on the career of discovery and conquest, there was none mo", "This question refers to the following information.\n\"I know that whenever the subject has occurred in conversation where I have been present, it has appeared to be the opinion of every one that we coul", "This question refers to the following information.\n\"I know that whenever the subject has occurred in conversation where I have been present, it has appeared to be the opinion of every one that we coul", "This question refers to the following information.\nOf all the band of adventurous cavaliers, whom Spain, in the sixteenth century, sent forth on the career of discovery and conquest, there was none mo", "This question refers to the following information.\nOf all the band of adventurous cavaliers, whom Spain, in the sixteenth century, sent forth on the career of discovery and conquest, there was none mo", "This question refers to the following information.\nOf all the band of adventurous cavaliers, whom Spain, in the sixteenth century, sent forth on the career of discovery and conquest, there was none mo", "This question refers to the following information.\n\"I know that whenever the subject has occurred in conversation where I have been present, it has appeared to be the opinion of every one that we coul", "This question refers to the following information.\nOne of the rights which the freeman has always guarded with most jealous care is that of enjoying the rewards of his own industry. Realizing that the"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 100.0, "perc": 50.0}, {"color": "rgb(58, 80, 138)", "height": 100.0, "perc": 50.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube3_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.21786983866557286]], "id": "", "name": "cube3_cluster1", "size": 2, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 6}, "custom_tooltips": ["This question refers to the following information.\nI come not to urge personal claims, nor to seek individual benefits; I appear as the advocate of those who cannot plead their own cause; I come as th", "This question refers to the following information.\nI come not to urge personal claims, nor to seek individual benefits; I appear as the advocate of those who cannot plead their own cause; I come as th", "This question refers to the following information.\nI come not to urge personal claims, nor to seek individual benefits; I appear as the advocate of those who cannot plead their own cause; I come as th", "This question refers to the following information.\n\"I come to present the strong claims of suffering humanity. I come to place before the Legislature of Massachusetts the condition of the miserable, t", "This question refers to the following information.\n\"I come to present the strong claims of suffering humanity. I come to place before the Legislature of Massachusetts the condition of the miserable, t", "This question refers to the following information.\nI come not to urge personal claims, nor to seek individual benefits; I appear as the advocate of those who cannot plead their own cause; I come as th"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 20.0, "perc": 16.7}, {"color": "rgb(58, 80, 138)", "height": 100.0, "perc": 83.3}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube3_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.21177618737800916]], "id": "", "name": "cube8_cluster0", "size": 4, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 29}, "custom_tooltips": ["This question refers to the following information.\n\"Since the foundations of the American commonwealth were laid in colonial times over 300 years ago, vigorous complaint and more or less bitter persec", "This question refers to the following information.\nOne of the rights which the freeman has always guarded with most jealous care is that of enjoying the rewards of his own industry. Realizing that the", "This question refers to the following information.\n\"We have witnessed for more than a quarter of a century the struggles of the two great political parties for power and plunder, while grievous wrongs", "This question refers to the following information.\nOne of the rights which the freeman has always guarded with most jealous care is that of enjoying the rewards of his own industry. Realizing that the", "This question refers to the following information.\n\"The conscience of the people, in a time of grave national problems, has called into being a new party, born of the nation\u0027s sense of justice. We of ", "This question refers to the following information.\n\"The conscience of the people, in a time of grave national problems, has called into being a new party, born of the nation\u0027s sense of justice. We of ", "This question refers to the following information.\n\"The seeds of totalitarian regimes are nurtured by misery and want. They spread and grow in the evil soil of poverty and strife. They reach their ful", "This question refers to the following information.\nLet us not, I beseech you sir, deceive ourselves. Sir, we have done everything that could be done, to avert the storm which is now coming on. We have", "This question refers to the following information.\n\"The economic ills we suffer have come upon us over several decades. They will not go away in days, weeks, or months, but they will go away. They wil", "This question refers to the following information.\n\"The seeds of totalitarian regimes are nurtured by misery and want. They spread and grow in the evil soil of poverty and strife. They reach their ful", "This question refers to the following information.\n\"We have witnessed for more than a quarter of a century the struggles of the two great political parties for power and plunder, while grievous wrongs", "This question refers to the following information.\n\"The conscience of the people, in a time of grave national problems, has called into being a new party, born of the nation\u0027s sense of justice. We of ", "This question refers to the following information.\n\"I know that whenever the subject has occurred in conversation where I have been present, it has appeared to be the opinion of every one that we coul", "This question refers to the following information.\n\"The petition of several poor negroes and mulattoes, who are inhabitants of the town of Dartmouth, humbly showeth,\u2014\n\"That we being chiefly of the Afr", "This question refers to the following information.\nLet us not, I beseech you sir, deceive ourselves. Sir, we have done everything that could be done, to avert the storm which is now coming on. We have", "This question refers to the following information.\n\"The petition of several poor negroes and mulattoes, who are inhabitants of the town of Dartmouth, humbly showeth,\u2014\n\"That we being chiefly of the Afr", "This question refers to the following information.\n\"The economic ills we suffer have come upon us over several decades. They will not go away in days, weeks, or months, but they will go away. They wil", "This question refers to the following information.\n\"The conscience of the people, in a time of grave national problems, has called into being a new party, born of the nation\u0027s sense of justice. We of ", "This question refers to the following information.\n\"Since the foundations of the American commonwealth were laid in colonial times over 300 years ago, vigorous complaint and more or less bitter persec", "This question refers to the following information.\n\"We have witnessed for more than a quarter of a century the struggles of the two great political parties for power and plunder, while grievous wrongs", "This question refers to the following information.\n\"We have witnessed for more than a quarter of a century the struggles of the two great political parties for power and plunder, while grievous wrongs", "This question refers to the following information.\n\"The conscience of the people, in a time of grave national problems, has called into being a new party, born of the nation\u0027s sense of justice. We of ", "This question refers to the following information.\n\"The conscience of the people, in a time of grave national problems, has called into being a new party, born of the nation\u0027s sense of justice. We of ", "This question refers to the following information.\n\"We have witnessed for more than a quarter of a century the struggles of the two great political parties for power and plunder, while grievous wrongs", "This question refers to the following information.\n\"Since the foundations of the American commonwealth were laid in colonial times over 300 years ago, vigorous complaint and more or less bitter persec", "This question refers to the following information.\nLet us not, I beseech you sir, deceive ourselves. Sir, we have done everything that could be done, to avert the storm which is now coming on. We have", "This question refers to the following information.\n\"The economic ills we suffer have come upon us over several decades. They will not go away in days, weeks, or months, but they will go away. They wil", "This question refers to the following information.\nLet us not, I beseech you sir, deceive ourselves. Sir, we have done everything that could be done, to avert the storm which is now coming on. We have", "This question refers to the following information.\nOne of the rights which the freeman has always guarded with most jealous care is that of enjoying the rewards of his own industry. Realizing that the"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 61.0, "perc": 37.9}, {"color": "rgb(58, 80, 138)", "height": 100.0, "perc": 62.1}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube8_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.21786983866557286]], "id": "", "name": "cube8_cluster1", "size": 2, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 6}, "custom_tooltips": ["This question refers to the following information.\nI come not to urge personal claims, nor to seek individual benefits; I appear as the advocate of those who cannot plead their own cause; I come as th", "This question refers to the following information.\nI come not to urge personal claims, nor to seek individual benefits; I appear as the advocate of those who cannot plead their own cause; I come as th", "This question refers to the following information.\nI come not to urge personal claims, nor to seek individual benefits; I appear as the advocate of those who cannot plead their own cause; I come as th", "This question refers to the following information.\n\"I come to present the strong claims of suffering humanity. I come to place before the Legislature of Massachusetts the condition of the miserable, t", "This question refers to the following information.\n\"I come to present the strong claims of suffering humanity. I come to place before the Legislature of Massachusetts the condition of the miserable, t", "This question refers to the following information.\nI come not to urge personal claims, nor to seek individual benefits; I appear as the advocate of those who cannot plead their own cause; I come as th"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 20.0, "perc": 16.7}, {"color": "rgb(58, 80, 138)", "height": 100.0, "perc": 83.3}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube8_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.20903404429860545]], "id": "", "name": "cube13_cluster0", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 16}, "custom_tooltips": ["This question refers to the following information.\n\"If any person or persons shall, from and after the passing of this act, by force and violence, take and carry away, or cause to be taken or carried ", "This question refers to the following information.\nI appeal to any white man to say, if ever he entered Logan\u0027s cabin hungry, and he gave him not meat: if ever he came cold and naked, and he clothed h", "This question refers to the following information.\n\"If any person or persons shall, from and after the passing of this act, by force and violence, take and carry away, or cause to be taken or carried ", "This question refers to the following information.\n\"Wherever I go\u2014the street, the shop, the house, or the steamboat\u2014I hear the people talk in such a way as to indicate that they are yet unable to conc", "This question refers to the following information.\n\"Wherever I go\u2014the street, the shop, the house, or the steamboat\u2014I hear the people talk in such a way as to indicate that they are yet unable to conc", "This question refers to the following information.\n\"In one view the slaveholders have a decided advantage over all opposition. It is well to notice this advantage\u2014the advantage of complete organizatio", "This question refers to the following information.\n\"The question, therefore, should be quickly settled, whether free colored persons, born and naturalized in this country, are not American citizens, a", "This question refers to the following information.\n\"If any person or persons shall, from and after the passing of this act, by force and violence, take and carry away, or cause to be taken or carried ", "This question refers to the following information.\n\"Wherever I go\u2014the street, the shop, the house, or the steamboat\u2014I hear the people talk in such a way as to indicate that they are yet unable to conc", "This question refers to the following information.\nI appeal to any white man to say, if ever he entered Logan\u0027s cabin hungry, and he gave him not meat: if ever he came cold and naked, and he clothed h", "This question refers to the following information.\n\"The question, therefore, should be quickly settled, whether free colored persons, born and naturalized in this country, are not American citizens, a", "This question refers to the following information.\n\"The question, therefore, should be quickly settled, whether free colored persons, born and naturalized in this country, are not American citizens, a", "This question refers to the following information.\n\"In one view the slaveholders have a decided advantage over all opposition. It is well to notice this advantage\u2014the advantage of complete organizatio", "This question refers to the following information.\nI appeal to any white man to say, if ever he entered Logan\u0027s cabin hungry, and he gave him not meat: if ever he came cold and naked, and he clothed h", "This question refers to the following information.\n\"As a means of effecting this end I suggest for your consideration the propriety of setting apart an ample district west of the Mississippi, and with", "This question refers to the following information.\nI appeal to any white man to say, if ever he entered Logan\u0027s cabin hungry, and he gave him not meat: if ever he came cold and naked, and he clothed h"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 60.0, "perc": 37.5}, {"color": "rgb(58, 80, 138)", "height": 100.0, "perc": 62.5}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube13_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.23494667760459395]], "id": "", "name": "cube13_cluster1", "size": 2, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 5}, "custom_tooltips": ["This question refers to the following information.\n\"Is there no danger to our liberty and independence in a bank that in its nature has so little to bind it to our country? The president of the bank h", "This question refers to the following information.\n\"Is there no danger to our liberty and independence in a bank that in its nature has so little to bind it to our country? The president of the bank h", "This question refers to the following information.\n\"The power . . . given to the commanding officer over all the people of each district is that of an absolute monarch. His mere will is to take the pl", "This question refers to the following information.\n\"Is there no danger to our liberty and independence in a bank that in its nature has so little to bind it to our country? The president of the bank h", "This question refers to the following information.\n\"Is there no danger to our liberty and independence in a bank that in its nature has so little to bind it to our country? The president of the bank h"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 100.0, "perc": 100.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube13_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.2110215702359697]], "id": "", "name": "cube26_cluster0", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 17}, "custom_tooltips": ["This question refers to the following information.\nThose who came before us made certain that this country rode the first waves of the industrial revolutions, the first waves of modern invention, and ", "This question refers to the following information.\n\"We found that not only was it a civil war, an effort by a people who had for years been seeking their liberation from any colonial influence whatsoe", "This question refers to the following information.\nOur leaders talk about stopping aggression from the north, but this was a struggle among groups of Vietnamese until we intervened. We seem bent upon ", "This question refers to the following information.\n\"We found that not only was it a civil war, an effort by a people who had for years been seeking their liberation from any colonial influence whatsoe", "This question refers to the following information.\n\"We found that not only was it a civil war, an effort by a people who had for years been seeking their liberation from any colonial influence whatsoe", "This question refers to the following information.\n\"We found that not only was it a civil war, an effort by a people who had for years been seeking their liberation from any colonial influence whatsoe", "This question refers to the following information.\n\"We found that not only was it a civil war, an effort by a people who had for years been seeking their liberation from any colonial influence whatsoe", "This question refers to the following information.\n\"When we were kids the United States was the wealthiest and strongest country in the world; the only one with the atom bomb, the least scarred by mod", "This question refers to the following information.\n\"We found that not only was it a civil war, an effort by a people who had for years been seeking their liberation from any colonial influence whatsoe", "This question refers to the following information.\nThose who came before us made certain that this country rode the first waves of the industrial revolutions, the first waves of modern invention, and ", "This question refers to the following information.\n\"When we were kids the United States was the wealthiest and strongest country in the world; the only one with the atom bomb, the least scarred by mod", "This question refers to the following information.\nThose who came before us made certain that this country rode the first waves of the industrial revolutions, the first waves of modern invention, and ", "This question refers to the following information.\n\"When we were kids the United States was the wealthiest and strongest country in the world; the only one with the atom bomb, the least scarred by mod", "This question refers to the following information.\nThose who came before us made certain that this country rode the first waves of the industrial revolutions, the first waves of modern invention, and ", "This question refers to the following information.\nOur leaders talk about stopping aggression from the north, but this was a struggle among groups of Vietnamese until we intervened. We seem bent upon ", "This question refers to the following information.\nOur leaders talk about stopping aggression from the north, but this was a struggle among groups of Vietnamese until we intervened. We seem bent upon ", "This question refers to the following information.\nOur leaders talk about stopping aggression from the north, but this was a struggle among groups of Vietnamese until we intervened. We seem bent upon "], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 55.0, "perc": 35.3}, {"color": "rgb(58, 80, 138)", "height": 100.0, "perc": 64.7}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube26_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.19004648619086684]], "id": "", "name": "cube26_cluster1", "size": 2, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 6}, "custom_tooltips": ["This question refers to the following information.\n\"The far-reaching, the boundless future will be the era of American greatness. In its magnificent domain of space and time, the nation of many nation", "This question refers to the following information.\n\"The far-reaching, the boundless future will be the era of American greatness. In its magnificent domain of space and time, the nation of many nation", "This question refers to the following information.\n\"The far-reaching, the boundless future will be the era of American greatness. In its magnificent domain of space and time, the nation of many nation", "This question refers to the following information.\n\"The far-reaching, the boundless future will be the era of American greatness. In its magnificent domain of space and time, the nation of many nation", "This question refers to the following information.\n\"The far-reaching, the boundless future will be the era of American greatness. In its magnificent domain of space and time, the nation of many nation", "This question refers to the following information.\n\"The far-reaching, the boundless future will be the era of American greatness. In its magnificent domain of space and time, the nation of many nation"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 100.0, "perc": 66.7}, {"color": "rgb(58, 80, 138)", "height": 50.0, "perc": 33.3}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube26_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.8559611703582172]], "id": "", "name": "cube51_cluster0", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 12}, "custom_tooltips": ["In which of the following fields did Islamic civilization most influence Europeans at the time of the Crusades?", "By what collective name do Christians refer to God the Father God the Son and the Holy Ghost?", "Which of the following groups was converted to Christianity in the tenth century C.E. by missionaries from the Byzantine Empire?", "A sect is organised around:", "Religious organizations such as the Church of Norway, Islam, the Church of England, and the Church of Greece have which of the following characteristics in common?", " Which early battle led to the conversion of Mecca?", " Which Christian denomination promotes a stripped-down Christianity?", "Speaking in tongues is a feature of which Christian denomination?", "What are the two sacraments that all Christians celebrate?", " Icons are a main feature of which church?", "What is seen by Europeans, and many Muslims, as the symbol of Islam?", " Which term refers to the five main areas into which early Christianity was divided?"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 29.0, "perc": 16.7}, {"color": "rgb(51, 178, 121)", "height": 14.0, "perc": 8.3}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 29.0, "perc": 16.7}, {"color": "rgb(220, 226, 37)", "height": 100.0, "perc": 58.3}]], "node_id": "cube51_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.95809406617446]], "id": "", "name": "cube51_cluster1", "size": 2, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 6}, "custom_tooltips": ["What does the term \"Qur\u0027an\" literally mean?", "What does the word \"Islam\" mean in Arabic?", "Which of the following is NOT included in the Islamic understanding of jurisprudence?", " In Islam, what is the qiblah?", " Which of the following does the Qur\u0027an permit?", "What is the term for commentary on the Qur\u0027an, which means \"unveiling\"?"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 100.0, "perc": 100.0}]], "node_id": "cube51_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.3385288487831556]], "id": "", "name": "cube56_cluster0", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 9}, "custom_tooltips": ["Which philosopher called the idea of natural rights \u0027nonsense on stilts\u0027?", "Which of the following factors contributed significantly to the revival of natural law in the 20th century?", "Who was an exponent of \u201cnatural law with a variable content\u201d?", "In which of the following the idea of \u2018natural law\u2019 first appeared", "\u201cNatural law is based on the nature of man and on his inward need of living in society.\u201d Who said it?", "Which of the factors below contributed significantly to the revival of natural law in the 20th century?", "Leopold Pospisil identifies four elements manifested by law: authority, universality, \u0027obligatio\u0027 - and fourthly?", "Which one of the following doctrines is not associated with Natural Law thinking", "Which proposition below is the most powerful refutation of Olivecrona\u0027s psychological explanation of law?"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 13.0, "perc": 11.1}, {"color": "rgb(46, 107, 141)", "height": 100.0, "perc": 88.9}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube56_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.6355326379936717]], "id": "", "name": "cube56_cluster1", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 7}, "custom_tooltips": ["Which statement best explains the purpose of Hart\u0027s distinction between \u0027being obliged\u0027 and \u0027having an obligation\u0027?", "To claim that one has a prima facie duty to obey the law is to assert that:", "According to Ross, our prima facie duties:", "A prima facie duty is a characteristic of an act in virtue of which the act:", "Which of the following is not one of Ross\u2019s prima facie duties?", "Ross claims that we learn of our prima facie duties:", "To explain the notion of a prima facie duty, Ross draws an analogy with:"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 50.0, "perc": 28.6}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 100.0, "perc": 57.1}, {"color": "rgb(155, 215, 59)", "height": 25.0, "perc": 14.3}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube56_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.9201282720560816]], "id": "", "name": "cube66_cluster0", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 11}, "custom_tooltips": ["Who is the mythological Roman goddess of flowers?", " Mani referred to God by which of the following names?", "Who is the woman mystic who exemplified the all-consuming love of the divine?", "The widely adored Egyptian goddess Hathor was depicted as which of the following?", " Where did people believe in the goddess known as Holy Mother of Mount Fairy Peach?", "The title Dalai Lama means which of the following?", "Who accompanies Vishnu in many of his incarnations as his consort, and is known as the goddess of good fortune?", "Krishna and Rama are incarnations of which Hindu god?", "Which god supplanted the earlier Mesopotamian supreme god Enil?", "Which deity is the Roman counterpart to the Greek god Zeus?", " The classic text Daodejing is known by what title in English?"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 10.0, "perc": 9.1}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 100.0, "perc": 90.9}]], "node_id": "cube66_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.9875307629204265]], "id": "", "name": "cube66_cluster1", "size": 2, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 5}, "custom_tooltips": [" What is the name of the most authoritative Kabbalah text?", " In Yiddish, what is the word for covenant?", " What are the rabbinical commentaries produced after the Mishnah called?", " What is the Hebrew word is used to refer to the Nazi\u0027s catastrophic program of genocide?", "What is the English name for Hanukkah?"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 100.0, "perc": 100.0}]], "node_id": "cube66_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.6968826907301067]], "id": "", "name": "cube73_cluster0", "size": 2, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 5}, "custom_tooltips": ["Which statement below is the least likely to follow logically from Savigny\u0027s notion of a Volksgeist?", "In response to the argument that famine relief is counterproductive because it leads to overpopulation, Singer claims that:", "Singer claims that his conclusions are similar to those of:", "One objection to Singer\u2019s theory that he considers is that it:", "Singer\u2019s argument begins with the assumption that:"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 33.0, "perc": 20.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 100.0, "perc": 60.0}, {"color": "rgb(155, 215, 59)", "height": 33.0, "perc": 20.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube73_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.33434167350287125]], "id": "", "name": "cube73_cluster1", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 8}, "custom_tooltips": ["In Justice for Hedgehogs Dworkin endorses \u0027Hume\u0027s principle\u0027. What does he understand by this idea?", "Dworkin contends that to every legal question there is only one right answer. Which proposition below is most inconsistent with this claim?", "Which statement best describes one of Dworkin\u0027s central arguments in Justice for Hedgehogs?", "Which of the following best describes Dworkin\u0027s distinction between principles and policies?", "Dworkin argues that it is only a conception of equality of resources that can secure the ideal of equality of welfare. How does he suggest this aspect of equality to be measured?", "Why does Dworkin support liberal egalitarianism?", "Which of the following statements best describes the postmodernist project?", "Posner\u0027s economic analysis of law is roundly attacked by Dworkin who says the theory \u0027has not achieved the beginning of a beginning.\u0027 What is the basis of this criticism?"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 100.0, "perc": 100.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube73_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.7717684284542364]], "id": "", "name": "cube83_cluster0", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 7}, "custom_tooltips": ["Epicurus holds that philosophy is:", "Epictetus claims that if the wife and children of a virtuous man were to die, he should feel:", "Epicurus states that of all the things required for a complete life, the greatest is:", "According to Epicurus, the wealth required for a good life is:", "Epictetus claims that the desire for one\u2019s loved ones to live forever is:", "Epicurus conceives of death as:", "According to Epicurus:"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 100.0, "perc": 57.1}, {"color": "rgb(155, 215, 59)", "height": 75.0, "perc": 42.9}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube83_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.7549062914116238]], "id": "", "name": "cube83_cluster1", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 13}, "custom_tooltips": ["Aquinas holds that the last end of man is:", "In Aquinas\u2019s view, man\u2019s ultimate happiness consists in:", "Aquinas argues that the end of every action is:", "Aquinas claim that all human operations appear to serve:", "Aquinas claims that the ultimate perfection of operation is:", "According to Aquinas, an infinite regress of causes is _____.", "Aquinas says that the first efficient cause of everything is _____.", "Augustine claims that to be happy, one must know:", "In Augustine\u2019s view, lying is:", "Aquinas claims that:", "In Aquinas\u2019s view, acts of prudence are solely about matters of:", "Augustine claims that there can be no evil where there is no:", "Aquinas argues that every agent acts for the sake of:"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 100.0, "perc": 92.3}, {"color": "rgb(155, 215, 59)", "height": 8.0, "perc": 7.7}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube83_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.584577522559475]], "id": "", "name": "cube94_cluster0", "size": 2, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 5}, "custom_tooltips": ["What is the name of the baby who appears in cartoons and comic strips with Popeye the Sailor?", "What kind of animal is cartoon character Tennessee Tuxedo?", "What is the name of the StarKist tuna mascot?", "Who is an archenemy of the cartoon superhero Underdog?", "What cartoon character traveled in a time machine with Mr Peabody?"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 100.0, "perc": 60.0}, {"color": "rgb(51, 178, 121)", "height": 67.0, "perc": 40.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube94_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.6039376538146022]], "id": "", "name": "cube94_cluster1", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 10}, "custom_tooltips": ["Which of these is not a position on an American football team?", "Which of these foods is not traditionally considered kosher?", "Which of these is not an ingredient in Yorkshire pudding?", "Which of the following is not a TV cartoon duo?", "Which of these is not a type of rock?", "Which of these are not legumes?", "Which of the following is not a flavor of Ben \u0026 Jerry\u0027s Ice Cream?", "Which of the following candies is traditionally fruit flavored?", "Which of these is not a Hindudeity?", "Which of these is not a style of shoe?"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 67.0, "perc": 40.0}, {"color": "rgb(51, 178, 121)", "height": 100.0, "perc": 60.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube94_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.7560842220399235]], "id": "", "name": "cube97_cluster0", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 15}, "custom_tooltips": ["For Socrates, an unexamined life is a tragedy because it results in grievous harm to _____.", "For Socrates, the soul is harmed by lack of _____.", "Socrates\u0027 claim that \"the unexamined life is not worth living\" is often cited as a central theme in the activities of people.  By it, Socrates is typically understood to mean that:", "Cicero argues that we will never go morally astray if we:", " According to Socrates, the task of the wise and virtuous person is not simply to learn various examples of just or virtuous actions but to learn the essence of justice or virtue, because:", "According to Cicero, the most practical branch of philosophy deals with:", "According to Socrates, the value or quality of one\u0027s life depends on understanding the principles of, or basic rationale for human existence.  Without such knowledge (he suggests) life lacks virtue, b", "During his trial, Socrates argues that he would never intentionally corrupt others because:", "According to Socrates, justice is when a soul is ruled by its:", "When Euthyphro attempts to define the holy as prosecuting wrongdoers, Socrates objects that:", "Cicero claims that it is sometimes permissible to:", "According to Socrates, it is important that we discover what makes a particular action (e.g., a merciful or just act) the kind of action that it is, because without such knowledge:", "In spite of the fact that Socrates claims to be ignorant of the essence or nature of certain things like justice, he is wise insofar as he recognizes that without such knowledge actions are rationally", "According to Cicero, immorality is __________, and expediency is __________.", "Epictetus claims that the most important part of philosophy deals with:"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 18.0, "perc": 13.3}, {"color": "rgb(94, 199, 96)", "height": 100.0, "perc": 73.3}, {"color": "rgb(155, 215, 59)", "height": 18.0, "perc": 13.3}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube97_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.7634844134536506]], "id": "", "name": "cube97_cluster1", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 8}, "custom_tooltips": ["Epicurus claims that all other virtues spring from:", "Epicurus holds that philosophy is:", "According to Epicurus, the wise man:", "Epicurus states that of all the things required for a complete life, the greatest is:", "According to Epicurus, the wealth required for a good life is:", "Epictetus claims that the desire for one\u2019s loved ones to live forever is:", "Epicurus conceives of death as:", "According to Epicurus:"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 100.0, "perc": 62.5}, {"color": "rgb(155, 215, 59)", "height": 60.0, "perc": 37.5}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube97_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.7599000671190992]], "id": "", "name": "cube98_cluster0", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 11}, "custom_tooltips": ["Nussbaum claims that to many current ethical theorists, turning to an ethical approach based on the virtues is connected with a turn toward:", "Hume defines virtue as:", "Aristotle ends the Ethics with a segue to a discussion of:", "Nussbaum claims that the specification of particular virtues:", "Nussbaum claims that for Aristotle the reference of each virtue term is fixed by:", "According to Aristotle, we should begin ethical inquiry by specifying:", "In Aristotle\u2019s view, the virtues are:", "Aristotle saw his theory of the virtues as:", "Aristotle divides the virtues into:", "Hume describes reason as:", "Nussbaum claims that at the first stage of ethical inquiry, terms for the virtues should be:"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 13.0, "perc": 9.1}, {"color": "rgb(94, 199, 96)", "height": 100.0, "perc": 72.7}, {"color": "rgb(155, 215, 59)", "height": 25.0, "perc": 18.2}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube98_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.7667760459392945]], "id": "", "name": "cube98_cluster1", "size": 2, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 5}, "custom_tooltips": ["Cicero argues that we will never go morally astray if we:", "According to Cicero, the most practical branch of philosophy deals with:", "Cicero claims that there could be \u201cno more pernicious doctrine\u201d than the idea that:", "Cicero claims that it is sometimes permissible to:", "According to Cicero, immorality is __________, and expediency is __________."], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 100.0, "perc": 80.0}, {"color": "rgb(155, 215, 59)", "height": 25.0, "perc": 20.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube98_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.7695417789757412]], "id": "", "name": "cube111_cluster0", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 7}, "custom_tooltips": ["Descartes had been disillusioned by his discovery that many of the alleged truths learned in his youth were _____.", "Descartes declares that he is _____.", "According to Sartre, what existentialists have in common is that they think that _____.", "At first Descartes supposes that everything he sees is _____.", "Descartes says that, for all he knows, he may be _____.", "Descartes reasons that the very fact that he is thinking shows that _____.", "Descartes argues against trusting the senses on the grounds that _____."], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 100.0, "perc": 71.4}, {"color": "rgb(155, 215, 59)", "height": 40.0, "perc": 28.6}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube111_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.7683552091878589]], "id": "", "name": "cube111_cluster1", "size": 4, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 20}, "custom_tooltips": ["Plato\u0027s view is that true beauty is _____.", " In his discussion of the Divided Line, Plato says that, in contrast to mere belief or opinion, knowledge is a belief for which we give reasons or justifications by appealing:", "Philosophy is concerned primarily with identifying beliefs about human existence and evaluating arguments that support those beliefs.  These activities can be summarized in two questions that drive ph", "\"There is no rationale for myth because it is through myth that reason itself is defined.\"  This means that:", "Plato\u0027s suggestion that knowledge is innate or remembered as a result of being triggered by experience is in response to a paradox he sets up for himself.  The paradox, now referred to as Meno\u0027s Parad", "To say that \"philosophy\" (like \"love\" or \"art\") is not a closed concept means that we cannot state the necessary and sufficient conditions by which it is defined.  Rather, philosophic issues are ident", "Plato distinguishes knowledge from mere belief or opinion by saying that knowledge must be a true belief for which one can give a justification, a rationale, or \"logos.\"  In terms of his image of the ", "Like most rationalists, Plato defines knowledge as justified true belief.  In terms of this definition, we might be able to claim to know something as true which might actually be false, but it is imp", "For Plato, ordinary sensible objects exist and are knowable as examples or instances of Ideas or \"Forms\" that do not exist in our ordinary sensible world.  Forms do not exist in the sensible world bec", "According to Plato, we can attain knowledge only by seeing beyond this world of particular, changing objects to the true essences or Forms in terms of which things in this world are intelligible.  For", "Whereas the social sciences (e.g., psychology, sociology, economics) ask questions about how people think and act, philosophy is the study of:", " Plato indicates that the knowledge of pure reason is preferable to conceptual understanding, because knowing that something is a certain kind of thing is not as good as knowing:", "According to Sartre, there is at least one being in whom existence precedes essence, and this being is _____.", "\"When a person starts on the discovery of the absolute by the light of reason only, and without any assistance of sense, and perseveres until by pure intelligence he arrives at the perception of the a", "The four main divisions of philosophy are metaphysics, epistemology, axiology, and _____.", "One of the aims of philosophy is to think critically about whether there are good reasons for adopting our beliefs.  Reasons are considered \"good reasons\" if they are consistent with everyday experien", "In Plato\u0027s idealism, the unchanging Ideas or \"Forms\" in terms of which sensible objects both exist and are known must transcend (that is, exist beyond) the changing realm of appearances; because if Fo", "Questions like \u201cWhat is knowledge?\u201d and \u201cWhat is truth?\u201d are mainstays in the branch of philosophy known as _____.", "One of the tasks of philosophy is to test conceptual frameworks for depth and consistency.  It does this through (1) expressing our ideas in clear, concise language and (2) supporting those ideas with", " In his final work, Laws, Plato shifted from cosmology to which of the following issues?"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 44.0, "perc": 20.0}, {"color": "rgb(94, 199, 96)", "height": 100.0, "perc": 45.0}, {"color": "rgb(155, 215, 59)", "height": 67.0, "perc": 30.0}, {"color": "rgb(220, 226, 37)", "height": 11.0, "perc": 5.0}]], "node_id": "cube111_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.43587640142193057]], "id": "", "name": "cube120_cluster0", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 9}, "custom_tooltips": ["Specialisation is a feature of which organisational structure?", "As what are key factors that reflect the situation of an organisation referred to?", "What is the term for organisational development through a formally designed organisational structure?", " Which of the following are the three broad groups of organizational characteristics segmentation criteria?", " ________________is used to influence the way an organization is perceived by various groups of stakeholders.", " Organizational characteristics, such as organizational size and location, are sometimes referred to as___________.", "These are chains of organizations that are concerned with the management of the processes and activities involved in creating and moving products from producers and manufacturers to end-user customers", "In B2B contexts, ___________ occurs in large organizations where considerable internal dealing between different company divisions occurs, often across national boundaries.", "In an organization, the group of people tasked with buying decisions is referred to as the _______________."], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 33.0, "perc": 22.2}, {"color": "rgb(36, 131, 141)", "height": 100.0, "perc": 66.7}, {"color": "rgb(33, 155, 136)", "height": 17.0, "perc": 11.1}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube120_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.4970604320481269]], "id": "", "name": "cube120_cluster1", "size": 2, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 6}, "custom_tooltips": [" Which of the following is not an element of the marketing mix?", "A marketing philosophy summarized by the phrase \u0027a stronger focus on social and ethical concerns in marketing\u0027 is characteristic of the _________ period.", " Four competing philosophies strongly influence the role of marketing and marketing activities within an organization. Which if the following is not a component of market orientation?", "Which of the following is not part of the external marketing environment?", "The six dimensions usually considered to constitute the external marketing environment include all of the following except:", "Which of the following would be provided in the marketing segment of a business plan?"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 100.0, "perc": 50.0}, {"color": "rgb(33, 155, 136)", "height": 67.0, "perc": 33.3}, {"color": "rgb(51, 178, 121)", "height": 33.0, "perc": 16.7}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube120_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.7429338503989859]], "id": "", "name": "cube125_cluster0", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 11}, "custom_tooltips": ["The aesthetic philosophy that claims that the value of a work of art is determined by museums and galleries is known as", "Aesthetics deals with objects that are_____.", "An important formal characteristic of art is_____.", "Hume argues that the criteria for judging aesthetic value are _____.", "Descartes says that the chief characteristic of physical things is that _____.", "Disagreements about the aesthetic value or social relevance of a piece of art are _____.", "Descartes declares that he is _____.", "Traditionally art has been defined as _____.", "A prominent view is that an object has aesthetic value if it _____.", "The view that art is defined by its form is known as _____.", "Aesthetic values have to do with _______"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 25.0, "perc": 18.2}, {"color": "rgb(94, 199, 96)", "height": 100.0, "perc": 72.7}, {"color": "rgb(155, 215, 59)", "height": 13.0, "perc": 9.1}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube125_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.7847279190593383]], "id": "", "name": "cube125_cluster1", "size": 2, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 6}, "custom_tooltips": ["Descartes had been disillusioned by his discovery that many of the alleged truths learned in his youth were _____.", "At first Descartes supposes that everything he sees is _____.", "Descartes says that, for all he knows, he may be _____.", "Descartes believed that interaction between body and mind took place in _____.", "Descartes reasons that the very fact that he is thinking shows that _____.", "Descartes argues against trusting the senses on the grounds that _____."], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 100.0, "perc": 50.0}, {"color": "rgb(155, 215, 59)", "height": 100.0, "perc": 50.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube125_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.2412633305988515]], "id": "", "name": "cube128_cluster0", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 10}, "custom_tooltips": ["Lev Vygotsky\u0027s approach to the study of cognitive development was", "Children develop internal representational systems that allow them verbally to describe people, events, and feelings during which of Piaget\u0027s stages of cognitive development?", "\"Psychology is the science of behavior and mental processes,\" commonly defines psychology. In their definition of psychology, behaviorists would be likely to eliminate", "According to cognitive theorist Jean Piaget, children in which of the following stages of cognitive development are egocentric, or unable to understand another person\u0027s perspective?", "According to Jean Piaget, egocentrism, animism, and trial-and-error learning are characteristic of the stage of development known as", "Periods of special sensitivity to specific types of learning that shape the capacity for future development are known as", "Piaget proposed that children develop knowledge by", "Pascale is interested in the processing strategies children use to learn new information. Pascale would best be classified as what type of psychologist?", "The idea that mental states are dispositions to behave in particular ways in certain circumstances is known as _____.", "The view of anti-psychiatrists like Scheff was that mental illness was:"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 100.0, "perc": 50.0}, {"color": "rgb(68, 51, 125)", "height": 60.0, "perc": 30.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 20.0, "perc": 10.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 20.0, "perc": 10.0}]], "node_id": "cube128_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.08032540333606782]], "id": "", "name": "cube128_cluster1", "size": 2, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 6}, "custom_tooltips": ["Which of the following kinds of therapies would most likely be used by a somatic therapist?", "Which approach emphasizes that therapists can effectively help their clients by offering unconditional positive regard?", "What is the principal tool used in all forms of psychotherapy?", "What kind of therapy involves both behavioral and cognitive interventions?", "Stephen is going through his second divorce. He thinks that no woman will ever love him again. His therapist points out to Stephen that his thinking is irrational and faulty. Which of the following th", "Vance\u0027s therapist believes Vance is psychotic. From which of the following medications would he most likely believe Vance would benefit?"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 100.0, "perc": 66.7}, {"color": "rgb(68, 51, 125)", "height": 50.0, "perc": 33.3}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube128_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.18352930453012486]], "id": "", "name": "cube130_cluster0", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 18}, "custom_tooltips": ["A study designed to investigate the friendship patterns of abused children was conducted by filming the interactions of the children and later having three raters view the footage and rate each child\u0027", "Of the following, which provides the most valid and reliable data about individuals as they progress through various stages of development?", "Which of the following are most directly designed to help determine whether the findings of a study reflect a truly replicable phenomenon rather than the outcomes of chance processes?", "Professor Ek is interested in studying online bullying behaviors of middle school students. Which of the following research method choices (and the rationale for the choice) is the most appropriate?", "Why can experiments determine causal relationships when no other research method can?", "One\u0027s ability to make inferences about the behavior of a population from the behavior of a sample of that population is referred to as", "Which of the following would a researcher need to use to determine if the difference between the mean scores of experimental and control groups was significant?", "A researcher has asked participants to complete a questionnaire that will assess how frequently in their lives they experience various emotions using a scale from 1 (never) to 5 (very often). The rese", "A researcher tests the problem solving skills of twenty 10-year-old, twenty 20-year-old, and twenty 30-year-old participants for a study on age and problem solving. What research method is this resear", "To demonstrate causation, a researcher must", "Which of the following is a key difference between the experimental method and naturalistic observation?", "In developmental research, studying the same subjects over time is known as", "A population frequently studied to best assess the relative effects of nature vs. nurture is", "David collected data on 15 research participants. Their scores were: 42, 38, 14, 13, 12, 12, 11, 11, 11, 10, 10, 10, 9, 9, 9. Which of the following statistics best reflects the central tendency of th", " Which type of research methods are designed to elicit responses to predetermined, standardized questions from many respondents?", "When little is known about the problem, research seeking to discover the cause of a problem by discussing the problem with informed sources and examining pre-existing data is undertaken. This type of ", " ______________ is used to determine whether one variable causes an effect in another variable. In order to determine causality experimental or longitudinal studies are needed.", "Which of the following is a form of harm that might be suffered by research participants?"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 100.0, "perc": 50.0}, {"color": "rgb(68, 51, 125)", "height": 56.0, "perc": 27.8}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 33.0, "perc": 16.7}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 11.0, "perc": 5.6}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube130_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.07909488651900465]], "id": "", "name": "cube130_cluster1", "size": 2, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 6}, "custom_tooltips": ["In classical conditioning the learner learns to associate the unconditioned stimulus with", "What is the first step in any example of classical conditioning?", "Which of the following responses was most likely acquired through classical conditioning?", "What is the major difference between classical and operant conditioning?", "The contingency model explains classical conditioning from which of the following perspectives?", "Cognitivists claim that classical conditioning results from"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 100.0, "perc": 50.0}, {"color": "rgb(68, 51, 125)", "height": 100.0, "perc": 50.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube130_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.11703582171178564]], "id": "", "name": "cube139_cluster0", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 15}, "custom_tooltips": ["Max was typically out of control whenever he attended preschool. Teachers tried time-outs and other punishments to no avail. His parents and the school decided to work with Max by giving him a sticker", "The AP Psychology examination given by the College Board in May exemplifies which of the following types of tests?", "Xavier is beginning his first year of college. He is eager to find a few other freshmen to \"hang out\" with. Psychologists would say that Xavier is motivated by a(n)", "Ben thinks students will answer questions printed on yellow paper more quickly than those printed on blue paper. All study participants will take three tests with 35 multiple-choice questions each. Th", "Mr. Maji gives a test to his class of 25 students. All but three students score between 82 and 94. The other three students score 47, 55, and 62. These scores are potential", "Emily scored at the 65th percentile on a standardized achievement test. This indicates which of the following? Her score was", "Shafi cited Tony\u0027s and David\u0027s 100% math test scores in providing evidence that boys do better in math than girls. His failure to recognize that seven girls in the class earned 100% while only two boy", "Jonathan\u0027s IQ score is in the 97th percentile. Of the following, which score is most likely his?", "The scores of Brian\u0027s team on the quiz were: 8, 6, 9, 7, 10, 9, 5, 4, 9. The median of the team\u0027s scores is", "After taking AP Psychology and doing well in the class and on the exam, Donald goes to college. If Donald is interested in psychology and has high achievement motivation, as a first-year student, he i", "Jared thinks that going to psychology lecture classes is a waste of time and that you can do just as well in the course if you just read the review book, watch \"Discovering Psychology,\" and take the t", "Which of the following kinds of tests is most likely to be an achievement test?", "As the time for the AP Psychology exam approached, several students in the class who had not been doing homework or attending classes earlier in the term became more concerned about studying and atten", "Jupiter pilots his newly created perfectionism scale on a high school psychology class. He returns one month later to administer the same test to the same students, and then he correlates the two sets", "Which of the following types of tests is designed primarily to help predict how successful a person is likely to be in learning new skills?"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 100.0, "perc": 60.0}, {"color": "rgb(68, 51, 125)", "height": 56.0, "perc": 33.3}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 11.0, "perc": 6.7}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube139_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.16297511621547717]], "id": "", "name": "cube139_cluster1", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 9}, "custom_tooltips": ["Which of the following kinds of therapies would most likely be used by a somatic therapist?", "Which psychoactive drugs are most frequently prescribed to relieve pain?", "Which of the following kinds of therapists is most likely to prescribe lithium for a patient diagnosed with bipolar disorder?", "A person who experiences flashbacks and nightmares after being involved in a serious car accident is likely to be diagnosed with which psychological disorder?", "Chantal says that her mother is domineering and overbearing. All of Chantal\u0027s friends agree that she is the one that has these characteristics, not her mother. Freud would suggest that Chantal\u0027s behav", "After discovering that she was in the early stages of an eating disorder, Maria\u0027s parents insisted Maria see a therapist. Although Maria attended the therapy sessions, she was late, uncooperative, and", "Stephen is going through his second divorce. He thinks that no woman will ever love him again. His therapist points out to Stephen that his thinking is irrational and faulty. Which of the following th", "Vance\u0027s therapist believes Vance is psychotic. From which of the following medications would he most likely believe Vance would benefit?", "The idea that mental states are dispositions to behave in particular ways in certain circumstances is known as _____."], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 100.0, "perc": 55.6}, {"color": "rgb(68, 51, 125)", "height": 60.0, "perc": 33.3}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(33, 155, 136)", "height": 0.0, "perc": 0.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 20.0, "perc": 11.1}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube139_cluster1", "projection_stats": []}, "type": "circle"}, {"color": [[0.4683347005742412]], "id": "", "name": "cube146_cluster0", "size": 2, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 5}, "custom_tooltips": ["These are costs which do not vary according to the number of units of product made or service sold:", "The use of entertainment material delivered through paid or owned media and which features a single company or brand is referred to as:", "Which of the following types of advertising is being used when a retail store agrees to share advertising costs for a consumer product with the national distributor of the product?", " What type of media helps advertisers demonstrate the benefits of using a particular product and can bring life and energy to an advertiser\u0027s message?", " For a long time commercial media have been used to convey messages designed to develop consumers\u0027 attitudes and feelings towards brands. This is referred to as:"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 100.0, "perc": 80.0}, {"color": "rgb(33, 155, 136)", "height": 25.0, "perc": 20.0}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube146_cluster0", "projection_stats": []}, "type": "circle"}, {"color": [[0.47652903108194333]], "id": "", "name": "cube146_cluster1", "size": 3, "tooltip": {"cluster_stats": {"above": [], "below": [], "size": 9}, "custom_tooltips": ["This allows us to determine how the quantity of an offering relates to the price at which it is offered:", " In B2B contexts, prices are set according to specific agreements between a company and its clients or customers (e.g. professional services such as architectural or structural engineering).This prici", " This pricing approach is used when the firm sets prices according to how much customers are prepared to pay:", " The pricing approach where prices are set based on what competitors are charging is called the:", " The pricing approach where prices are set based on what customers believe to offer value is called the:", "This business-to-business pricing approach seeks to understand customers\u0027 needs before pricing the offering according to those needs in order to generate a long-term relationship. This is referred to ", " With this pricing approach, the pricing process begins with the customer; not the cost of the product offering:", " _____________ is influenced by perceptions of the fairness of prices set, latitude of price acceptance (customers appear willing to accept a price within a range of prices suggesting a \u0027price zone of", " When customers assess prices, they estimate value using __________, because they do not always know the true cost and price of the item that they are purchasing. These pricing cues include: sale sign"], "dist_label": "Member", "histogram": [[{"color": "rgb(70, 18, 100)", "height": 0.0, "perc": 0.0}, {"color": "rgb(68, 51, 125)", "height": 0.0, "perc": 0.0}, {"color": "rgb(58, 80, 138)", "height": 0.0, "perc": 0.0}, {"color": "rgb(46, 107, 141)", "height": 0.0, "perc": 0.0}, {"color": "rgb(36, 131, 141)", "height": 100.0, "perc": 66.7}, {"color": "rgb(33, 155, 136)", "height": 50.0, "perc": 33.3}, {"color": "rgb(51, 178, 121)", "height": 0.0, "perc": 0.0}, {"color": "rgb(94, 199, 96)", "height": 0.0, "perc": 0.0}, {"color": "rgb(155, 215, 59)", "height": 0.0, "perc": 0.0}, {"color": "rgb(220, 226, 37)", "height": 0.0, "perc": 0.0}]], "node_id": "cube146_cluster1", "projection_stats": []}, "type": "circle"}]};
+    const colorscale = [[0.0, "rgb(68, 1, 84)"], [0.1, "rgb(72, 35, 116)"], [0.2, "rgb(64, 67, 135)"], [0.3, "rgb(52, 94, 141)"], [0.4, "rgb(41, 120, 142)"], [0.5, "rgb(32, 144, 140)"], [0.6, "rgb(34, 167, 132)"], [0.7, "rgb(68, 190, 112)"], [0.8, "rgb(121, 209, 81)"], [0.9, "rgb(189, 222, 38)"], [1.0, "rgb(253, 231, 36)"]];
+    const summary = {"color_function_name": ["Row number"], "custom_meta": {"clusterer": "HDBSCAN(metric=\u0027precomputed\u0027)", "n_cubes": 15, "nerve_min_intersection": 1, "perc_overlap": 0.3, "projection": "custom", "scaler": "None"}, "n_edges": 8, "n_nodes": 38, "n_total": 373, "n_unique": 343, "node_color_function": ["mean"]};
+    const summary_histogram = [[[{"color": "rgb(70, 18, 100)", "height": 20.0, "perc": 5.3}, {"color": "rgb(68, 51, 125)", "height": 40.0, "perc": 10.5}, {"color": "rgb(58, 80, 138)", "height": 80.0, "perc": 21.1}, {"color": "rgb(46, 107, 141)", "height": 20.0, "perc": 5.3}, {"color": "rgb(36, 131, 141)", "height": 40.0, "perc": 10.5}, {"color": "rgb(33, 155, 136)", "height": 10.0, "perc": 2.6}, {"color": "rgb(51, 178, 121)", "height": 30.0, "perc": 7.9}, {"color": "rgb(94, 199, 96)", "height": 100.0, "perc": 26.3}, {"color": "rgb(155, 215, 59)", "height": 10.0, "perc": 2.6}, {"color": "rgb(220, 226, 37)", "height": 30.0, "perc": 7.9}]]];
+  </script>
+
+  <div id="header">
+    <div class="wrap wrap-header">
+
+      <div class="">
+
+        <!-- toolbar -->
+        <div class="toolbar-container">
+        
+<div id="toolbar" class='wrap'>
+    <div id="tooltip_control" class="tool_item">
+        <h3>
+        <a href="#"><small id="tooltip_tag">[+]</small></a>
+        Cluster Details
+        </h3>
+    </div>
+
+    <div id="meta_control" class="tool_item">
+        <h3>
+        <a href="#"><small id="meta_tag">[+]</small></a>
+        Mapper Summary
+        </h3>
+    </div>
+
+    <div id="help_control" class="tool_item">
+        <h3>
+        <a href="#"><small id="helptip_tag">[+]</small></a>
+        Help
+        </h3>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+</div>
+        </div>
+        <!-- /toolbar -->
+
+        <div class='banner'>
+          <noscript><b>Requires JavaScript (d3.js) for visualizations</b></noscript>
+          <h1> Mapper — nomic-embed-v1.5 (seed=42) </h1>
+        </div>
+
+      </div>
+
+      <div class="wrap-logo">
+        <img id="logo" class='logo' src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAIAAAC3ytZVAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAACK1SURBVHhevdxXrJVV0wdw9NhfsfdeUVREEJHeFJCmgCg2jEaRmCCWxAtDYrwy8cJojAZRmgUJRZpUAUFBREGQpoK99977+9t71tnss5v7oDgX+13PembNmvnPf2at58j3bdfgP5eaWvlfVn755Zd99tnnxx9//PXXX41/+umn33777Y8//vjzzz/Tgv9Q/gs4tttuu1133XXffffdaaed9t9//++++26XXXb56quvBH/44YefdtppHufNm/fzzz9vv/32DRs23GuvvSBC/9tvv/36668/+OADA2Alc9tStiEcUBDS7rvvfsQRR4jqk08+kXmBpddZmpx55pmDBw9GjfHjxy9fvjy9qJUdd9zxkEMOadSoEXT23HPP995777XXXoNmer0NZJvAAQJpF8wPP/zw0UcfQeGvv/5K7/KkSZMm559/ft++fT/88ENVc+GFF4IsvSsS4B555JGNGzf+/fff8eX111/fFnypSf/7L8lxxx3XrFkzQLz55pucVhESm97VlYj/oIMOQhA1EtE+88wzok0aRYJiUGAZ6U499VR19+WXX1bQ3wr5d+AIVnPxs88+W7t27aefflrZS8F37dq1RYsWxsccc4zwVq9efckllwjvhRdeCJ0K8vnnnwMFOqeccspJJ52EU+VAr6/8UzjUvwwfeuihKmLjxo1VFrYyufjii7VSiOgse++9t5o6+OCDW7ZsuW7dOqEmvYoCAgTUUIBywAEHYKLzKL3bWvlHcOyxxx6KmR/vvvtu9R1OUxw0aNBRRx31xRdfNG3a1CmLU8j16quvnnzyyQwiSIUmUiDOY60HXyDr/MKv9GKrZOvh0CZw/p133qlXq99hhx0GDBjQpk0bXda5e+KJJ/rVaHfeeWe8gAWioZtzF3fSmioEKMrz9NNPZ/+bb77ZappsDRy77bYbtr/99ttSUd+NNU6nCVpppSBQKfoo2us+fqWX8eOPP94dBEeqaZOWwHTIkCFDhw4Fh8djjz0W3fJP9Oql3nDYT9k3b968X79+jjpSPTtUuFUap3uXsu/QoYPJ/fbbT99xNqOJruGEBpC7mX68Zs2aWFgsoETPc84559Zbb73lllt69+6tBpUMI7fddhtrMNWPknbVsn363+oE8LZR88gpFfPnz3/66aefeOKJyy67zLECqaRXSjRd8btTiQQcMo/YoFH5IhG8yyiMQllzHTZsWI8ePeIxJxYedthhAwcOHDly5LRp08aOHXvuueceeOCB2PTcc885pOgoPTYZ7NixI2RjYZVSD3bAgvVXXnnFb69evdavXw8CLRBAcg6Rnj174q043TJJWlYrXbp0USlqRKiaDnSEARog4pdLBHoDyLzcUvCW5vvvv689xUHubL7mmmtuv/129HQGWUKZJlFZgJYkjWPy5MkQYY1ZaqCpvqKrhUOzwENYGHOuW7duDvzp06fbTwwcEpi8tW7d+qKLLoKLahIM4OSTZw5R83qktSbfeuutuEopEz1V++S0+L1y0XIfY1BIEuDcYdlFXkVcfvnl7du3N8OT8Couu9a6gxiwb/mMGTMifsY//vjjPn36ALTKi0lVcGh4wtiwYUM8yuell176/fff88zpCBfexysCHYEppfPOO69///6dOnVq27atNDo1vMIaMLksXHnllWoblVhGbBBs2rTp6KOP9ovzmYxnxQw43NCCSuybjI1CMMJdFrjsKxnLlXDuVGIfFnJmi2oQ+Xs4xAyOl156KT1nTxZlKULba6W2kV6JigBCqPmlieQaZLwVs5CQRckIgGXIAshB88YbbyCgLzRmKesmYcEjfnlri5jJeFArHp999lnUsxEj8FUsDmmMSxrZ2xos0NblKNhUQf6m0+A/xhZfnFGDE5ym4C1OFjiak82bNzv23K94zFcz3JJS1zDntEnuahaaDk1cQHhNMd9vmn6dGvGYL25r8IVXw4YN2eGPcwrd0utagbiPAIik5/JSCQ47oeiLL76YnmsF58VjECHJ+bhx4/ITEiIk8atkjMUFBwdegAaTlY+EI46jxOlLGaXjniowxnPgxkAnUgJyEJOEca1h6dKlbujmuWovPQXvuJeU8sTVOaomPZeRsnDw44wzztAaIvJ80fBsaXs3MX7gs66urabXebJ48WL9X2MTPDWVBQsN3yq0shzcggETDip7NPH2hBNOwKBkIiuccXixFqyJ31WrVrVr144bOGULsOIFQIvZEaJhQZByei4lZeHgn/5fnHMCDk6IRGwS4lcXAH8Bj5YtW8ZjkXgbKCCIeSgbqGflZhWG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">
+      </div>
+    </div>
+
+  </div>
+
+    <div id="canvas" class='canvas'>
+      <!-- Graph will go in here -->
+      <svg id='svg'>
+        <defs>
+          <filter id="drop-shadow-glow" filterUnits="userSpaceOnUse" width="250%" height="250%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur-out"/>
+            <feColorMatrix in="blur-out" type="hueRotate" values="0" result="color-out"/>
+            <feOffset in="color-out" dx="0" dy="0" result="the-shadow"/>
+            <feComponentTransfer type="linear" slope="0.2" result="shadow-opacity"/>
+            <feBlend in="SourceGraphic" in2="the-shadow" mode="normal"/>
+          </filter>
+          <filter id="drop-shadow-pulse" filterUnits="userSpaceOnUse" width="250%" height="250%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur-out">
+              <animate attributeName="stdDeviation" from="0" to="100" dur="1.5s" repeatCount="indefinite" />
+            </feGaussianBlur>
+            <feColorMatrix in="blur-out" type="hueRotate" values="0" result="color-out"/>
+            <feOffset in="color-out" dx="0" dy="0" result="the-shadow"/>
+            <feComponentTransfer type="linear" slope="0.2" result="shadow-opacity"/>
+            <feBlend in="SourceGraphic" in2="the-shadow" mode="normal"/>
+          </filter>
+        </defs>
+      </svg>
+
+    <!-- Panes for each of the tips -->
+    <div id="tooltip" class='pane pane-left'>
+      <div id="tooltip_content" class="pane_content">
+        <div id='tooltip_content_no_focus_node'>
+          Hover over a node to see attributes about it.
+        </div>
+        <div id='tooltip_content_focus_node' style='display:none'>
+        <div>
+  <div class='actions'>
+    <h3>Actions</h3>
+    <p>
+      <button class='btn center-on-node'>Center viewport on node</button>
+    </p>
+  </div>
+
+  <div class='details'>
+    <h2>Cluster Details <span style="font-size:0.7em">(node id: <span class='node_id'></span>)</span></h2>
+
+    <!-- histogram -->
+    <div class='histogram-wrapper'>
+      <hr><br/>
+
+      <h3><span class='distribution_label'></span> Distribution</h3>
+
+      <div class="histogram"></div>
+
+      <br><br>
+    </div>
+    <!-- /histogram -->
+
+    <!-- Projection Statistics -->
+    <div class='projection_stats' style='display:none'>
+
+      <hr><br/>
+
+      <h3>Projection Statistics</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Lens</th>
+            <th style="width:50px;"><small>Mean</small></th>
+            <th style="width:50px;"><small>Max</small></th>
+            <th style="width:50px;"><small>Min</small></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Cluster Statistics -->
+    <div class='cluster_stats'>
+        <hr><br/>
+
+        <h3>Cluster Statistics</h3>
+        <div class='above-wrapper'>
+            <h3>Above Average</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th style="width:50px;"><small>Mean</small></th>
+                  <th style="width:50px;"><small>STD</small></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+        </div>
+
+        <div class='below-wrapper'>
+            <h3>Below Average</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th style="width:50px;"><small>Mean</small></th>
+                  <th style="width:50px;"><small>STD</small></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+        </div>
+
+        <h3>Size</h3>
+        <p class='cluster-size'></p>
+    </div>
+
+    <!-- Membership information -->
+    <div class='membership-information'>
+      <hr> <br/>
+
+      <h3>Members</h3>
+      <div class='list-of-members'></div>
+
+      <br><br>
+      <hr><br>
+    </div>
+    <!-- /membership information -->
+  </div>
+</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="helptip" class='pane pane-right'>
+      <div id="helptip_content" class="pane_content">
+        <!-- Help pane.
+    TODO: Add more information here.  -->
+
+<ul>
+<li>Click on a node to lock focus on that node. The node with the current focus will pulse. Click off of a node to release the lock.</li>
+<li>Dragging a node will fix its position on the screen. Double-click a fixed-position node to unfreeze it.</li>
+</ul>
+
+<table>
+    <tr>
+        <th>Key</th>
+        <th><small>Action</small></th>
+    </tr>
+
+    <tr>
+        <td>s</td>
+        <td><small>Nodes glow :D</small></td>
+    </tr>
+
+    <tr>
+        <td>c</td>
+        <td><small>remove glow</small></td>
+    </tr>
+
+    <tr>
+        <td>p</td>
+        <td><small>Print mode - white backgrounds</small></td>
+    </tr>
+
+    <tr>
+        <td>d</td>
+        <td><small>Display mode - black backgrounds</small></td>
+    </tr>
+
+    <tr>
+        <td>z</td>
+        <td><small>Turn off gravity</small></td>
+    </tr>
+
+    <tr>
+        <td>m</td>
+        <td><small>Spacious layout</small></td>
+    </tr>
+
+    <tr>
+        <td>e</td>
+        <td><small>Tight layout</small></td>
+    </tr>
+
+    <tr>
+        <td>f</td>
+        <td><small>Freeze layout</small></td>
+    </tr>
+
+    <tr>
+        <td>x</td>
+        <td><small>Unfreeze all nodes</small></td>
+    </tr>
+
+</table>
+
+<div class="control-wrapper">
+  <div class="control-row">
+    <button class='btn' type="button" id="download-config" name="download-config">Save config</button>
+  </div>
+
+  <div class="control-row">
+    <label for="config-file-loader">Load config file</label>
+    <input type="file" id="config-file-loader" name="config-file-loader" accept="application/json">
+    <button class='btn' id='load-config' disabled>Load</button>
+  </div>
+</div>
+      </div>
+    </div>
+
+    <div id="meta" class='pane pane-right'>
+      <div id="meta_content" class="pane_content">
+        <h2>Mapper Summary</h2>
+
+<hr><br>
+
+
+    
+        <h3>projection </h3> <p> custom</p>
+    
+        <h3>n_cubes </h3> <p> 15</p>
+    
+        <h3>perc_overlap </h3> <p> 0.3</p>
+    
+        <h3>clusterer </h3> <p> HDBSCAN(metric='precomputed')</p>
+    
+        <h3>scaler </h3> <p> None</p>
+    
+        <h3>nerve_min_intersection </h3> <p> 1</p>
+    
+
+
+<h3>Nodes</h3><p> 38 </p>
+
+<h3>Edges</h3><p> 8 </p>
+
+<h3>Total Samples</h3><p> 373</p>
+
+<h3>Unique Samples</h3><p> 343</p>
+
+<h3>Color function</h3><p>
+  Row number
+</p>
+
+<h3>Node Color Function</h3><p> mean</p>
+
+
+<!-- histogram -->
+<hr><br/>
+
+<h3>Node Distribution</h3>
+
+<div class="histogram"></div>
+
+<br><br>
+<!-- /histogram -->
+
+<hr><br>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/6.1.1/d3.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js"></script>
+
+  <script>// Height and width settings
+var page_height = window.innerHeight - 5;
+var header_height = document.getElementById('header').offsetHeight;
+var canvas_height = page_height - header_height;
+document.getElementById("canvas").style.height = canvas_height + "px";
+var width = document.getElementById("canvas").offsetWidth;
+var height = document.getElementById("canvas").offsetHeight;
+var w = width;
+var h = height;
+var padding = 40;
+
+var focus_node_id = null;
+var focus_node = null;
+var text_center = false;
+var outline = false;
+
+// Size for zooming
+var size = d3.scalePow().exponent(1)
+           .domain([1,100])
+           .range([8,24]);
+
+// Variety of variable inits
+var default_node_color = "#ccc";
+var default_node_color = "rgba(160,160,160, 0.5)";
+var default_link_color = "rgba(160,160,160, 0.5)";
+var nominal_base_node_size = 8;
+var nominal_text_size = 15;
+var max_text_size = 24;
+var nominal_stroke = 1.0;
+var max_stroke = 4.5;
+var max_base_node_size = 36;
+var min_zoom = 0.1;
+var max_zoom = 7;
+var zoom;
+var svg, g;
+var simulation;
+var link, node;
+var drag;
+var dragging = false;
+var circle;
+var text;
+var focus_via_click = false;
+var nodes = [];
+var links = [];
+
+var tocolor = "fill";
+var towhite = "stroke";
+if (outline) {
+  tocolor = "stroke";
+  towhite = "fill";
+}
+
+/**
+ * Side panes
+ */
+
+// Show/Hide Functionality
+function toggle_pane(content, content_id, tag) {
+  var active = content.active ? false : true;
+
+  if (active) {
+    content_id.style("display", "block");
+    tag.node().textContent = "[-]";
+  } else {
+    content_id.style("display", "none");
+    tag.node().textContent = "[+]";
+  }
+
+  // TODO: This is probably not the best way to find the correct height.
+  var h = canvas_height - content.offsetTop - padding;
+  content_id.style("height", h + "px")
+
+  content.active = active;
+}
+
+d3.select("#tooltip_control").on("click", function(e) {
+  toggle_pane(tooltip_content,
+              d3.select("#tooltip_content"),
+              d3.select("#tooltip_tag"))
+
+});
+
+d3.select("#meta_control").on("click", function(e) {
+  toggle_pane(meta_content,
+              d3.select("#meta_content"),
+              d3.select("#meta_tag"))
+
+});
+
+d3.select("#help_control").on("click", function(e) {
+  toggle_pane(helptip_content,
+              d3.select("#helptip_content"),
+              d3.select("#helptip_tag"))
+});
+
+d3.select('#select-color-function').on('input', function(e){
+  color_function_index = parseInt(e.target.value);
+  update_color_functions()
+})
+d3.select('#select-node-color-function').on('input', function(e){
+  node_color_function_index = parseInt(e.target.value);
+  update_color_functions()
+})
+
+/**
+ *
+ * Set up color scale
+ *
+ *
+ */
+// var colorscale defined in base.html
+var domain = colorscale.map((x)=>x[0])
+var palette = colorscale.map((x)=>x[1])
+
+var color = d3.scaleLinear()
+  .domain(domain)
+  .range(palette);
+
+/*
+* one-time setups, like SVG and force init
+*/
+function init() {
+
+  zoom = d3.zoom()
+    .scaleExtent([min_zoom, max_zoom])
+    .on('zoom', zoomed)
+
+  // We draw the graph in SVG
+  svg = d3.select("#canvas svg")
+          .attr("width", width)
+          .attr("height", height)
+          .style("cursor","move")
+          .call(zoom)
+          .on('dblclick.zoom', null); // prevent default zoom-in on dblclick
+
+  svg.on('click.focus', function(e){
+    set_focus_via_click(null);
+  });
+
+  g = svg.append("g")
+
+  link = g.selectAll(".link")
+  node = g.selectAll(".node")
+  text = g.selectAll(".text")
+
+  simulation = d3.forceSimulation()
+    .force('charge', d3.forceManyBody().strength(-1200))
+    .force('center', d3.forceCenter(width / 2, height / 2))
+    .force('link', d3.forceLink().distance(5))
+    .force('x', d3.forceX()) // not sure what this does...
+    .force('y', d3.forceY())
+    .on('tick', ticked)
+
+  drag = d3.drag()
+    .on("start", function(e, d){
+      svg.style('cursor','grabbing');
+      if (!e.active) {
+        simulation.alphaTarget(0.3).restart()
+      }
+      d.fx = d.x
+      d.fy = d.y
+      dragging = true;
+    })
+    .on('drag', function(e, d){
+      d.fx = e.x
+      d.fy = e.y
+    })
+    .on('end', function(e, d){
+      if (!e.active) {
+        simulation.alphaTarget(0)
+      }
+      dragging = false;
+    });
+
+  resize();
+  d3.select(window).on("resize", resize);
+
+  d3.select(window).on("mouseup.focus", function(e){
+    if (focus_node == null) {
+      set_cursor('move');
+    } else {
+      set_cursor('pointer');
+    }
+  });
+}
+
+function set_histogram(selection, data){
+  selection.selectAll('.bin')
+    .data(data)
+    .join(
+      enter => enter.append('div')
+        .attr('class', 'bin')
+        .call(enter => enter.append('div')
+          .text(d => d.perc + '%'))
+      ,
+      update => update
+        .call(update => update.select('div')
+          .text(d => d.perc + '%'))
+    )
+    .style('height', (d) => (d.height || 1) + 'px')
+    .style('background', (d) => d.color);
+}
+
+
+
+var color_function_index = 0;
+var node_color_function_index = 0;
+
+function update_color_functions(){
+  // update_meta_content_histogram
+  set_histogram(d3.select('#meta_content .histogram'), summary_histogram[node_color_function_index][color_function_index])
+
+  // update node colors
+  node.style(tocolor, function(d) {
+    return color(d.color[node_color_function_index][color_function_index]);
+  })
+
+  // update focus node display, if focus_node
+  if (focus_node != null){
+    set_focus_node_histogram(focus_node)
+  }
+}
+
+function update_meta_content_histogram(){
+
+}
+
+function draw_circle_size(d) {
+  return (d3.symbol()
+    .size(function(d) {
+      if (!d.size_modifier) {
+          d.size_modifier = 1;
+      }
+      return d.size * 50 * d.size_modifier;
+    })
+    .type(d3.symbolCircle))(d)
+}
+
+function start() {
+
+  /*
+  * Force-related things
+  *
+  */
+  // shallow copy to enable restarting,
+  // because otherwise, starting the force simulation mutates the links (replaces indeces with refs)
+  nodes = graph.nodes.map(n => Object.assign({}, n));
+  links = graph.links.map(l => Object.assign({}, l));
+
+  // draw links first so that they appear behind nodes
+  link = link
+    .data(links)
+    .join("line")
+      .attr("class", "link")
+      .style("stroke-width", function(d) { return d.w * nominal_stroke; })
+      .style("stroke-width", function(d) { return d.w * nominal_stroke; });
+
+  node = node
+    .data(nodes, d => d.name)
+    .join(enter => enter.append("g")
+      .attr("class", "node")
+      .attr("id", function(d){ return "node-" + d.name })
+      // append circles...
+      .append("path")
+        .attr("d", draw_circle_size )
+        .attr("class", "circle")
+        .on("mouseover.focus", node_mouseover)
+        .on("mouseout.focus", node_mouseout)
+        .on('mousedown.focus', node_mousedown)
+        .on("dblclick.freeze", (e, d) => unfreeze_node(d) )
+        .on('click.zoom', node_click)
+        .on('center_viewport', center_on_node)
+        .call(drag));
+
+  simulation.nodes(nodes);
+  simulation.force('link').links(links);
+  simulation.alpha(1).restart()
+
+  update_color_functions()
+}
+
+init();
+start();
+
+function restart() {
+  // nodes = []
+  // links = []
+  // node.remove()
+  // link.remove()
+  focus_via_click = false;
+  start()
+}
+
+function zoomed({transform}){
+  g.attr('transform', transform)
+}
+
+function ticked() {
+  node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+      .attr("cx", function(d) { return d.x; })
+      .attr("cy", function(d) { return d.y; })
+
+  link.attr("x1", function(d) { return d.source.x; })
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; });
+}
+
+/*
+* Resizing window and redraws
+*/
+function resize() {
+  var width = document.getElementById("canvas").offsetWidth;
+  var height = document.getElementById("canvas").offsetHeight;
+
+  svg.attr("width", width)
+     .attr("height", height);
+
+  simulation.force('center', d3.forceCenter(width / 2, height / 2));
+  simulation.alpha(.3).restart();
+
+  w = width;
+  h = height;
+}
+
+function set_focus_via_click(d) {
+  focus_via_click = (d != null ? true : false);
+  set_focus_node(d);
+}
+
+function do_above_below_stats(wrapper, data) {
+  let column_order = ['feature', 'mean', 'std'];
+  wrapper.select('tbody')
+    .selectAll('tr')
+    .data(data, d => d)
+    .join(enter => {
+        let tr = enter.append('tr')
+        tr.append('td')
+        tr.append('td').style('font-size', 'smaller')
+        tr.append('td').style('font-size', 'smaller').attr('class', 'std')
+        return tr
+        })
+    .selectAll('td')
+    .text( (d, i) => d[column_order[i]] )
+  if (data.length > 0) {
+    wrapper.style('display', 'block')
+  } else {
+    wrapper.style('display', 'none')
+  }
+}
+
+function do_projection_stats(wrapper, data) {
+  let column_order = ['name', 'mean', 'min', 'max'];
+  wrapper.select('tbody').selectAll('tr')
+    .data(data, d => d)
+    .join(enter => {
+      let tr = enter.append('tr')
+      tr.append('td')
+      tr.append('td').style('font-size', 'smaller')
+      tr.append('td').style('font-size', 'smaller')
+      tr.append('td').style('font-size', 'smaller')
+      return tr;
+    })
+    .selectAll('td')
+    .text( (d, i) => d[column_order[i]] );
+  if (data.length > 0) {
+    wrapper.style('display', 'block')
+  } else {
+    wrapper.style('display', 'none')
+  }
+}
+
+let focus_node_tooltip_select = d3.select('#tooltip_content_focus_node');
+let tooltip_content_no_focus_node = d3.select('#tooltip_content_no_focus_node')
+let projection_stats_select = focus_node_tooltip_select.select('.projection_stats');
+let cluster_stats_select = focus_node_tooltip_select.select('.cluster_stats');
+let above_wrapper = cluster_stats_select.select('.above-wrapper');
+let below_wrapper = cluster_stats_select.select('.below-wrapper');
+let list_of_members = focus_node_tooltip_select.select('.membership-information .list-of-members');
+
+function set_focus_node(d){
+  if (d == null) {
+    focus_node = null;
+    set_cursor('move');
+    tooltip_content_no_focus_node.style('display', 'block');
+    focus_node_tooltip_select.style('display', 'none')
+    exit_highlight();
+  } else if (focus_node == null || d.name != focus_node.name) {
+    exit_highlight(focus_node);
+    focus_node = d;
+    set_highlight(focus_node);
+    set_cursor('pointer');
+
+    tooltip_content_no_focus_node.style('display', 'none');
+
+    focus_node_tooltip_select.select('button.center-on-node').node().dataset.nodeId = d.tooltip.node_id;
+    focus_node_tooltip_select.select('.node_id').text(d.tooltip.node_id)
+    focus_node_tooltip_select.select('.distribution_label').text(d.tooltip.dist_label)
+
+    // histogram
+    set_focus_node_histogram(d)
+
+    // projection statistics
+    let projection_stats = d.tooltip.projection_stats;
+    do_projection_stats(projection_stats_select, projection_stats)
+
+    // cluster statistics
+    let cluster_stats = d.tooltip.cluster_stats;
+    if (cluster_stats) {
+
+      do_above_below_stats(above_wrapper, cluster_stats.above);
+
+      do_above_below_stats(below_wrapper, cluster_stats.below);
+
+      cluster_stats_select.select('.cluster-size').text(cluster_stats.size)
+
+      cluster_stats_select.style('display', 'block')
+    } else {
+      cluster_stats_select.style('display', 'none')
+    }
+
+    // membership information
+    list_of_members.selectAll('span')
+      .data(d.tooltip.custom_tooltips, d => d)
+      .join('span')
+        .html(d => d)
+        .style('display', 'inline-block')
+        .style('padding', '0 3px')
+
+    focus_node_tooltip_select.style('display', 'block');
+
+    set_focus_node_histogram(d)
+  }
+  // else, it's already the focus node, so do nothing...
+}
+
+d3.select('#tooltip .center-on-node').on('click', function(e){
+  // d3.select('#node-' + focus_node.name + ' .circle').dispatch('center_viewport')
+  d3.select('#node-' + e.target.dataset.nodeId + ' .circle').dispatch('center_viewport')
+})
+
+function set_focus_node_histogram(d){
+  set_histogram(d3.select('#tooltip_content .histogram'), d.tooltip.histogram[color_function_index])
+}
+
+function set_highlight(node) {
+  let node_id = node.name;
+  d3.select('#node-' + node_id + ' .circle').classed('highlight', true);
+  d3.select('#node-' + node_id).classed('highlight', true);
+}
+
+function exit_highlight(node) {
+  let node_id = false;
+  if (node) {
+    node_id = node.name
+  }
+  if (!node_id) {
+     d3.selectAll('.node .circle').classed('highlight', false);
+     d3.selectAll('.node').classed('highlight', false);
+  } else {
+     d3.select('#node-' + node_id + ' .circle').classed('highlight', false);
+     d3.select('#node-' + node_id).classed('highlight', false);
+  }
+
+  do_projection_stats(projection_stats_select, [])
+  do_above_below_stats(above_wrapper, [])
+  do_above_below_stats(below_wrapper, [])
+}
+
+function set_cursor(state) {
+  if (!dragging) {
+    svg.style('cursor', state);
+  }
+}
+
+function node_is_fixed(d){
+  return d.hasOwnProperty('fx') || d.hasOwnProperty('fy')
+}
+
+function node_click(e, d) {
+  e.stopPropagation()
+  // to prevent the svg click.focus listener from unsetting the focus node...
+}
+
+function center_on_node(e, d) {
+  svg.transition().duration(250).call(zoom.translateTo, d.x, d.y);
+}
+
+function node_mouseover(e, d) {
+  d.was_fixed = d.hasOwnProperty('fx') || d.hasOwnProperty('fy')
+  if (!d.was_fixed){
+    d.fx = d.x;
+    d.fy = d.y;
+  }
+
+  if (e.buttons == 0){
+    set_cursor('pointer');
+    if (!focus_via_click) {
+      set_focus_node(d);
+    }
+  }
+}
+
+function node_mouseout(e, d) {
+  if (!d.was_fixed){
+      delete d.fx
+      delete d.fy
+  }
+  if (e.buttons == 0){
+    set_cursor('move');
+    if (!focus_via_click) {
+        set_focus_node(null);
+    }
+  }
+}
+
+function node_mousedown(e, d) {
+  e.stopPropagation();
+  if (focus_node.name != d.name) {
+      //switch click focus
+      set_focus_via_click(d);
+  } else if (!focus_via_click) {
+      //d already selected but not via click; set click true
+      focus_via_click = true;
+  }
+}
+
+
+
+function isNumber(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+function unfreeze_node(d){
+  delete d.fy
+  delete d.fx
+  return d
+}
+
+function freeze_node(d){
+  d.fx = d.x;
+  d.fy = d.y;
+  return d
+}
+
+// search functionality
+d3.select('#searchbar')
+  .on('submit', function(event){
+      /*
+      * Searchbar functionality
+      *
+      * Permits AND, OR, and EXACT functionality
+      *
+      */
+      event.preventDefault();
+      // always running this will clear search results on a submit with an empty query
+      node.datum(d => { d.size_modifier = 1; return d });
+      node.style('filter', null)
+
+      node.datum(d => {
+        let to_lower = tooltip => String(tooltip).toLowerCase();
+        d.tooltip.custom_tooltips_lowercase = d.tooltip.custom_tooltips.map(to_lower)
+        return d
+      });
+
+      let search_query = d3.select(this).select('input').property('value').toLowerCase();
+      if (search_query) {
+          let search_mode = d3.select(this).select('input[name="search_mode"]:checked').property('value');
+
+          let node_ratio_fn = (d, i) => {
+            matches = d.tooltip.custom_tooltips_lowercase.map(map_fn)
+            let how_many = matches.filter(x=>x).length;
+
+            // Future optional feature -- size relative to ratio _within-node_
+            let out_of = d.tooltip.cluster_stats.size;
+            let ratio = how_many / out_of;
+
+            // Node sizes will be overall number of items in the node
+            // number of matching
+            d.size_modifier = how_many;
+          }
+
+          let map_fn;
+          let node_each_fn;
+          switch (search_mode) {
+            case 'and':
+              search_query = search_query.split(' ');
+              map_fn = tooltip => {
+                return search_query.every(query_word => { return tooltip.includes( query_word ) })
+              }
+              node.each(node_ratio_fn)
+              break;
+            case 'or':
+              search_query = search_query.split(' ');
+              map_fn = tooltip => {
+                return search_query.some(query_word => { return tooltip.includes( query_word ) })
+              }
+              node.each(node_ratio_fn)
+              break;
+            case 'exact':
+              node.filter((d,i) => {
+                  matches = d.tooltip.custom_tooltips_lowercase.map(tooltip => tooltip == search_query)
+                  return matches.some(e => e);
+              })
+              .style("filter", "url(#drop-shadow-glow)");
+              break;
+            default:
+              console.error(`search mode ${search_mode} unknown`);
+              return;
+          }
+
+      }
+      node.attr("d", draw_circle_size )
+
+  })
+
+
+//https://stackoverflow.com/questions/51319147/map-default-value
+class MapWithDefault extends Map {
+  get(key) {
+    if (!this.has(key)) {
+      this.set(key, this.default())
+    };
+    return super.get(key);
+  }
+
+  constructor(defaultFunction, entries) {
+    super(entries);
+    this.default = defaultFunction;
+  }
+}
+
+d3.select('#min_intersction_selector')
+  .on('submit', function(event){
+    // replicates the logic in kmapper.nerve.GraphNerve.compute
+    event.preventDefault()
+
+    let result = new MapWithDefault(() => []);
+
+    // loop over all combinations of nodes
+    // https://stackoverflow.com/a/43241295/1396649
+    let candidates = []
+    let num_nodes = graph.nodes.length;
+    for (let i = 0; i < num_nodes - 1; i++){
+      for (let j = i + 1; j < num_nodes; j++) {
+        candidates.push([i, j]);
+      }
+    }
+
+    candidates.forEach(function(candidate) {
+      let node1_idx = candidate[0];
+      let node2_idx = candidate[1];
+      let node1 = graph.nodes[node1_idx];
+      let node2 = graph.nodes[node2_idx];
+      let intersection = node1.tooltip.custom_tooltips.filter(x => node2.tooltip.custom_tooltips.includes(x));
+      if (intersection.length >= Number(min_intersction_selector_input.property('value')) ) {
+        result.get(node1_idx).push(node2_idx)
+      }
+    })
+
+    let edges = []
+    result.forEach(function(value, key) {
+      let _edges = value.map(function(end) {
+        return [key, end]
+      })
+      edges.push(_edges);
+    })
+
+    edges = edges.flat().map(function(edge) {
+      return {
+        'source': edge[0],
+        'target': edge[1],
+        'width': 1
+      }
+    })
+
+    graph.links = edges;
+    restart()
+  })
+
+
+// Dynamically size the min_intersection_selector input
+let min_intersction_selector_input = d3.select('#min_intersction_selector input');
+
+min_intersction_selector_input
+  .on('input', function(event){
+    resizeInput.call(this)
+  })
+
+function resizeInput() {
+  this.style.width = ( this.value.length + 3 ) + "ch";
+}
+
+// Only trigger if input is present
+if (min_intersction_selector_input.size()) {
+  resizeInput.call(min_intersction_selector_input.node())
+}
+
+
+// Key press events
+let searchbar = d3.select('#searchbar input');
+
+d3.select(window).on("keydown", function (event) {
+  if (event.defaultPrevented) {
+    return; // Do nothing if the event was already processed
+  }
+
+  // if searchbar is present and has focus
+  if (searchbar.size() && searchbar.node().matches(':focus')){
+      return; // let them use the search bar.
+  }
+
+  if (!event.ctrlKey && !event.altKey && !event.metaKey) {
+    switch (event.key) {
+      case "f": // freeze all
+        node.datum(freeze_node);
+        break;
+      case "x": // unfreeze all
+        node.datum(unfreeze_node);
+        simulation.alphaTarget(.3).restart()
+        break
+      case "s":
+        // Glow
+        node.style("filter", "url(#drop-shadow-glow)");
+        break;
+      case "c":
+        // Remove glow
+        node.style("filter", null);
+        break;
+      case "p":
+        // Turn to print mode, white backgrounds
+        d3.select("body").attr('id', null).attr('id', "print")
+        break;
+      case "d":
+        // "Display" mode (dark background)
+        d3.select("body").attr('id', null).attr('id', "display")
+        break;
+      case "z":
+        // turn off gravity (??)
+        simulation
+          .force('charge', d3.forceManyBody().strength(0))
+          .alphaTarget(.3)
+          .restart()
+        break
+      case "m":
+        // spacious layout
+        simulation
+          .force('charge', d3.forceManyBody().strength(-1200))
+          .alphaTarget(.3)
+          .restart()
+        break
+      case "e":
+        // tight layout
+        simulation
+          .force('charge', d3.forceManyBody().strength(-60))
+          .alphaTarget(.3)
+          .restart()
+        break
+      default:
+        return; // Quit when this doesn't handle the key event.
+    }
+  event.preventDefault();
+  }
+  // Cancel the default action to avoid it being handled twice
+}, true);
+
+
+
+/*
+* Save and load config
+*
+*/
+
+// save config
+document.getElementById('download-config').addEventListener('click', function(e){
+  let config = {}
+  node.data().forEach(node => {
+      let config_node = {}
+
+      if ( node.hasOwnProperty('fx') && node.hasOwnProperty('fy') ) {
+        config_node['fx'] = config_node['x'] = node['fx']
+        config_node['fy'] = config_node['y'] = node['fy']
+      } else {
+        config_node['x'] = node['x']
+        config_node['y'] = node['y']
+      }
+      config[node['name']] = config_node
+    })
+
+  //JSON.stringify(config,undefined,2)
+
+  // https://stackoverflow.com/a/45594892
+  var fileName = 'kmapper-config.json';
+
+  // Create a blob of the data. Blob is native JS api
+  var fileToSave = new Blob([JSON.stringify(config)], {
+      type: 'application/json',
+      name: fileName
+  });
+
+  // function from FileSaver.js
+  saveAs(fileToSave, fileName);
+})
+
+// load config
+var config_file_loader = document.getElementById('config-file-loader');
+
+config_file_loader.addEventListener('change', function(){
+  document.getElementById('load-config').disabled = ( config_file_loader.files.length === 0 )
+})
+
+document.getElementById('load-config').addEventListener('click', function(){
+  const config_file = config_file_loader.files[0];
+  const fr = new FileReader();
+  fr.onload = function(e) {
+    var config = JSON.parse(e.target.result);
+    load_config(config);
+  }
+  fr.readAsText(config_file)
+})
+function load_config(config){
+  node = node.datum(function(d, i){
+    let load_node_config = config[d['name']]
+    d = Object.assign(d, load_node_config);
+    if ( d.hasOwnProperty('fx') && !load_node_config.hasOwnProperty('fx') ) {
+      delete d['fx']
+    }
+    if ( d.hasOwnProperty('fy') && !load_node_config.hasOwnProperty('fy') ) {
+      delete d['fy']
+    }
+    return d;
+  })
+  simulation.restart()
+}
+</script>
+</body>
+
+</html>
