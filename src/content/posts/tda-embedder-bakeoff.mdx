@@ -8,19 +8,28 @@ abstract: "I ran 14 open-weights text encoders (15 evaluation rows) EmbeddingGem
 
 # Why Massive Text Embedding Benchmarks (MTEB) Alone Won't Pick Your Embedder
 
+A text embedder is a model that turns a string of text into a fixed-length vector to use in mathematical operations. 
+Semantically similar strings map to nearby vectors.
 [MTEB](https://huggingface.co/spaces/mteb/leaderboard) is great for one thing: telling you which embedders score highest on a fixed benchmark suite of retrieval and similarity tasks.
-What it does not convey is whether *your* corpus has the same linguistic or lexicological shape as the MTEB benchmark.
+What it does not convey is whether *your* corpus has the same linguistic or lexical distribution as the MTEB benchmark.
 MTEB also does not determine whether the embedder you're picking organizes its representation space in a way that respects the text corpus subject matter.
 I wanted to pick a text embedder for an LLM (large language model) router that classifies prompts by domain and complexity.
 The MTEB leaderboards say "use the latest sentence-transformer," and the bag-of-cosines bake-offs you see in many blog posts agree.
 
 ## Adding Topological Information to Embedding Vectors
 
-When I reimagined and ran a bake-off myself, I added a second evaluation layer on top of cosine using topological data analysis (TDA).
+Each encoder maps every prompt to a point in a high-dimensional space (768 or 1024 numbers per prompt).
+The set of all those points has a *shape*.
+Mathematically this is a low-dimensional surface, or 'manifold', sitting inside that high-dimensional space.
+Topological data analysis (TDA) is a family of techniques for measuring that shape directly, instead of summarizing it through pairwise distances.
+When I reimagined and ran a bake-off myself, I added a second evaluation layer on top of cosine using TDA.
 The pipeline is [UMAP](https://umap-learn.readthedocs.io/) (Uniform Manifold Approximation and Projection) as a stable lens into the encoder's output manifold, then [KeplerMapper](https://kepler-mapper.scikit-tda.org/) turning that lens into a graph.
 Across 25 UMAP seeds, I measure how stable that graph is (i.e. does the same encoder produce the same output shape regardless of UMAP's randomness?) and how well its distances track readable surface features of the multiple-choice question (MCQ) prompts.
+The two metrics assessing topology are:
+- anchor ρ - [Spearman rank correlation](https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient) between Mapper-graph distance and a panel of surface-text features, where 0 = no relationship, 1 = perfect.
+- [Adjusted Rand Index](https://en.wikipedia.org/wiki/Rand_index) (ARI), is a partition-agreement score, where 0 = random, 1 = identical clusterings with mapper graphs. 
 
-Two observations fell out:
+Two observations fell out after adding a topological assessment of the embedders:
 
 1. The encoder that won cosine on both corpora (`minilm`) finished dead last on whether the topology of its output manifold meant anything (anchor ρ = 0.006 on MMLU, 0.059 on SciCUEval).
 2. Two BERT-base encoders with the same PubMed pretraining look indistinguishable on cosine (gap 0.011 vs 0.006 on MMLU) and land 11 ranks apart on TDA stability (ARI 0.842 vs 0.695).
@@ -52,7 +61,10 @@ The encoders:
 | `embeddinggemma-prescribed` | [`google/embeddinggemma-300m`](https://huggingface.co/google/embeddinggemma-300m) | 2025 | Same weights as above, run with the model card's prescribed prefix — only the prefix varies |
 
 
-NOTE: The dual-Gemma rows are intentional.
+> NOTE: The dual-Gemma rows are intentional.
+
+BERT-style models output one vector per token.
+In order to get one vector per prompt, average the token vectors, weighted by which positions are real tokens (the 'attention mask') vs padding.
 Pool is held constant at mean-over-attention-mask for *all* encoders so that the only variable separating the two Gemma rows is the prefix itself: `task: classification \| query: {content}`.
 Not to spoil the tea, but how much does honoring the prescribed prefix actually move the numbers?
 On the full 4000-prompt SciCUEval run the prefix bumps the cosine gap by ~50% relative (0.026 → 0.039); small enough that the apples-to-apples ranking is informative, large enough that the caveat is real.
@@ -101,6 +113,13 @@ prompts → [encode]
        │  - per-feature alignment    │
        └─────────────────────────────┘
 ```
+
+> n = number of prompts (4,000 for SciCUEval, 2,450 for MMLU). 
+> d = embedding dimension (typically 384, 512, 768, or 1024 depending on encoder). 
+> μ = mean. 
+> ρ = Spearman rank correlation. 
+> ARI/NMI are partition-agreement scores between clusterings, both ∈ [0,1]. 
+> LR acc = downstream-classifier accuracy from a logistic regression fit on raw embeddings.
 
 The methodology owes a lot to recent TDA-for-NLP (natural language processing) work — [TopoBERT (Rathore et al. 2023)](https://arxiv.org/abs/2310.16937) for the Mapper-as-diagnostic framing, the [2025 "When Annotators Disagree, Topology Explains"](https://arxiv.org/abs/2510.17548) paper for the seed-bootstrap motivation, and [Draganov & Skiena (2024)](https://aclanthology.org/2024.findings-emnlp.927/) for the linguistic-anchor-faithfulness idea.
 
@@ -172,9 +191,9 @@ A 0.008 mean shift in cosine looks like nothing on the heatmap, but it's preserv
 Logistic regression (LR) accuracy on raw embeddings (last column of the cosine table) sits in **0.95-0.99 across all 14 encoders**.
 By the coarsest metric, every encoder is roughly equivalent.
 This is the signal that makes cosine bake-offs misleading: a 768-dim embedding space has plenty of room for LR to find hairline linear separators, even when the cosine geometry has collapsed to a single tight blob.
+In a 768-dim space, you can almost always draw a flat boundary that separates one labeled subset from another, even if the points are packed into a small region. So 'logistic regression got 98%' tells you the points are labelable, not that the embedding has useful geometry.
 The downstream classifier looks fine.
-The cosine/LR models are brittle.
-
+The cosine + LR view of these models is brittle, since both metrics can look healthy while the underlying geometry can collapse.
 The topology layer lets us poke around each embedder's output-layer geometry.
 
 # Layer 2: TDA / Mapper Stability, And Why It Disagrees With Cosine
@@ -185,7 +204,8 @@ The topology layer lets us poke around each embedder's output-layer geometry.
 The mapper algorithm takes a high-dimensional point cloud, projects it through a "lens" (here: 2D UMAP), covers the lens range with overlapping cubes, and clusters within each cube using a precomputed distance matrix (here: cosine distance on the original embeddings).
 It then builds a graph where nodes are clusters and edges connect clusters that share documents.
 The output is a graph that captures local topological structure that pure dimensionality reduction would flatten.
-For example, a point cloud of data representing a donut and another representing a coffee cup would flatten into the same graph structure.
+For example, a 2D circle (one loop, no enclosed volume) and a 2D filled disk (no loop, enclosed volume) project to similar 2D scatter plots, but Mapper distinguishes them — the circle's graph has a cycle, the disk's doesn't.
+While a point cloud of data representing a donut and another representing a coffee cup would flatten into the same graph structure — both have a cycle in the constructed graph.
 
 The catch for these experiments: Mapper is sensitive to UMAP's randomness.
 A single UMAP fit gives you one possible projection out of many.
@@ -253,8 +273,9 @@ It does not. The collapse turns out to be the most dramatic single result in the
 > This is what 'Topologically stable' looks like, UMAP's randomness shifts the 2D projection but not the graph structure underneath.
 
 
-An ARI of 0.840 shows the underlying graph statistics — node count, connected components, [first Betti number](https://en.wikipedia.org/wiki/Betti_number) (independent loops), coverage — barely move across 25 different UMAP initializations.
-The topology is a property of the embedding model's output manifold layer geometry.
+An ARI of 0.840 means that across 25 different UMAP seeds, the same documents end up in the same Mapper-graph nodes 84% above chance.
+Combined with the strip plot showing graph statistics (node count, connected components, b₁, coverage) barely moving, both partition-level and statistic-level stability hold.
+The topology is a property of the embedding model's output manifold, which is the surface in high-dimensional space where its output embeddings actually live.
 
 ## Pulling It All Together
 
@@ -275,6 +296,9 @@ Encoders that score well on standard cosine bake-offs are the ones whose output 
 # Layer 3: Linguistic Anchors As Ground Truth
 
 I used the six [textstat](https://github.com/textstat/textstat) features (Flesch reading ease, syllable count, lexicon count, sentence count, average sentence length, difficult words) as continuous linguistic anchors.
+Spearman ρ is a *rank* correlation: ρ = 1 means closer-in-the-Mapper-graph pairs are also closer in textstat space and in the same rank order; ρ = 0 means no relationship; ρ = -1 means rank-reversed.
+Unlike Pearson correlation, it doesn't assume the relationship is linear. 
+"Graph distance" is the shortest-path edge count between the two pairs' Mapper nodes.
 The Spearman ρ in the table above is between *graph distance in the Mapper graph* and *Euclidean distance in standardized textstat space*, on a sample of 5,000 document pairs.
 
 ## Per-feature alignment heatmap
@@ -289,7 +313,7 @@ The Spearman ρ in the table above is between *graph distance in the Mapper grap
 Interesting findings:
 
 - **`arctic-embed-m`** has visible non-zero structure — its training on web query-document pairs preserves length/readability gradients as a noise floor that didn't get scrubbed out.
-- **`minilm`** is the palest row — its supervised contrastive training with InfoNCE loss explicitly pushes apart pairs by *semantic similarity*, treating surface features as adversarial noise. The result: clean clusters by topic, gradient-flat by surface form. ρ = 0.059 across the whole graph distance.
+- **`minilm`** is the palest heatmap row — its supervised InfoNCE contrastive training (InfoNCE pulls semantic 'positives' together, pushes the rest apart) treats surface features as adversarial noise. The result: clean clusters by topic, gradient-flat by surface form. ρ = 0.059 across the whole graph distance.
 - **`biomedbert-fulltext`** has more structure than abstract-only BiomedBERT, presumably from full-text pretraining exposing the model to more stylistic variation than abstract-only data.
 
 This final layer makes "MiniLM wins cosine" a less interesting result.
@@ -376,7 +400,7 @@ They fail in completely different ways.
 **`biomedbert-fulltext` (MLM-domain)** anchor ρ went 0.249 → **0.476**.
 A PubMed-only MLM encoder has no biomedical content signal in MMLU prompts.
 However, it appears its masked-language-model training preserved local linguistic structure as a byproduct.
-So the manifold *falls back* on those surface features, the textstat coupling jumps.
+So the manifold *falls back* on those surface features; the textstat coupling jumps.
 
 **`medcpt-query` (contrastive-domain)** anchor ρ went 0.532 → **0.000**.
 Contrastive training is *built* to scrub surface features.
@@ -386,7 +410,8 @@ The mean Mapper node count drops from 173 to **1.84**, coverage from 0.40 to **0
 The 0.962 ARI is an artifact of partitioning ~1 cluster into ~1 cluster across all 25 seeds, not a finding.
 
 **Same thesis, opposite directions, mechanistically predicted by training objective.**
-MLM domain models keep a latent surface-feature gradient as scaffolding; contrastive domain models actively destroy that gradient during training.
+MLM domain-pretrained models keep a latent surface-feature gradient as scaffolding; contrastive domain-pretrained models train *against* it.
+InfoNCE rewards invariance to anything that doesn't separate semantic pairs, and over many gradient steps that gradient gets squeezed out of the manifold.
 When the content signal vanishes, the MLMs fall back on surface features and the contrastive models fall through them.
 *Training regime is destiny*, not as a slogan but as a prediction about which encoders fail in which ways under domain shift.
 
@@ -480,10 +505,6 @@ ARI 0.766 → 0.880 (the new MMLU stability leader).
 ![scibert Mapper graph on MMLU](/images/bakeoff/mmlu-mapper-scibert.png)
 
 Visibly more color mixing within nodes — the categorical boundaries that were sharp on SciCUEval are blurred. Weighted purity dropped 0.941 → 0.737, the largest single-encoder drop in the run. SciBERT's broader-scientific training has more signal than pure PubMed for non-scientific text, but not enough to find clean subject boundaries in MMLU.
-
-{/*
-LAYOUT NOTE: All these image pairs render as one-after-the-other in default markdown. If you want side-by-side, this would need a small <Figure> or <div className="grid grid-cols-2 gap-4"> wrapper. The site is Tailwind-equipped — that grid class will work.
-*/}
 
 # Interactive Mapper Graphs
 
