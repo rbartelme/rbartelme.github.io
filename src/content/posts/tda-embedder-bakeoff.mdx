@@ -3,35 +3,35 @@ title: "Beyond Massive Text Embedding Benchmarks (MTEB): A Topology-Aware Embedd
 date: "2026-05-05"
 description: "Cosine leaderboards rank by training objective, not corpus fit. Adding a Mapper-TDA stability layer and linguistic anchors changes which embedder wins — and a fourteen-encoder roster spanning both training-regime axes (contrastive vs MLM, general vs biomedical) shows the topology ranking is structured by training-regime + pooling-convention compatibility, not benchmark performance."
 tags: ["embeddings", "topological data analysis", "TDA", "Mapper", "BERT", "biomedical NLP", "scientific NLP", "model evaluation", "MTEB"]
-abstract: "I ran 14 open-weights text encoders (15 evaluation rows, with EmbeddingGemma run twice — once apples-to-apples and once with its prescribed task prefix) through a two-layer evaluation — cosine geometry plus 25-seed UMAP bootstrap into KeplerMapper — on a biomedical corpus (SciCUEval) and a general-knowledge corpus (MMLU non-STEM). The cosine ranking rewards aggressive contrastive training; the topology layer reorders everything. The contrastive-biomedical encoder MedCPT — the previously-empty cell in the (training objective × domain) grid — wins continuous-anchor faithfulness outright. PubMed-pretrained MLMs that 'collapse' in cosine space recover clean topological structure. Architecture barely moves the needle; training regime does."
+abstract: "I ran 14 open-weights text encoders (15 evaluation rows, with EmbeddingGemma run twice — once apples-to-apples and once with its prescribed task prefix) through a two-layer evaluation — cosine geometry plus 25-seed UMAP bootstrap into KeplerMapper — on a biomedical corpus (SciCUEval) and a general-knowledge corpus (MMLU non-STEM). The cosine ranking rewards aggressive contrastive training; the topology layer reorders everything. The contrastive-biomedical encoder MedCPT — the previously-empty cell in the (training objective x domain) grid — wins continuous-anchor faithfulness outright. PubMed-pretrained MLMs that 'collapse' in cosine space recover clean topological structure. Architecture barely moves the needle; training regime does."
 ---
 
 # Why Massive Text Embedding Benchmarks (MTEB) Alone Won't Pick Your Embedder
 
 [MTEB](https://huggingface.co/spaces/mteb/leaderboard) is great for one thing: telling you which embedders score highest on a fixed benchmark suite of retrieval and similarity tasks.
-What it does not convey is whether *your* corpus has the same liguistic or lexicological shape as the MTEB benchmark.
+What it does not convey is whether *your* corpus has the same linguistic or lexicological shape as the MTEB benchmark.
 MTEB also does not determine whether the embedder you're picking organizes its representation space in a way that respects the text corpus subject matter.
 I wanted to pick a text embedder for an LLM-router that classifies prompts by domain and complexity.
 The MTEB leaderboards say "use the latest sentence-transformer," and the bag-of-cosines bake-offs you see in many blog posts agree.
 
-## Adding Topological Information to Embedding Vectors 
+## Adding Topological Information to Embedding Vectors
+
 When I reimagined and ran a bake-off myself, I added a second evaluation layer on top of cosine.
-[UMAP](https://umap-learn.readthedocs.io/) as a stable lens into the encoder's output manifold, then [KeplerMapper](https://kepler-mapper.scikit-tda.org/) turning that lens into a graph.
-Across 25 UMAP seeds, I measure how stable that graph is (i.e. does the same encoder produce the same output shape regardless of UMAP's randomness?) and how well its distances track readable surface features of the multiple choice answer (MCA) prompts.
+The pipeline is [UMAP](https://umap-learn.readthedocs.io/) as a stable lens into the encoder's output manifold, then [KeplerMapper](https://kepler-mapper.scikit-tda.org/) turning that lens into a graph.
+Across 25 UMAP seeds, I measure how stable that graph is (i.e. does the same encoder produce the same output shape regardless of UMAP's randomness?) and how well its distances track readable surface features of the MCQ prompts.
 
 Two observations fell out:
 
-1. The encoder that won cosine on both corpora (`minilm`) finished dead last in output manifold topological analysis (anchor ρ = 0.006 on MMLU, 0.059 on SciCUEval).
+1. The encoder that won cosine on both corpora (`minilm`) finished dead last on whether the topology of its output manifold meant anything (anchor ρ = 0.006 on MMLU, 0.059 on SciCUEval).
 2. Two BERT-base encoders with the same PubMed pretraining look indistinguishable on cosine (gap 0.011 vs 0.006 on MMLU) and land 11 ranks apart on TDA stability (ARI 0.842 vs 0.695).
 
-This post is the bake-off, the methodology, and a contrast run on a general-knowledge corpus that promotes one observation into a thesis.
-
+This post is the bake-off, the methodology, and a contrast run between general-knowledge and biological corpora.
 
 # Setup: 14 Encoders, 2 Corpora, 3 Evaluation Layers
 
 ## The encoder roster
 
-The encoders are as follows:
+The encoders:
 
 | key | model | training era | role |
 | --- | --- | --- | --- |
@@ -48,16 +48,16 @@ The encoders are as follows:
 | `minilm` | [`sentence-transformers/all-MiniLM-L6-v2`](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) | 2021 | Distilled BERT trained with sentence-similarity contrastive loss |
 | `e5-base-v2` | [`intfloat/e5-base-v2`](https://huggingface.co/intfloat/e5-base-v2) | 2023 | BERT-base trained with weakly-supervised contrastive on web pairs; uses prescribed `query:`/`passage:` prefixes |
 | `nomic-embed-v1.5` | [`nomic-ai/nomic-embed-text-v1.5`](https://huggingface.co/nomic-ai/nomic-embed-text-v1.5) | 2024 | 273M, Matryoshka, 8192-token context, contrastive-trained with prescribed task prefixes |
-| `embeddinggemma` *(naive)* | [`google/embeddinggemma-300m`](https://huggingface.co/google/embeddinggemma-300m) | 2025 | Gemma3-derived 300M embedder. Run **once** with raw mean-pool (apples-to-apples)... |
-| `embeddinggemma-prescribed` | [`google/embeddinggemma-300m`](https://huggingface.co/google/embeddinggemma-300m) | 2025 | ...and **once** with the model card's prescribed  prefix. Same weights, only the prefix varies |
+| `embeddinggemma` *(naive)* | [`google/embeddinggemma-300m`](https://huggingface.co/google/embeddinggemma-300m) | 2025 | Gemma3-derived 300M embedder. Run with raw mean-pool — apples-to-apples to the rest of the roster |
+| `embeddinggemma-prescribed` | [`google/embeddinggemma-300m`](https://huggingface.co/google/embeddinggemma-300m) | 2025 | Same weights as above, run with the model card's prescribed prefix — only the prefix varies |
 
 
-NOTE: The dual-Gemma row is intentional and addresses the v1 caveat directly.
-Pool is held constant at mean-over-attention-mask for *all* encoders so the only variable separating the two Gemma rows is the prefix itself: `task: classification \| query: {content}`
+NOTE: The dual-Gemma rows are intentional and address the v1 caveat directly.
+Pool is held constant at mean-over-attention-mask for *all* encoders so that the only variable separating the two Gemma rows is the prefix itself: `task: classification \| query: {content}`.
 Not to spoil the tea, but how much does honoring the prescribed prefix actually move the numbers?
-On the full 4000-prompt SciCUEval run the prefix bumpscosine gap by ~50% relative (0.026 → 0.039); small enough that the apples-to-apples ranking is informative, large enough that the caveat is real.
+On the full 4000-prompt SciCUEval run the prefix bumps the cosine gap by ~50% relative (0.026 → 0.039); small enough that the apples-to-apples ranking is informative, large enough that the caveat is real.
 
-I also deliberately chose a roster that fills out a 2×2 grid of training regimes, so the comparison isn't a strawman against 2018-era baselines or a one-axis "modern vs old" framing:
+I also deliberately chose a roster that fills out a 2x2 grid of training regimes, so the comparison isn't against 2018-era baselines or a one-axis "modern vs old" framing:
 
 |  | **General-purpose** | **Biomedical / scientific** |
 | --- | --- | --- |
@@ -65,14 +65,14 @@ I also deliberately chose a roster that fills out a 2×2 grid of training regime
 | **MLM-only** | (empty by design — bare BERT isn't an embedder) | bioformer-8L, biomedbert-{abstract,fulltext}, scibert, clinicalbert |
 
 The **contrastive-biomedical cell** (top-right) turns out to be where one of the more interesting findings lives.
-An another caveat to consider, the **MLM-only general-purpose cell** is empty by design since bare BERT isn't a competitive embedding model and would just be a strawman.
+Another caveat to consider: the **MLM-only general-purpose cell** is empty by design since bare BERT isn't a competitive embedding model and would just be a strawman.
 
 
 ## The corpora
 
-Two Multiple Choice Question (MCQ) style corpora chosen for matching question shape but very different content:
+I picked two MCQ-style corpora with matching question shape but very different content:
 
-- **[SciCUEval](https://arxiv.org/abs/2505.15094)** ([Figshare deposit](https://springernature.figshare.com/articles/dataset/29924687), CC-BY 4.0, doi:10.6084/m9.figshare.29924687): 11,343 multiple-choice questions across 10 sub-datasets covering biology, biomedicine, chemistry, materials, physics × text/tables/KGs. I stratified-sampled 400/sub-dataset = 4,000 prompts.
+- **[SciCUEval](https://arxiv.org/abs/2505.15094)** ([Figshare deposit](https://springernature.figshare.com/articles/dataset/29924687), CC-BY 4.0, doi:10.6084/m9.figshare.29924687): 11,343 multiple-choice questions across 10 sub-datasets covering biology, biomedicine, chemistry, materials, physics x text/tables/KGs. I stratified-sampled 400/sub-dataset = 4,000 prompts.
 - **[MMLU](https://arxiv.org/abs/2009.03300)** ([HF dataset](https://huggingface.co/datasets/cais/mmlu), MIT): I picked 10 non-STEM subjects in 5 broad domains (humanities, social science, law/policy, business, common knowledge) and stratified-sampled 400/subject — capped by available data, ending at 2,450 prompts. Same stratification recipe, very different content.
 
 Same prompt format (MCQ stem from each item), same per-class budget — so the comparison isolates *content domain*, not *prompt style*.
@@ -82,7 +82,7 @@ Same prompt format (MCQ stem from each item), same per-class budget — so the c
 ```
 prompts → [encode]
             ↓
-       embedding matrix (n × d)
+       embedding matrix (n x d)
             ↓
        ┌─────────────────────────────┐
        │ Layer 1: cosine geometry    │  within/between μ, centroid heatmap, LR acc
@@ -104,7 +104,7 @@ prompts → [encode]
 
 The methodology owes a lot to recent TDA-for-NLP work — [TopoBERT (Rathore et al. 2023)](https://arxiv.org/abs/2310.16937) for the Mapper-as-diagnostic framing, the [2025 "When Annotators Disagree, Topology Explains"](https://arxiv.org/abs/2510.17548) paper for the seed-bootstrap motivation, and [Draganov & Skiena (2024)](https://aclanthology.org/2024.findings-emnlp.927/) for the linguistic-anchor-faithfulness idea.
 
-NOTE: all three layers run on L2-normalized embeddings with cosine distance throughout, since mixing metrics across embedders silently invalidates comparisons.
+NOTE: All three layers run on L2-normalized embeddings with cosine distance throughout, since mixing metrics across embedders silently invalidates comparisons.
 
 
 # Layer 1: Cosine Geometry, And Why LR Accuracy Is Misleading
@@ -131,27 +131,12 @@ Sorted by within-vs-between cosine gap (bigger = more separation in the embeddin
 | 14 | `biomedbert-abstract` | 0.968 | 0.956 | 0.012 | 0.988 | 0.979 |
 | 15 | `biomedbert-fulltext` | 0.979 | 0.971 | 0.007 | 0.992 | 0.969 |
 
-The story this table tells if you stop here: 
-```text
-MiniLM is still 1.7× better than the runner-up, the four modern general-purpose contrastive encoders own the top five slots regardless of size (22M–273M), the contrastive-biomedical encoder MedCPT slots awkwardly in the middle (#8) alongside E5, and BiomedBERT is broken — ship MiniLM**.
-```
-The story that's actually correct is more interesting, and the topology layer is going to invert most of this ranking.
+The story this table tells if you stop here:
 
-{/*
-USER: optional inline expansion. Three observations the table supports —
-inline any/all if you want to set up the topology layer more explicitly:
+> MiniLM is still 1.7x better than the runner-up, five modern general-purpose contrastive encoders own the top five slots regardless of size (22M-273M), the contrastive-biomedical encoder MedCPT slots awkwardly in the middle (#8) alongside E5, and BiomedBERT is broken — *ship MiniLM*.
 
-  1. Top-5 lane is *pure modern contrastive* across all architecture sizes
-     (minilm 22M → nomic 273M). Different families, similar objectives, they
-     sort together.
-  2. E5 (#7) and MedCPT (#8) are *also* contrastive but rank with the MLMs —
-     both have prescribed encoding conventions the apples-to-apples readout
-     ignores. The Gemma story is not a Gemma quirk.
-  3. Gemma-prescribed → Gemma-naive delta (0.039 → 0.026, +50% rel) is the
-     post's strongest in-corpus evidence for the pooling caveat, but the
-     table also shows that even with prefix Gemma stays mid-pack — pool
-     convention matters but doesn't change the lane.
-*/}
+The story that's more interesting is adding the topology layer inverts most of this ranking.
+
 
 ## What the centroid heatmap shows
 
@@ -159,55 +144,55 @@ inline any/all if you want to set up the topology layer more explicitly:
 
 ![BiomedBERT-fulltext cosine centroid heatmap on SciCUEval](/images/bakeoff/scicueval-cosine-centroids-biomedbert-fulltext.png)
 
-{/*
-SUGGESTED CAPTION FOR THE PAIR:
-"Class-centroid pairwise cosine on SciCUEval. Top: MiniLM — diagonal block clearly separated from off-diagonal. Bottom: BiomedBERT-fulltext — entire matrix saturated near 1.0; centroids are mutually indistinguishable in this view."
-*/}
 
-For MiniLM, the diagonal block (within-class) is clearly redder than the off-diagonal (between-class) — there's geometric structure there to exploit.
+> "Class-centroid pairwise cosine on SciCUEval. Top: MiniLM — diagonal block clearly separated from off-diagonal.
+> Bottom: BiomedBERT-fulltext — entire matrix saturated near 1.0; centroids are mutually indistinguishable in this view."
+
+
+For MiniLM, the diagonal block (within-class) is more red than the off-diagonal (between-class), so there's an underlying geometric structure there to exploit.
 For BiomedBERT-fulltext, every cell is saturated near 1.0.
-Looking only at this matrix, you'd conclude the embedder has *no* useful information about subject class.
+Looking only at this cosine matrix, you'd conclude the embedder has *no* useful information embeddings pertaining subject class.
 
-But that's where the within/between histogram tells a different story:
+But I think that's where the within/between histograms start to shape a different story:
 
 ![MiniLM within vs between cosine histograms on SciCUEval](/images/bakeoff/scicueval-cosine-within-between-minilm.png)
 
 ![BiomedBERT-fulltext within vs between cosine histograms on SciCUEval](/images/bakeoff/scicueval-cosine-within-between-biomedbert-fulltext.png)
 
-{/*
-SUGGESTED CAPTION:
-"Within-class (orange) vs between-class (blue) cosine distributions. MiniLM's two distributions barely overlap. BiomedBERT-fulltext's distributions are nearly identical — but a 0.008 mean shift on rank-ordered local neighborhoods is still enough for downstream classifiers and for Mapper to find structure (see Layer 2)."
-*/}
+> "Within-class (orange) vs between-class (blue) cosine distributions.
+> MiniLM's two distributions barely overlap.
+> BiomedBERT-fulltext's distributions are nearly identical, but a 0.008 mean shift on rank-ordered local neighborhoods is still enough for downstream classifiers and for Mapper to find structure (see Layer 2 in the flow diagram)."
 
-The within/between distributions overlap heavily for BiomedBERT-fulltext, but they're not identical.
-A 0.008 mean shift in cosine looks like nothing on the heatmap — but it's preserved as a *rank order* of nearest neighbors, and rank order is what Mapper and HDBSCAN actually exploit.
 
-## The LR accuracy trap
+The within/between cosine distributions overlap heavily for BiomedBERT-fulltext, but they're not identical.
+A 0.008 mean shift in cosine looks like nothing on the heatmap, but it's preserved as a *rank order* of nearest neighbors, and rank order is what Mapper and HDBSCAN actually probe.
 
-Logistic regression accuracy on raw embeddings (last column of the cosine table) sits in **0.95–0.99 across all 14 encoders**.
-By that single number, every encoder is roughly equivalent.
-This is the false-comfort signal that makes cosine bake-offs misleading: a 768-dim embedding space has plenty of room for hairline linear separators to live, even when the cosine geometry has collapsed to a single tight blob.
-LR finds them.
+## The logistic (LR) accuracy trap
+
+Logistic regression (LR) accuracy on raw embeddings (last column of the cosine table) sits in **0.95-0.99 across all 14 encoders**.
+By the coarsest metric, every encoder is roughly equivalent.
+This is the signal that makes cosine bake-offs misleading: a 768-dim embedding space has plenty of room for LR to find hairline linear separators, even when the cosine geometry has collapsed to a single tight blob.
 The downstream classifier looks fine.
-The model is brittle.
+The cosine/LR models are brittle.
 
-This is the trap the topology layer is here to expose.
+The topology layer will allow poking around each embedder's output layer's geometry.
 
 # Layer 2: TDA / Mapper Stability, And Why It Disagrees With Cosine
 
 ## What Mapper does
 
-[Mapper](https://www.cs.cmu.edu/~ymeguro/papers/SinghMC07_TopoMethod.pdf) is a topological data analysis algorithm that takes a high-dimensional point cloud, projects it through a "lens" (here: 2D UMAP), covers the lens range with overlapping cubes, and clusters within each cube using a precomputed distance matrix (here: cosine distance on the original embeddings).
+[Mapper](https://www.cs.cmu.edu/~ymeguro/papers/SinghMC07_TopoMethod.pdf) is a topological data analysis algorithm.
+The mapper algorithm takes a high-dimensional point cloud, projects it through a "lens" (here: 2D UMAP), covers the lens range with overlapping cubes, and clusters within each cube using a precomputed distance matrix (here: cosine distance on the original embeddings).
 It then builds a graph where nodes are clusters and edges connect clusters that share documents.
-
 The output is a graph that captures local topological structure that pure dimensionality reduction would flatten.
+For example, a point cloud of data representing a donut and another representing a coffee cup would flatten into the same graph structure.
 
-The catch: Mapper is sensitive to UMAP's randomness.
+The catch for these experiments: Mapper is sensitive to UMAP's randomness.
 A single UMAP fit gives you one possible projection out of many.
 The fix, which I've taken straight from the [2025 "When Annotators Disagree" paper](https://arxiv.org/abs/2510.17548), is to run Mapper across many UMAP seeds (I used 25) and measure stability via:
 
 - **Statistic-level stability**: coefficient of variation across seeds on graph statistics (n_nodes, n_edges, b1, etc.).
-- **Partition-level stability**: pairwise [Adjusted Rand Index](https://en.wikipedia.org/wiki/Rand_index#Adjusted_Rand_index) and [Normalized Mutual Information](https://en.wikipedia.org/wiki/Mutual_information#Normalized_variants) on document-to-node assignments across seed pairs.
+- **Partition-level stability**: pairwise [Adjusted Rand Index](https://en.wikipedia.org/wiki/Rand_index#Adjusted_Rand_index) (ARI) and [Normalized Mutual Information](https://en.wikipedia.org/wiki/Mutual_information#Normalized_variants) (NMI) on document-to-node assignments across the seed set.
 
 ## TDA results on SciCUEval
 
@@ -231,108 +216,110 @@ Sorted by `mean_ari` (topological stability across 25 UMAP seeds):
 | `arctic-embed-m` | 0.710 | 0.943 | 0.902 | 0.492 | 0.474 | 168 | 81 |
 | `nomic-embed-v1.5` | 0.673 | 0.929 | 0.906 | 0.340 | 0.534 | 171 | 79 |
 
-**The ranking flips.** Five of the six top-ARI rows are biomedical MLM encoders or the Gemma-prescribed variant — the same encoders that occupied ranks 9–15 on cosine.
-`biomedbert-fulltext`, near-dead-last on cosine, lands at weighted-purity 0.941: its Mapper graph carves a clean categorical structure the cosine view gave no reason to expect.
+**The ranking flips.** Five of the six top-ARI rows are biomedical MLM encoders the same encoders that occupied ranks 9-15 on cosine.
+`biomedbert-fulltext`, near-dead-last on cosine, lands at weighted class purity 0.941.
+Meaning, its Mapper graph carves a clean categorical structure the cosine view failed to separate.
 `medcpt-query` is the only encoder in the roster in the top two on *both* stability and anchor faithfulness.
 
 ## The headline finding: MedCPT wins continuous-anchor faithfulness
 
-The cell that was empty in v1 — *contrastive + biomedical* — turns out to be the cell that wins the anchor-faithfulness axis.
-`medcpt-query` (NCBI's PubMed-search encoder, contrastive-trained on real user click logs) hits **anchor Spearman ρ = 0.532** on SciCUEval — the highest single number anywhere in the project, beating v1's leader `arctic-embed-m` (0.492) and almost an order of magnitude above `minilm`'s 0.059.
+The *contrastive + biomedical* cell of the 2x2 matrix turns out to be the cell that wins the anchor-faithfulness axis in the topological testing.
+`medcpt-query` (NCBI's PubMed-search encoder, contrastive-trained on real user click logs) hits **anchor Spearman ρ = 0.532** on SciCUEval.
+This beats`arctic-embed-m` (0.492) and is almost an order of magnitude above `minilm`'s 0.059.
 
-The four-cell training-regime taxonomy reads as:
+The training-regime taxonomy reads as:
 
 |                 | low anchor ρ (training scrubs surface features) | high anchor ρ (manifold tracks textstat) |
 | --- | --- | --- |
 | **General-purpose contrastive** | minilm (0.059), e5-base-v2 (0.077) | arctic-embed-m (0.492), bge-small (0.351), nomic (0.340) |
 | **Biomedical contrastive** | — | **medcpt-query (0.532)** |
-| **Biomedical MLM** | — | scibert (0.270), bioformer-8l (0.234), biomedbert (0.248–0.249), clinicalbert (0.246), specter2 (0.243) |
+| **Biomedical MLM** | — | scibert (0.270), bioformer-8l (0.234), biomedbert (0.248-0.249), clinicalbert (0.246), specter2 (0.243) |
 
-Contrastive training usually pushes pairs apart by *semantic* similarity and treats surface features as adversarial noise — that's why MiniLM's anchor ρ collapses to 0.059.
-MedCPT's contrastive signal is different: PubMed-search query/article pairs from real user logs, which already encode the surface-feature gradient (biomedical search behavior correlates with vocabulary difficulty, sentence length, syllable density).
-Train on that signal and the manifold inherits the correlation — the textstat coupling survives because it was *in the training data*, not in spite of it.
+Contrastive training usually pushes pairs apart by *semantic* similarity and treats surface features as adversarial noise.
+That may be why MiniLM's anchor ρ collapses to 0.059.
+It also explains why MedCPT's contrastive signal is different.
+PubMed-search query/article pairs from real user logs already encode the surface-feature gradient (biomedical search behavior correlates with vocabulary difficulty, sentence length, syllable density).
+Train on that signal and the output manifold inherits the correlation.
+This is why the textstat coupling survives because it was *in the training data*, not in spite of it.
 
-The MMLU contrast run answers whether MedCPT's anchor faithfulness generalizes off-domain.
+The MMLU contrast run answers whether MedCPT's anchor faithfulness generalizes to off-domain text corpora.
 It does not. The collapse turns out to be the most dramatic single result in the entire run.
-
-{/* USER: the explanation runs ~3 short paragraphs + a 4-cell table. If still
-   too long, the "MedCPT's contrastive signal..." paragraph could fold into one
-   sentence. Substance: "PubMed click logs already encode the surface gradient;
-   contrastive training inherits it." Your call on density vs breathing room.
-*/}
 
 ## How stable is "stable"?
 
 ![Bioformer-8L seed stability strip plot — graph statistics across 25 seeds](/images/bakeoff/scicueval-seed-stability-bioformer-8l.png)
 
-{/*
-CAPTION: "Bioformer-8L's Mapper graph statistics across 25 UMAP seeds. n_nodes, n_components, b1, and coverage all cluster tightly around the mean (red dashed line). This is what 'topologically stable' looks like — UMAP's randomness shifts the projection but not the graph structure underneath."
-*/}
+> Bioformer-8L's Mapper graph statistics across 25 UMAP seeds. n_nodes, n_components, b1, and coverage all cluster tightly around the mean (red dashed line).
+> This is what 'Topologically stable' looks like, UMAP's randomness shifts the 2D projection but not the graph structure underneath.
 
-This is what an ARI of 0.840 buys you concretely: the underlying graph statistics — node count, connected components, [first Betti number](https://en.wikipedia.org/wiki/Betti_number) (independent loops), coverage — barely move across 25 different UMAP initializations.
-The topology is a property of the embedding manifold, not the projection.
+
+An ARI of 0.840 shows the underlying graph statistics — node count, connected components, [first Betti number](https://en.wikipedia.org/wiki/Betti_number) (independent loops), coverage — barely move across 25 different UMAP initializations.
+The topology is a property of the embedding model's output manifold layer geometry.
 
 ## The big synthesis figure
 
 ![SciCUEval synthesis: 4-panel summary across all 15 evaluation rows](/images/bakeoff/scicueval-synthesis.png)
 
 {/*
-CAPTION: "All four diagnostic views across the 15-row roster on SciCUEval. (Upper-left) Stability vs anchor faithfulness — medcpt-query is the upper-right outlier. (Upper-right) Stability vs categorical purity — most encoders cluster top-right; the spread is on the x-axis. (Lower-left) Cosine gap (Layer 1) vs anchor Spearman ρ (Layer 3) — *anti-correlated*: encoders that spread embeddings most are the ones whose manifolds least track surface features. (Lower-right) Per-feature alignment heatmap: rows are encoders, columns are textstat features × {umap1, umap2, radial}."
+CAPTION: "All four diagnostic views across the 15-row roster on SciCUEval. (Upper-left) Stability vs anchor faithfulness — medcpt-query is the upper-right outlier. (Upper-right) Stability vs categorical purity — most encoders cluster top-right; the spread is on the x-axis. (Lower-left) Cosine gap (Layer 1) vs anchor Spearman ρ (Layer 3) — *anti-correlated*: encoders that spread embeddings most are the ones whose manifolds least track surface features. (Lower-right) Per-feature alignment heatmap: rows are encoders, columns are textstat features x {umap1, umap2, radial}."
 */}
 
 If you only looked at one figure for SciCUEval, this is it.
 
 The lower-left panel is the punchline: cosine gap and anchor ρ are *anti-correlated*.
-Encoders that score well on standard cosine bake-offs are the ones whose manifolds bear least relationship to linguistic surface features.
+Encoders that score well on standard cosine bake-offs are the ones whose output geometry bear the weakest relationship to linguistic surface features.
 
 # Layer 3: Linguistic Anchors As Ground Truth
 
 I used the six [textstat](https://github.com/textstat/textstat) features (Flesch reading ease, syllable count, lexicon count, sentence count, average sentence length, difficult words) as continuous linguistic anchors.
-The Spearman ρ in the table above is between *graph distance in the Mapper graph* and *Euclidean distance in standardized textstat space*, on a sample of 5000 document pairs.
+The Spearman ρ in the table above is between *graph distance in the Mapper graph* and *Euclidean distance in standardized textstat space*, on a sample of 5,000 document pairs.
 
 ## Per-feature alignment heatmap
 
 ![SciCUEval per-feature alignment heatmap](/images/bakeoff/scicueval-per-feature-alignment.png)
 
-{/*
-CAPTION: "Spearman ρ between each textstat feature and each UMAP axis (umap1 / umap2 / radial), per encoder. Cells are colored coolwarm: blue = anti-correlated, red = correlated. The pattern: arctic-embed-m and bge-small show the strongest gradients; minilm rows are pale, indicating no consistent surface-feature structure."
-*/}
+> Spearman ρ between each textstat feature and each UMAP axis (umap1 / umap2 / radial), per encoder.
+> Cells are colored coolwarm: blue = anti-correlated, red = correlated.
+> The pattern: arctic-embed-m and bge-small show the strongest gradients; minilm rows are pale, indicating no consistent surface-feature structure."
 
-Reading this:
+
+Interesting findings:
 
 - **`arctic-embed-m`** has visible non-zero structure — its training on web query-document pairs preserves length/readability gradients as a noise floor that didn't get scrubbed out.
 - **`minilm`** is the palest row — its supervised contrastive training with InfoNCE loss explicitly pushes apart pairs by *semantic similarity*, treating surface features as adversarial noise. The result: clean clusters by topic, gradient-flat by surface form. ρ = 0.059 across the whole graph distance.
 - **`biomedbert-fulltext`** has more structure than abstract-only BiomedBERT, presumably from full-text pretraining exposing the model to more stylistic variation than abstract-only data.
 
-This is the layer that makes "MiniLM wins cosine" a less interesting claim.
+This final layer makes "MiniLM wins cosine" a less interesting result.
 MiniLM wins cosine because that's what it was *trained* to do.
-The interesting question is whether anything else about the embedding space survives that training, and the answer is: not much.
+The interesting question is whether anything else about the embedding space survives that training.
 
 # The Contrast Run: MMLU Non-STEM
 
 The single-corpus story above is suggestive but not conclusive.
-The skeptic's response is "you're seeing this on biomedical text because the BiomedBERT and MedCPT models have a built-in advantage there."
-Fair.
-So I re-ran the entire pipeline — same 14 encoders, same Mapper config, same textstat anchors — on **MMLU non-STEM**, ten general-knowledge subjects across humanities, social science, law/policy, business, and common knowledge.
+You might be thinking, "you're seeing this on biomedical text because the BiomedBERT and MedCPT models have a built-in advantage there."
+Fair point.
+I re-ran the entire pipeline.
+The same 14 encoders, same Mapper config, same textstat anchors were used with **the MMLU non-STEM corpus**.
+This consisted of ten general-knowledge subjects across humanities, social science, law/policy, business, and common knowledge.
 
-If the cosine vs topology disagreement is a property of biomedical text specifically, it should disappear here.
-If it's a property of the methodology, it should persist with different *encoder rankings*.
+If the cosine vs. topology disagreement is a property of biomedical text specifically, it should disappear here.
+If it's a property of the embedding methodology, it should persist with different *encoder rankings*.
 
 ## What stayed the same
 
 The cosine ranking is **near-identical** to SciCUEval's:
 
-- MiniLM wins by 1.5× on cosine gap (0.120 vs 0.080 for runner-up).
+- MiniLM comes out on top by 1.5x on cosine gap (0.120 vs 0.080 for runner-up).
 - The four general-purpose modern encoders (minilm, bge-{small,base}, arctic-embed-m, nomic-embed-v1.5) take the top five slots.
 - Both BiomedBERT variants are dead last (gaps 0.011 and 0.006 — almost the same numbers as on SciCUEval).
-- LR accuracy drops to 0.77–0.87 on MMLU but the *ordering* of encoders barely changes.
+- Logistic regression accuracy drops to 0.77-0.87 on MMLU but the *ordering* of encoders barely changes.
 
-So Layer 1's ranking measures something *about the encoders*, not *about the corpus*.
-That something is "how aggressively did the training objective push pairs apart."
+So cosine level ranking measures something *about the encoders*, not necessarily *about the corpus* output vectors.
+Or, more succinctly, how aggressively did the training objective push pairs apart?
 
 ## What flipped
 
-The TDA layer rankings reorganized. Stability and anchor-faithfulness deltas across all 14 encoders (15 evaluation rows with Gemma×2):
+The TDA layer rankings reorganized. Stability and anchor-faithfulness deltas across all 14 encoders (15 evaluation rows with Gemmax2):
 
 | encoder | ARI sci → mmlu | Δ ARI | purity sci → mmlu | Δ purity | anchor ρ sci → mmlu | Δ ρ |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -354,27 +341,45 @@ The TDA layer rankings reorganized. Stability and anchor-faithfulness deltas acr
 
 *MedCPT's MMLU ARI is in italics because it's an artifact, not a finding — see the next section.*
 
-Patterns:
+### Emergent MMLU Patterns:
 
-1. **General-purpose modern encoders gained stability** on MMLU. `bge-base` overtook `bioformer-8l` at the top. Their training distribution overlaps MMLU more than SciCUEval, the manifold becomes more reproducible across UMAP seeds. The new entrants `nomic-embed-v1.5` and `e5-base-v2` follow the same pattern.
-2. **`bioformer-8l` is again the only encoder that held all three metrics across corpora.** Stability flat, purity *up* by 0.012 (now the highest weighted purity on the entire MMLU run), anchor ρ down only 0.030. Its biomedical pretraining produces a manifold so well-defined that it organizes out-of-domain prompts coherently — for the wrong reasons, but coherently.
-3. **`scibert`, `specter2`, `embeddinggemma-prescribed`, and the BiomedBERT pair lost stability + purity on MMLU.** Intermediate-domain training (SciBERT, SPECTER2) is the most brittle: enough signal to organize scientific text, not enough to find structure when the corpus shifts.
-4. **`clinicalbert` lost the second-most purity** (-0.153) — its MIMIC-clinical training is the *furthest* from MMLU's general-knowledge MCQs, and the manifold reflects that.
-5. **`embeddinggemma-prescribed` flipped relative to naive on MMLU.** On SciCUEval the prescribed prefix was a stability win (ARI 0.821 vs 0.791). On MMLU the prescribed prefix is a stability *loss* (0.704 vs 0.823). The `task: classification | query:` framing is corpus-shape-dependent; MMLU's short prompts don't fit its assumption.
+**General-purpose modern encoders gained stability** on MMLU.
+`bge-base` overtook `bioformer-8l` at the top.
+Their training distribution overlaps MMLU more than SciCUEval, so the output becomes more reproducible across UMAP seeds while doing topological analysis.
+`nomic-embed-v1.5` and `e5-base-v2` follow the same pattern.
+
+**`bioformer-8l` is again the only encoder that held all three metrics across corpora.**
+Stability flat, purity *up* by 0.012 (now the highest weighted purity on the entire MMLU run), anchor ρ down only 0.030.
+Its biomedical pretraining produces a output so well-defined that it organizes out-of-domain prompts coherently, likely for the wrong reasons, but does so coherently.
+
+**`scibert`, `specter2`, `embeddinggemma-prescribed`, and the BiomedBERT pair lost stability + purity on MMLU.**
+Intermediate-domain training (SciBERT, SPECTER2) is the most brittle.
+There's enough signal to organize scientific text, not enough to find structure when the corpus shifts.
+
+**`clinicalbert` lost the second-most purity** (-0.153).
+Its MIMIC-clinical training is the *furthest* from MMLU's general-knowledge MCQs, and the output layer reflects that.
+
+**`embeddinggemma-prescribed` flipped relative to naive on MMLU.**
+On SciCUEval the prescribed prefix was a stability win (ARI 0.821 vs 0.791).
+On MMLU the prescribed prefix is a stability *loss* (0.704 vs 0.823).
+The `task: classification | query:` framing is corpus-shape-dependent; MMLU's short prompts don't fit its assumption.
 
 ## The single most-interesting result: two opposite failure modes for domain-trained encoders
 
-The bottom two rows of the cross-corpus table tell the cleanest mechanistic story of the project.
-Both encoders are domain-pretrained on PubMed content; both are asked to embed philosophy and law-school questions.
+The bottom two rows of the cross-corpus table tell the cleanest mechanistic story from the experiments.
+Both encoders are domain-pretrained on PubMed content and both are asked to embed philosophy and law-school questions.
 They fail in completely different ways.
 
 **`biomedbert-fulltext` (MLM-domain)** anchor ρ went 0.249 → **0.476**.
-A PubMed-only MLM encoder has no biomedical content signal in MMLU prompts — but its masked-language-model training preserved local linguistic structure as a byproduct, and the manifold *falls back* on those surface features.
-The textstat coupling jumps.
+A PubMed-only MLM encoder has no biomedical content signal in MMLU prompts.
+However, it appears its masked-language-model training preserved local linguistic structure as a byproduct.
+So the manifold *falls back* on those surface features, the textstat coupling jumps.
 
 **`medcpt-query` (contrastive-domain)** anchor ρ went 0.532 → **0.000**.
-Contrastive training is *built* to scrub surface features — InfoNCE explicitly maximizes semantic-pair similarity, treating surface gradients as adversarial.
-With no content signal *and* no surface-feature fallback, MedCPT's manifold simply disintegrates: mean Mapper node count drops from 173 to **1.84**, coverage from 0.40 to **0.006**, and almost the entire 2,450-prompt MMLU corpus lands in HDBSCAN's outlier pool.
+Contrastive training is *built* to scrub surface features.
+InfoNCE explicitly maximizes semantic-pair similarity, treating surface gradients as adversarial.
+With no content signal *and* no surface-feature fallback, MedCPT's manifold simply disintegrates.
+The mean Mapper node count drops from 173 to **1.84**, coverage from 0.40 to **0.006**, and almost the entire 2,450-prompt MMLU corpus lands in HDBSCAN's outlier pool.
 The 0.962 ARI is an artifact of partitioning ~1 cluster into ~1 cluster across all 25 seeds, not a finding.
 
 **Same thesis, opposite directions, mechanistically predicted by training objective.**
@@ -386,43 +391,34 @@ When the content signal vanishes, the MLMs fall back on surface features and the
 
 ![MMLU synthesis: 4-panel summary on the contrast corpus](/images/bakeoff/mmlu-synthesis.png)
 
-{/*
-CAPTION: "Same four panels as the SciCUEval synthesis, on MMLU non-STEM. Two outlier points are worth tracing manually: (a) biomedbert-fulltext has the highest anchor ρ on this corpus (0.476) — the surface-feature fallback. (b) medcpt-query has anchor ρ ≈ 0 with mean node count 1.84 — manifold disintegration. The Pareto frontier looks completely different from SciCUEval; it's been entirely rebuilt by the corpus shift."
-*/}
+> Same four panels as the SciCUEval synthesis, on MMLU non-STEM.
+> Two outlier points are worth tracing manually: (a) biomedbert-fulltext has the highest anchor ρ on this corpus (0.476) — the surface-feature fallback. (b) medcpt-query has anchor ρ ≈ 0 with mean node count 1.84.
+> The Pareto frontier looks completely different from SciCUEval after the corpus shift.
+
 
 # Architecture vs Training: The Post
 
 The roster contains nine BERT-base-architecture encoders (`biomedbert-abstract`, `biomedbert-fulltext`, `scibert`, `clinicalbert`, `medcpt-query`, `bge-base`, `arctic-embed-m`, `e5-base-v2`, `specter2`).
-They differ in pretraining era by 5–6 years and in training objective by entire paradigms — masked language modeling on one corpus, contrastive on another, retrieval on a third, citation-graph contrastive on a fourth, click-log contrastive on a fifth.
+They differ in pretraining era by 5-6 years and in training objective by entire paradigms.
+Some use masked language modeling on one corpus, contrastive on another, retrieval on a third, citation-graph contrastive on a fourth, click-log contrastive on a fifth.
 
 On the MMLU stability ranking:
 
 - `bge-base` (BERT-base, 2024, contrastive on web pairs): **#1, ARI 0.880**
 - `scibert` (BERT-base, 2019, MLM on scientific corpus): #11, ARI 0.749
 
-**Same architecture. Five years apart in pretraining era.** Opposite ends of the ranking.
-
-The 14-encoder roster sharpens this further. The four-cell training-regime taxonomy (general/biomedical × contrastive/MLM) doesn't just predict where each encoder falls on cosine — it predicts the *axis on which it does best*:
+**Same starting architecture. Five years apart in pretraining era.** Opposite ends of the ranking.
+The 14-encoder roster sharpens this further.
+The four-cell training-regime taxonomy (general/biomedical x contrastive/MLM) doesn't just predict where each encoder falls on cosine, it predicts the *axis on which it does best*.
 
 - **Modern general-purpose contrastive encoders** dominate cosine geometry but score low on continuous-anchor faithfulness. Their training scrubbed surface features.
 - **Biomedical MLM encoders** collapse on cosine geometry but recover stable, categorically clean Mapper graphs. Their masked-language training preserved local neighborhood structure that cosine integration over the whole space can't see.
 - **The biomedical-contrastive encoder (MedCPT)** wins continuous-anchor faithfulness — a result no general-purpose model on the roster comes close to.
 - **General-purpose MLM encoders** are an empty cell by design; bare BERT isn't an embedding model.
 
-That's the post.
 The MTEB leaderboards reward training objective alignment with their fixed benchmark suite.
-A topology-aware bake-off reveals that *what you trained on, how you trained it, and how the corpus you'll use it on overlaps with that training* dominates *which transformer you started with* and *which size class you spend on*.
-You cannot pick an embedder by reading any single benchmark column.
-
-{/*
-USER: practitioner-mapping section. 2-3 sentences in your voice, not mine.
-Sketch (free to ignore): "For your own task, identify which property you
-actually care about (separation? stability? linguistic structure?) and pick
-the cell of the training-regime grid that lights up on *that* axis. Similarity
-search over a domain corpus → MedCPT-style contrastive-domain. Downstream
-classifier → MLM-domain may surprise you. The MTEB number is a proxy for
-retrieval quality on a fixed corpus, not a measure of fitness for your task."
-*/}
+A topology-aware bake-off reveals more information as to *what the encoder was trained on, how it was trained, and how well the corpus used overlaps with that training*.
+TLDR: You cannot pick an embedder by reading any single benchmark column.
 
 # Visual: Same Encoder, Two Corpora
 
@@ -435,7 +431,12 @@ Spring layout, node size proportional to membership, node color = majority subje
 
 ![medcpt-query Mapper graph on MMLU](/images/bakeoff/mmlu-mapper-medcpt-query.png)
 
-The post's headline finding in two pictures. SciCUEval: 173 nodes, structured manifold. MMLU: ~2 nodes — the rest of the corpus is in HDBSCAN's outlier pool. Same encoder, same Mapper config, same prompts-per-class budget; the only difference is the corpus the encoder is reading.
+
+> SciCUEval: 173 nodes, structured manifold.
+> MMLU: ~2 nodes — the rest of the corpus is in HDBSCAN's outlier pool.
+
+Same encoder, same Mapper config, same prompts-per-class budget.
+The only difference is the corpus the encoder is reading.
 
 ## biomedbert-fulltext (fell back on surface features)
 
@@ -443,7 +444,10 @@ The post's headline finding in two pictures. SciCUEval: 173 nodes, structured ma
 
 ![biomedbert-fulltext Mapper graph on MMLU](/images/bakeoff/mmlu-mapper-biomedbert-fulltext.png)
 
-The opposite failure mode. The MMLU graph still has structure — it just isn't *content* structure. The clusters are organized by surface features (sentence length, syllable density) rather than subject. Compare to MedCPT above: same domain bias, same out-of-domain corpus, two completely different things going wrong.
+The opposite failure mode.
+The MMLU graph still has structure and it isn't solely *content* structure.
+The clusters are organized by surface features (sentence length, syllable density) rather than subject.
+Compare to MedCPT above: same domain bias, same out-of-domain corpus, two completely different things going wrong.
 
 ## bioformer-8l (held)
 
@@ -451,7 +455,10 @@ The opposite failure mode. The MMLU graph still has structure — it just isn't 
 
 ![bioformer-8l Mapper graph on MMLU](/images/bakeoff/mmlu-mapper-bioformer-8l.png)
 
-The MMLU graph is sparser — fewer nodes overall, because the corpus is smaller — but the per-node coloring is just as clean as on SciCUEval. ARI moved 0.840 → 0.837, weighted purity *up* to the highest value seen on MMLU (0.975). The PubMed-only 8-layer encoder is the only one that organized out-of-domain prompts coherently across all three metrics.
+The MMLU graph is sparser because the corpus is smaller.
+However, the per-node coloring is just as clean as on SciCUEval.
+ARI moved 0.840 → 0.837, weighted purity *up* to the highest value seen on MMLU (0.975).
+The PubMed-only 8-layer encoder is the only one that organized out-of-domain prompts coherently across all three metrics.
 
 ## bge-base (gained)
 
@@ -459,7 +466,9 @@ The MMLU graph is sparser — fewer nodes overall, because the corpus is smaller
 
 ![bge-base Mapper graph on MMLU](/images/bakeoff/mmlu-mapper-bge-base.png)
 
-The general-purpose contrastive encoder consolidated into tighter regional clusters on MMLU than on SciCUEval — its training distribution overlaps general-knowledge text more, so the manifold becomes more reproducible. ARI 0.766 → 0.880 (the new MMLU stability leader).
+The general-purpose contrastive encoder consolidated into tighter regional clusters on MMLU than on SciCUEval.
+Its training distribution overlaps general-knowledge text more, so the manifold becomes more reproducible.
+ARI 0.766 → 0.880 (the new MMLU stability leader).
 
 ## scibert (lost the most)
 
@@ -475,10 +484,21 @@ LAYOUT NOTE: All these image pairs render as one-after-the-other in default mark
 
 # Interactive Mapper Graphs
 
-The KeplerMapper HTML files are self-contained and can be loaded directly. *Curated set* below — full per-encoder HTMLs ship in the companion repo's `tda_subset/` and `tda_mmlu/` directories.
+The KeplerMapper HTML files are self-contained and can be loaded directly.
 
-- SciCUEval / [medcpt-query](/mapper/scicueval/medcpt-query.html) ← anchor-faithfulness leader, [bioformer-8l](/mapper/scicueval/bioformer-8l.html), [bge-base](/mapper/scicueval/bge-base.html), [biomedbert-fulltext](/mapper/scicueval/biomedbert-fulltext.html), [minilm](/mapper/scicueval/minilm.html), [embeddinggemma](/mapper/scicueval/embeddinggemma.html), [embeddinggemma-prescribed](/mapper/scicueval/embeddinggemma-prescribed.html)
-- MMLU / [medcpt-query](/mapper/mmlu/medcpt-query.html), [bioformer-8l](/mapper/mmlu/bioformer-8l.html), [bge-base](/mapper/mmlu/bge-base.html), [biomedbert-fulltext](/mapper/mmlu/biomedbert-fulltext.html), [minilm](/mapper/mmlu/minilm.html)
+
+- SciCUEval / [medcpt-query](/mapper/scicueval/medcpt-query.html) ← anchor-faithfulness leader
+- [bioformer-8l](/mapper/scicueval/bioformer-8l.html)
+- [bge-base](/mapper/scicueval/bge-base.html)
+- [biomedbert-fulltext](/mapper/scicueval/biomedbert-fulltext.html)
+- [minilm](/mapper/scicueval/minilm.html)
+- [embeddinggemma](/mapper/scicueval/embeddinggemma.html)
+- [embeddinggemma-prescribed](/mapper/scicueval/embeddinggemma-prescribed.html)
+- MMLU / [medcpt-query](/mapper/mmlu/medcpt-query.html)
+- [bioformer-8l](/mapper/mmlu/bioformer-8l.html)
+- [bge-base](/mapper/mmlu/bge-base.html)
+- [biomedbert-fulltext](/mapper/mmlu/biomedbert-fulltext.html)
+- [minilm](/mapper/mmlu/minilm.html)
 
 Each renders the canonical Mapper graph at base seed 42 with hover tooltips showing the first 200 chars of each prompt in a node.
 
@@ -488,42 +508,65 @@ links above will resolve. KeplerMapper's CSS conflicts with iframe sandboxing
 so embedding as iframes doesn't work cleanly. Two future-iteration options if
 you want native embeds: (a) MDX component wrapping <iframe> with fixed
 height/width + "open in new tab" link, (b) re-render in D3 (already in
-package.json). Direct links are fine for v1.
+package.json). 
 */}
 
 # Caveats
 
 A few things worth being honest about:
 
-1. **Coverage gap on MMLU.** Mapper coverage on MMLU was 5–10× lower than on SciCUEval (0.05–0.20 vs 0.40–0.62) because the corpus is smaller and the prompts are shorter. HDBSCAN's `min_cluster_size=5` is harder to satisfy, and most documents land in HDBSCAN's outlier pool. The metrics measure the topology of the *covered region*, which is real, but the Mapper graphs reflect a smaller fraction of the data. Per-corpus tuning of Mapper params would close this gap; I held them fixed to keep the cross-corpus comparison apples-to-apples.
+**Coverage gap on MMLU.** Mapper coverage on MMLU was 5-10x lower than on SciCUEval (0.05-0.20 vs 0.40-0.62) because the corpus is smaller and the prompts are shorter.
+HDBSCAN's `min_cluster_size=5` is harder to satisfy, and most documents land in HDBSCAN's outlier pool.
+The metrics measure the topology of the *covered region*, which is real, but the Mapper graphs reflect a smaller fraction of the data.
+Per-corpus tuning of Mapper params would close this gap; I held them fixed to keep the cross-corpus comparison apples-to-apples.
+The pathological extreme: `medcpt-query` on MMLU produced **0.6% coverage and a mean Mapper node count of 1.84**.
+Almost the entire 2,450-prompt MMLU corpus landed in HDBSCAN's outlier pool.
+That isn't a measurement artifact, it's the finding "manifold disintegration on out-of-domain text".
+This does mean MedCPT's MMLU ARI of 0.962 is reading the stability of partitioning ~1 cluster across seeds, not a meaningful topological property.
+I report the number for completeness, despite the anchor ρ = 0.000.
 
-   The pathological extreme: `medcpt-query` on MMLU produced **0.6% coverage and a mean Mapper node count of 1.84** — almost the entire 2,450-prompt MMLU corpus landed in HDBSCAN's outlier pool. That isn't a measurement artifact, it's the finding ("manifold disintegration on out-of-domain text") visible *as* a measurement extremum. But it does mean MedCPT's MMLU ARI of 0.962 is reading the stability of partitioning ~1 cluster across seeds, not a meaningful topological property. I report the number for completeness; the anchor ρ = 0.000 is the load-bearing statistic for that row.
-2. **Single corpus pair.** Two corpora make a contrast, not a generalization. Replicating on a third corpus — code prompts, conversational queries, etc. — would either strengthen or complicate the thesis.
-3. **Mean-pool over attention mask is not the right pool for every encoder.** SPECTER2, E5 (`query:`/`passage:` prefixes), Nomic (`search_query:`/`search_document:` prefixes), and EmbeddingGemma (`task: classification | query: {content}`) all have prescribed conventions the apples-to-apples readout ignores. I held mean-pool constant for cross-encoder comparability. To *measure* the cost rather than just acknowledge it, EmbeddingGemma is run twice: prescribed prefix bumps SciCUEval cosine gap 0.026 → 0.039 and ARI 0.791 → 0.821 — real and measurable, but Gemma-prescribed still lands in the MLM-cluster ranking lane, not with the modern contrastives. Re-running every encoder with its preferred config is the v2 followup. The MedCPT headline doesn't depend on it: under-utilization can only *weaken* its number, not produce 0.532 from nothing.
-4. **Coverage and node count differ across encoders.** When `bge-base` builds 30 nodes on MMLU and `specter2` builds 46, the ARI numbers across encoders aren't measuring exactly the same thing. The within-encoder, across-seeds ARI is the apples-to-apples metric; cross-encoder comparison should be read in conjunction with the absolute graph statistics.
+**Single corpus pair.** Two corpora make a contrast, not a generalization.
+Replicating on a third corpus of subjects like code prompts, conversational queries, etc.
+Could either strengthen or complicate the thesis.
 
-{/*
-TODO: Decide whether to add a 5th caveat about the LR-accuracy single-split methodology (the spec recommends train/test split, no cross-validation, no calibration). The selection criterion is the topological metrics, not LR, so it doesn't change conclusions — but worth flagging if you want full methodological transparency.
-*/}
+**Mean-pool over attention mask is not the right pool for every encoder.**
+SPECTER2, E5 (`query:`/`passage:` prefixes), Nomic (`search_query:`/`search_document:` prefixes), and EmbeddingGemma (`task: classification | query: {content}`) all have prescribed conventions the apples-to-apples readout ignores.
+I held mean-pool constant for cross-encoder comparability.
+To *measure* the cost rather than just acknowledge it, EmbeddingGemma is run twice: prescribed prefix bumps SciCUEval cosine gap 0.026 → 0.039 and ARI 0.791 → 0.821.
+A real effect, but Gemma-prescribed still lands in the MLM-cluster ranking, not with the modern contrastives.
+Re-running every encoder with its preferred config could be a future hypothesis worth exploring.
+
+**Coverage and node count differ across encoders.** When `bge-base` builds 30 nodes on MMLU and `specter2` builds 46, the ARI numbers across encoders aren't measuring exactly the same thing. The within-encoder, across-seeds ARI is the apples-to-apples metric; cross-encoder comparison should be read in conjunction with the absolute graph statistics.
+
+**Logistic Regression (LR)-accuracy single-split methodology,** 
+Likely needs train/test split, with no cross-validation or calibration.
+The selection criterion for the encoder is based on the topological metrics, not LR, so it doesn't change conclusions.
 
 # Reproducing
 
-Companion code: **[github.com/rbartelme/tda-embedder-bakeoff](https://github.com/rbartelme/tda-embedder-bakeoff)** — the full pipeline, plus the SciCUEval/MMLU adapters and `run_full_bakeoff.sh` for one-shot reproduction.
+Companion code: **[github.com/rbartelme/tda-embedder-bakeoff](https://github.com/rbartelme/tda-embedder-bakeoff)**
+The full analysis, plus the SciCUEval/MMLU adapters and `run_full_bakeoff.sh` for one-shot reproduction.
 
-The pipeline is three Python scripts plus two corpus adapters:
+The analysis is three Python scripts plus two corpus adapters:
 
 - `scicueval_to_jsonl.py` / `mmlu_to_jsonl.py` — flatten each MCQ corpus into a uniform JSONL with `question` and `source_subset` fields.
 - `embedding_diagnostic.py` — Layer 1 (cosine geometry). Encodes prompts with each encoder in the roster, computes within/between cosine distributions, centroid heatmaps, and an LR baseline. Caches `embeddings.npy` per encoder for downstream use.
 - `embedding_tda.py` — Layers 2 + 3 (Mapper + linguistic anchors). Reads the cached embeddings, runs a 25-seed UMAP-lens bootstrap into KeplerMapper with HDBSCAN on precomputed cosine, computes ARI/NMI partition stability, categorical purity, continuous-anchor Spearman ρ, per-feature alignment, and writes a 4-panel synthesis figure. Parallelized across seeds via `concurrent.futures.ProcessPoolExecutor` (UMAP single-threads itself when `random_state` is set, so the speedup comes from fanning seeds out across worker processes).
 
-Full bake-off (encode + 25-seed × 14-encoder Mapper bootstrap × 2 corpora) runs in **~100 minutes end-to-end** on a single laptop:
+Full bake-off (encode + 25-seed x 14-encoder Mapper bootstrap x 2 corpora) runs in **~100 minutes end-to-end** on a single laptop:
 
-- NVIDIA RTX 4070 Laptop, **8 GB VRAM** — encoding stays inside this envelope across every encoder including the 300M Gemma variants and 273M Nomic, batched at `--batch-size 32` with `--max-length 256`
-- 16 logical CPU cores (8 used for the Mapper bootstrap pool — UMAP single-threads itself when `random_state` is set, so parallelism comes from fanning seeds out across worker processes)
+- NVIDIA RTX 4070 Laptop, **8 GB VRAM**  (300M Gemma variants and 273M Nomic, batched at `--batch-size 32` with `--max-length 256`)
+- 16 logical CPU cores (8 used for the Mapper bootstrap pool. UMAP single-threads itself when `random_state` is set, so parallelism comes from fanning seeds out across worker processes)
 - 32 GB RAM (peak well below 16 GB; the embeddings + Mapper graphs are small)
 - WSL2 / Linux 5.15 on Windows 11
 
-Stage timings on this hardware: Layer 1 (cosine, both corpora) ≈ 15 min, Layer 2+3 SciCUEval Mapper bootstrap ≈ 44 min, Layer 1 MMLU ≈ 13 min, Layer 2+3 MMLU Mapper bootstrap ≈ 26 min. CPU-only inference is supported (set `--device cpu`) and adds roughly 4–6× to wall clock.
+Stage timings on this hardware: 
+- Layer 1 (cosine, both corpora) ≈ 15 min
+- Layer 2+3 SciCUEval Mapper bootstrap ≈ 44 min
+- Layer 1 MMLU ≈ 13 min
+- Layer 2+3 MMLU Mapper bootstrap ≈ 26 min.
+
+CPU-only inference is supported (set `--device cpu`) and adds roughly 4-6x to wall clock.
 
 ```bash
 uv run python scripts/embedding_diagnostic.py \
@@ -543,7 +586,7 @@ uv run python scripts/embedding_tda.py \
     --n-workers 8
 ```
 
-Or run the whole pipeline (downloads + cosine + TDA × both corpora) in one shot via `bash run_full_bakeoff.sh` after `export HF_TOKEN=...`.
+Or run the whole analysis (downloads + cosine + TDA x both corpora) in one shot via `bash run_full_bakeoff.sh` after `export HF_TOKEN=...` is set in your CLI environment.
 
 # References And Further Reading
 
@@ -559,4 +602,4 @@ Or run the whole pipeline (downloads + cosine + TDA × both corpora) in one shot
 Find me on [Bluesky](https://bsky.app/profile/microbialbart.bsky.social) or [LinkedIn](https://www.linkedin.com/in/ryan-bartelme/).*
 
 *Note: This post was written by me based on my own experiments and analysis.
-In all transparency, I used [Claude](https://claude.ai/) (Anthropic's AI assistant) as a pair-programming partner to co-write the evaluation pipeline (the cosine diagnostic, the Mapper bake-off harness, and the corpus adapters), and to help structure this post — but the experiments, the interpretations, and the thesis are mine.*
+In all transparency, I used [Claude](https://claude.ai/) (Anthropic's AI assistant) as a pair-programming partner to co-write the evaluation analyses (the cosine diagnostic, the Mapper bake-off harness, and the corpus adapters), and to help scaffold this post from the experimental results. The experiments, the interpretations, prose, and the thesis are mine.*
