@@ -1,9 +1,9 @@
 ---
 title: "Beyond Massive Text Embedding Benchmarks (MTEB): A Topology-Aware Embedder Bake-Off Across Two Corpora"
-date: "2026-05-05"
-description: "Cosine leaderboards rank by training objective, not corpus fit. Adding a Mapper-TDA stability layer and linguistic anchors changes which embedder wins — and a fourteen-encoder roster spanning both training-regime axes (contrastive vs MLM, general vs biomedical) shows the topology ranking is structured by training-regime + pooling-convention compatibility, not benchmark performance."
-tags: ["embeddings", "topological data analysis", "TDA", "Mapper", "BERT", "biomedical NLP", "scientific NLP", "model evaluation", "MTEB"]
-abstract: "I ran 14 open-weights text encoders (15 evaluation rows, with EmbeddingGemma run twice — once apples-to-apples and once with its prescribed task prefix) through a two-layer evaluation — cosine geometry plus 25-seed UMAP bootstrap into KeplerMapper — on a biomedical corpus (SciCUEval) and a general-knowledge corpus (MMLU non-STEM). The cosine ranking rewards aggressive contrastive training; the topology layer reorders everything. The contrastive-biomedical encoder MedCPT — the previously-empty cell in the (training objective x domain) grid — wins continuous-anchor faithfulness outright. PubMed-pretrained MLMs (masked language models) that 'collapse' in cosine space recover clean topological structure. Architecture barely moves the needle; training regime does."
+date: "2026-05-08"
+description: "Cosine leaderboards rank by training objective, not corpus fit. Adding a Mapper-TDA stability layer and linguistic anchors changes which embedder wins. A fourteen-encoder roster spanning both training-regime axes (contrastive vs MLM, general vs biomedical). Results indicate the topology ranking is structured by training-regime + pooling-convention compatibility, not cosine benchmark performance."
+tags: ["embeddings", "topological data analysis", "natural language processing", "TDA", "Mapper", "BERT", "biomedical NLP", "scientific NLP", "model evaluation", "MTEB"]
+abstract: "I ran 14 open-weights text encoders (15 evaluation rows) EmbeddingGemma was run twice — once with the same config as the other models and once with its prescribed task prefix). Here I use a multi-layer evaluation criteria. Specifically, cosine geometry plus 25-seed UMAP bootstrap into KeplerMapper applied to a biomedical corpus (SciCUEval) and a general-knowledge corpus (MMLU non-STEM). The cosine ranking rewards aggressive contrastive training. The topological data analysis layer reorders everything. The contrastive-biomedical encoder MedCPT wins continuous-anchor faithfulness outright. PubMed-pretrained MLMs (masked language models) that 'collapse' in cosine space recover clean topological structure. Concluding that architecture barely moves the needle; training regime does."
 ---
 
 # Why Massive Text Embedding Benchmarks (MTEB) Alone Won't Pick Your Embedder
@@ -52,7 +52,7 @@ The encoders:
 | `embeddinggemma-prescribed` | [`google/embeddinggemma-300m`](https://huggingface.co/google/embeddinggemma-300m) | 2025 | Same weights as above, run with the model card's prescribed prefix — only the prefix varies |
 
 
-NOTE: The dual-Gemma rows are intentional and address the v1 caveat directly.
+NOTE: The dual-Gemma rows are intentional.
 Pool is held constant at mean-over-attention-mask for *all* encoders so that the only variable separating the two Gemma rows is the prefix itself: `task: classification \| query: {content}`.
 Not to spoil the tea, but how much does honoring the prescribed prefix actually move the numbers?
 On the full 4000-prompt SciCUEval run the prefix bumps the cosine gap by ~50% relative (0.026 → 0.039); small enough that the apples-to-apples ranking is informative, large enough that the caveat is real.
@@ -256,13 +256,16 @@ It does not. The collapse turns out to be the most dramatic single result in the
 An ARI of 0.840 shows the underlying graph statistics — node count, connected components, [first Betti number](https://en.wikipedia.org/wiki/Betti_number) (independent loops), coverage — barely move across 25 different UMAP initializations.
 The topology is a property of the embedding model's output manifold layer geometry.
 
-## The big synthesis figure
+## Pulling It All Together
 
 ![SciCUEval synthesis: 4-panel summary across all 15 evaluation rows](/images/bakeoff/scicueval-synthesis.png)
 
-{/*
-CAPTION: "All four diagnostic views across the 15-row roster on SciCUEval. (Upper-left) Stability vs anchor faithfulness — medcpt-query is the upper-right outlier. (Upper-right) Stability vs categorical purity — most encoders cluster top-right; the spread is on the x-axis. (Lower-left) Cosine gap (Layer 1) vs anchor Spearman ρ (Layer 3) — *anti-correlated*: encoders that spread embeddings most are the ones whose manifolds least track surface features. (Lower-right) Per-feature alignment heatmap: rows are encoders, columns are textstat features x {umap1, umap2, radial}."
-*/}
+> All four diagnostic views across the 15-row roster on SciCUEval.
+> (Upper-left) Stability vs anchor faithfulness where `medcpt-query` is the upper-right outlier.
+> (Upper-right) Stability vs categorical purity -> most encoders cluster top-right
+> the spread is on the x-axis. (Lower-left) Cosine gap (Layer 1) vs anchor Spearman ρ (Layer 3) -> *anti-correlated*: encoders that spread embeddings most are the ones whose manifolds least track surface features.
+> (Lower-right) Per-feature alignment heatmap: rows are encoders, columns are textstat features x (umap1, umap2, radial)."
+
 
 If you only looked at one figure for SciCUEval, this is it.
 
