@@ -3,6 +3,7 @@ import ScatterPlot from './ScatterPlot'
 import Citation, { Cite } from './Citation'
 import CodeBlock from './CodeBlock'
 import Alert from './Alert'
+import MapperViewer from './MapperViewer'
 
 export const mdxComponents = {
   SequenceViewer,
@@ -11,5 +12,6 @@ export const mdxComponents = {
   Cite,
   CodeBlock,
   Alert,
+  MapperViewer,
   // You can add more custom components here
 }
