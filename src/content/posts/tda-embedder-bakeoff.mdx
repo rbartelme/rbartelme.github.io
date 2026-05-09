@@ -3,7 +3,7 @@ title: "Beyond Massive Text Embedding Benchmarks (MTEB): A Topology-Aware Embedd
 date: "2026-05-08"
 description: "Cosine leaderboards rank by training objective, not corpus fit. Adding a Mapper-TDA stability layer and linguistic anchors changes which embedder wins. A fourteen-encoder roster spanning both training-regime axes (contrastive vs MLM, general vs biomedical). Results indicate the topology ranking is structured by training-regime + pooling-convention compatibility, not cosine benchmark performance."
 tags: ["embeddings", "topological data analysis", "natural language processing", "TDA", "Mapper", "BERT", "biomedical NLP", "scientific NLP", "model evaluation", "MTEB"]
-abstract: "I ran 14 open-weights text encoders (15 evaluation rows) EmbeddingGemma was run twice — once with the same config as the other models and once with its prescribed task prefix). Here I use a multi-layer evaluation criteria. Specifically, cosine geometry plus 25-seed UMAP bootstrap into KeplerMapper applied to a biomedical corpus (SciCUEval) and a general-knowledge corpus (MMLU non-STEM). The cosine ranking rewards aggressive contrastive training. The topological data analysis layer reorders everything. The contrastive-biomedical encoder MedCPT wins continuous-anchor faithfulness outright. PubMed-pretrained MLMs (masked language models) that 'collapse' in cosine space recover clean topological structure. Concluding that architecture barely moves the needle; training regime does."
+abstract: "I ran 14 open-weights text encoders (15 evaluation rows; EmbeddingGemma was run twice, once with the same config as the other models and once with its prescribed task prefix). Here I use a multi-layer evaluation. Specifically, cosine geometry plus a 25-seed UMAP bootstrap into KeplerMapper, applied to a biomedical corpus (SciCUEval) and a general-knowledge corpus (MMLU non-STEM). The cosine ranking rewards aggressive contrastive training. The topology layer reorders everything. The contrastive-biomedical encoder MedCPT wins continuous-anchor faithfulness outright. PubMed-pretrained MLMs (masked language models) that 'collapse' in cosine space recover clean topological structure. Architecture barely moves the needle; training regime does."
 ---
 
 # Why Massive Text Embedding Benchmarks (MTEB) Alone Won't Pick Your Embedder
@@ -11,7 +11,8 @@ abstract: "I ran 14 open-weights text encoders (15 evaluation rows) EmbeddingGem
 A text embedder is a model that turns a string of text into a fixed-length vector to use in mathematical operations. 
 Semantically similar strings map to nearby vectors.
 [MTEB](https://huggingface.co/spaces/mteb/leaderboard) is great for one thing: telling you which embedders score highest on a fixed benchmark suite of retrieval and similarity tasks.
-What it does not convey is whether *your* corpus has the same linguistic or lexical distribution as the MTEB benchmark.
+
+What it does not convey is whether *your* corpus has the same lexical distribution as the MTEB benchmark.
 MTEB also does not determine whether the embedder you're picking organizes its representation space in a way that respects the text corpus subject matter.
 I wanted to pick a text embedder for an LLM (large language model) router that classifies prompts by domain and complexity.
 The MTEB leaderboards say "use the latest sentence-transformer," and the bag-of-cosines bake-offs you see in many blog posts agree.
@@ -20,14 +21,17 @@ The MTEB leaderboards say "use the latest sentence-transformer," and the bag-of-
 
 Each encoder maps every prompt to a point in a high-dimensional space (768 or 1024 numbers per prompt).
 The set of all those points has a *shape*.
-Mathematically this is a low-dimensional surface, or 'manifold', sitting inside that high-dimensional space.
+
+Mathematically this is a low-dimensional surface, or *manifold*, sitting inside that high-dimensional space.
 Topological data analysis (TDA) is a family of techniques for measuring that shape directly, instead of summarizing it through pairwise distances.
 When I reimagined and ran a bake-off myself, I added a second evaluation layer on top of cosine using TDA.
 The pipeline is [UMAP](https://umap-learn.readthedocs.io/) (Uniform Manifold Approximation and Projection) as a stable lens into the encoder's output manifold, then [KeplerMapper](https://kepler-mapper.scikit-tda.org/) turning that lens into a graph.
 Across 25 UMAP seeds, I measure how stable that graph is (i.e. does the same encoder produce the same output shape regardless of UMAP's randomness?) and how well its distances track readable surface features of the multiple-choice question (MCQ) prompts.
+
 The two metrics assessing topology are:
+
 - anchor ρ - [Spearman rank correlation](https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient) between Mapper-graph distance and a panel of surface-text features, where 0 = no relationship, 1 = perfect.
-- [Adjusted Rand Index](https://en.wikipedia.org/wiki/Rand_index) (ARI), is a partition-agreement score, where 0 = random, 1 = identical clusterings with mapper graphs. 
+- [Adjusted Rand Index](https://en.wikipedia.org/wiki/Rand_index) (ARI) is a partition-agreement score, where 0 = random agreement, 1 = identical document-to-node assignments across two Mapper graphs. 
 
 Two observations fell out after adding a topological assessment of the embedders:
 
@@ -190,11 +194,12 @@ A 0.008 mean shift in cosine looks like nothing on the heatmap, but it's preserv
 
 Logistic regression (LR) accuracy on raw embeddings (last column of the cosine table) sits in **0.95-0.99 across all 14 encoders**.
 By the coarsest metric, every encoder is roughly equivalent.
-This is the signal that makes cosine bake-offs misleading: a 768-dim embedding space has plenty of room for LR to find hairline linear separators, even when the cosine geometry has collapsed to a single tight blob.
-In a 768-dim space, you can almost always draw a flat boundary that separates one labeled subset from another, even if the points are packed into a small region. So 'logistic regression got 98%' tells you the points are labelable, not that the embedding has useful geometry.
+This is the signal that makes cosine bake-offs misleading.
+In a 768-dim space, you can almost always draw a flat boundary that separates one labeled subset from another, even if the points are packed into a tight blob.
+So 'logistic regression got 98%' tells you the points are labelable, not that the embedding has useful geometry.
 The downstream classifier looks fine.
-The cosine + LR view of these models is brittle, since both metrics can look healthy while the underlying geometry can collapse.
-The topology layer lets us poke around each embedder's output-layer geometry.
+The cosine + LR view of these models is brittle: both metrics can look healthy even when the underlying geometry has collapsed.
+The topology layer of analysis lets us poke around each embedder's output-layer geometry.
 
 # Layer 2: TDA / Mapper Stability, And Why It Disagrees With Cosine
 
@@ -205,7 +210,8 @@ The mapper algorithm takes a high-dimensional point cloud, projects it through a
 It then builds a graph where nodes are clusters and edges connect clusters that share documents.
 The output is a graph that captures local topological structure that pure dimensionality reduction would flatten.
 For example, a 2D circle (one loop, no enclosed volume) and a 2D filled disk (no loop, enclosed volume) project to similar 2D scatter plots, but Mapper distinguishes them — the circle's graph has a cycle, the disk's doesn't.
-While a point cloud of data representing a donut and another representing a coffee cup would flatten into the same graph structure — both have a cycle in the constructed graph.
+Conversely, a donut and a coffee cup are topologically equivalent (both have one hole / genus 1).
+Both would yield the same Mapper graph, both with a cycle, which is the correct outcome.
 
 The catch for these experiments: Mapper is sensitive to UMAP's randomness.
 A single UMAP fit gives you one possible projection out of many.
@@ -270,7 +276,7 @@ It does not. The collapse turns out to be the most dramatic single result in the
 ![Bioformer-8L seed stability strip plot — graph statistics across 25 seeds](/images/bakeoff/scicueval-seed-stability-bioformer-8l.png)
 
 > Bioformer-8L's Mapper graph statistics across 25 UMAP seeds. n_nodes, n_components, b1, and coverage all cluster tightly around the mean (red dashed line).
-> This is what 'Topologically stable' looks like, UMAP's randomness shifts the 2D projection but not the graph structure underneath.
+> This is what 'topologically stable' looks like; UMAP's randomness shifts the 2D projection but not the graph structure underneath.
 
 
 An ARI of 0.840 means that across 25 different UMAP seeds, the same documents end up in the same Mapper-graph nodes 84% above chance.
@@ -282,9 +288,9 @@ The topology is a property of the embedding model's output manifold, which is th
 ![SciCUEval synthesis: 4-panel summary across all 15 evaluation rows](/images/bakeoff/scicueval-synthesis.png)
 
 > All four diagnostic views across the 15-row roster on SciCUEval.
-> (Upper-left) Stability vs anchor faithfulness where `medcpt-query` is the upper-right outlier.
-> (Upper-right) Stability vs categorical purity -> most encoders cluster top-right
-> the spread is on the x-axis. (Lower-left) Cosine gap (Layer 1) vs anchor Spearman ρ (Layer 3) -> *anti-correlated*: encoders that spread embeddings most are the ones whose manifolds least track surface features.
+> (Upper-left) Stability vs anchor faithfulness — `medcpt-query` is the upper-right outlier.
+> (Upper-right) Stability vs categorical purity → most encoders cluster top-right; the spread is on the x-axis.
+> (Lower-left) Cosine gap (Layer 1) vs anchor Spearman ρ (Layer 3) → *anti-correlated*: encoders that spread embeddings most are the ones whose manifolds least track surface features.
 > (Lower-right) Per-feature alignment heatmap: rows are encoders, columns are textstat features x (umap1, umap2, radial)."
 
 
@@ -377,7 +383,8 @@ Their training distribution overlaps MMLU more than SciCUEval, so the output bec
 
 **`bioformer-8l` is again the only encoder that held steady on all three metrics across corpora.**
 Stability flat, purity *up* by 0.012 (now the highest weighted purity on the entire MMLU run), anchor ρ down only 0.030.
-Its biomedical pretraining produces an output so well-defined that it organizes out-of-domain prompts coherently, likely for the wrong reasons, but does so coherently.
+Its biomedical pretraining produces an output so well-defined that it organizes out-of-domain prompts coherently, likely for the wrong reasons.
+One possible explanation is, despite its over-specialization, the the smaller 8L PubMed-only encoder falls back on broad lexical/length cues for non-medical text.
 
 **`scibert`, `specter2`, `embeddinggemma-prescribed`, and the BiomedBERT pair lost stability + purity on MMLU.**
 Intermediate-domain training (SciBERT, SPECTER2) is the most brittle.
@@ -540,7 +547,7 @@ Re-running every encoder with its preferred config could be a future hypothesis 
 
 **Coverage and node count differ across encoders.** When `bge-base` builds 30 nodes on MMLU and `specter2` builds 46, the ARI numbers across encoders aren't measuring exactly the same thing. The within-encoder, across-seeds ARI is the apples-to-apples metric; cross-encoder comparison should be read in conjunction with the absolute graph statistics.
 
-**Logistic regression accuracy uses a single-split methodology** with no cross-validation or calibration; a proper train/test split would be more appropriate.
+**Logistic regression accuracy uses a single 80/20 train/test split** with no cross-validation or calibration; k-fold CV would be more conservative.
 The selection criterion for the encoder is based on the topological metrics, not LR, so this doesn't change the conclusions.
 
 # Reproducing
