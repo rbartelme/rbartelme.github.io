@@ -24,7 +24,8 @@ The set of all those points has a *shape*.
 
 Mathematically this is a low-dimensional surface, or *manifold*, sitting inside that high-dimensional space.
 Picture a sheet of paper crumpled inside a room. The paper is a 2D surface even though it occupies space in a 3D room.
-An embedder's output points trace something analogous: a lower-dimensional surface (the paper *manifold* or input or prompt) sitting inside the much higher-dimensional embedding space (the 3D room or the output or the vector embedding of the prompt).
+An embedder's output points trace something analogous.
+In this case, each prompt is a single point in the high-dimensional embedding space (the room), and the cloud of all those points lies on a lower-dimensional surface (the manifold — the paper).
 Topological data analysis (TDA) is a family of techniques for measuring that shape directly, instead of summarizing it through pairwise distances.
 When I reimagined and ran a bake-off myself, I added a second evaluation layer on top of cosine using TDA.
 The pipeline is [UMAP](https://umap-learn.readthedocs.io/) (Uniform Manifold Approximation and Projection) as a stable lens into the encoder's output manifold, then [KeplerMapper](https://kepler-mapper.scikit-tda.org/) turning that lens into a graph.
@@ -137,10 +138,13 @@ NOTE: All three layers run on L2-normalized embeddings with cosine distance thro
 
 
 
-> **TLDR for the impatient:** 
-> Cosine bake-offs measure how aggressively the embedder was trained to spread pairs apart, not whether its output geometry has anything to do with your corpus.
-> Adding a topological analysis layer reorders the ranking and reveals two distinct domain-shift failure modes.
-> MLM-pretrained encoders fall back on linguistic surface features when content signal vanishes, while contrastive-pretrained encoders fall through them entirely.
+<Alert title="TLDR for the impatient" type="info">
+
+Cosine bake-offs measure how aggressively the embedder was trained to spread pairs apart, not whether its output geometry has anything to do with your corpus.
+Adding a topological analysis layer reorders the ranking and reveals two distinct domain-shift failure modes.
+MLM-pretrained encoders fall back on linguistic surface features when content signal vanishes, while contrastive-pretrained encoders fall through them entirely.
+
+</Alert>
 
 # Layer 1: Cosine Geometry, And Why LR Accuracy Is Misleading
 
