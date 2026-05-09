@@ -3,6 +3,8 @@ import { getPostBySlug, getAllPosts, formatDate } from '@/lib/content'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { notFound } from 'next/navigation'
 import { mdxComponents } from '@/components/mdx/MDXComponents'
+import remarkGfm from 'remark-gfm'
+import rehypeHighlight from 'rehype-highlight'
 
 interface BlogPostProps {
   params: Promise<{ slug: string }>
@@ -80,7 +82,17 @@ export default async function BlogPost({ params }: BlogPostProps) {
         
         {/* IMPORTANT: This is where D3 plots will be rendered - added responsive wrapper */}
         <div className="prose prose-sm sm:prose-base md:prose-lg dark:prose-invert max-w-none overflow-x-auto">
-          <MDXRemote source={post.content} components={mdxComponents} options={{ blockJS: false }} />
+          <MDXRemote
+            source={post.content}
+            components={mdxComponents}
+            options={{
+              blockJS: false,
+              mdxOptions: {
+                remarkPlugins: [remarkGfm],
+                rehypePlugins: [rehypeHighlight],
+              },
+            }}
+          />
         </div>
         
         <footer className="mt-8 md:mt-12 pt-6 md:pt-8 border-t">
