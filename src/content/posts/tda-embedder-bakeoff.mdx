@@ -23,6 +23,8 @@ Each encoder maps every prompt to a point in a high-dimensional space (768 or 10
 The set of all those points has a *shape*.
 
 Mathematically this is a low-dimensional surface, or *manifold*, sitting inside that high-dimensional space.
+Picture a sheet of paper crumpled inside a room. The paper is a 2D surface even though it occupies space in a 3D room.
+An embedder's output points trace something analogous: a lower-dimensional surface (the paper *manifold* or input or prompt) sitting inside the much higher-dimensional embedding space (the 3D room or the output or the vector embedding of the prompt).
 Topological data analysis (TDA) is a family of techniques for measuring that shape directly, instead of summarizing it through pairwise distances.
 When I reimagined and ran a bake-off myself, I added a second evaluation layer on top of cosine using TDA.
 The pipeline is [UMAP](https://umap-learn.readthedocs.io/) (Uniform Manifold Approximation and Projection) as a stable lens into the encoder's output manifold, then [KeplerMapper](https://kepler-mapper.scikit-tda.org/) turning that lens into a graph.
@@ -31,6 +33,7 @@ Across 25 UMAP seeds, I measure how stable that graph is (i.e. does the same enc
 The two metrics assessing topology are:
 
 - anchor ρ - [Spearman rank correlation](https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient) between Mapper-graph distance and a panel of surface-text features, where 0 = no relationship, 1 = perfect.
+     - Read anchor ρ operationally: *if two prompts sit near each other in the Mapper graph, are they also similar in surface features like length, reading ease, and vocabulary difficulty?* High ρ means the manifold organizes documents along measurable linguistic gradients, while low ρ means it doesn't.
 - [Adjusted Rand Index](https://en.wikipedia.org/wiki/Rand_index) (ARI) is a partition-agreement score, where 0 = random agreement, 1 = identical document-to-node assignments across two Mapper graphs. 
 
 Two observations fell out after adding a topological assessment of the embedders:
@@ -73,7 +76,10 @@ Pool is held constant at mean-over-attention-mask for *all* encoders so that the
 Not to spoil the tea, but how much does honoring the prescribed prefix actually move the numbers?
 On the full 4000-prompt SciCUEval run the prefix bumps the cosine gap by ~50% relative (0.026 → 0.039); small enough that the apples-to-apples ranking is informative, large enough that the caveat is real.
 
-I also deliberately chose a roster that fills out a 2x2 grid of training regimes, so the comparison isn't against 2018-era baselines or a one-axis "modern vs old" framing:
+Two training regimes show up across this roster: *contrastive* training shows the model pairs of texts and pulls 'similar' pairs closer in the output space while pushing everything else apart — the model learns *what should be close*. 
+*Masked language modeling* (MLM) hides tokens in a sentence and asks the model to predict them — the model learns *what tokens belong where*.
+Contrastive training tends to produce tight clusters by meaning, while MLM produces a representation that tracks local linguistic structure as a byproduct.
+The 2x2 below crosses this objective axis with the corpus the model was trained on:
 
 |  | **General-purpose** | **Biomedical / scientific** |
 | --- | --- | --- |
@@ -125,10 +131,16 @@ prompts → [encode]
 > ARI/NMI are partition-agreement scores between clusterings, both ∈ [0,1]. 
 > LR acc = downstream-classifier accuracy from a logistic regression fit on raw embeddings.
 
-The methodology owes a lot to recent TDA-for-NLP (natural language processing) work — [TopoBERT (Rathore et al. 2023)](https://arxiv.org/abs/2310.16937) for the Mapper-as-diagnostic framing, the [2025 "When Annotators Disagree, Topology Explains"](https://arxiv.org/abs/2510.17548) paper for the seed-bootstrap motivation, and [Draganov & Skiena (2024)](https://aclanthology.org/2024.findings-emnlp.927/) for the linguistic-anchor-faithfulness idea.
+The methodology owes a lot to recent TDA-for-NLP (natural language processing) work — [TopoBERT (Rathore et al. 2023)](https://journals.sagepub.com/doi/10.1177/14738716231168671) for the Mapper-as-diagnostic framing, the [2025 "When Annotators Disagree, Topology Explains"](https://arxiv.org/abs/2510.17548) paper for the seed-bootstrap motivation, and [Draganov & Skiena (2024)](https://arxiv.org/abs/2404.00500) for the linguistic-anchor-faithfulness idea.
 
 NOTE: All three layers run on L2-normalized embeddings with cosine distance throughout, since mixing metrics across embedders silently invalidates comparisons.
 
+
+
+> **TLDR for the impatient:** 
+> Cosine bake-offs measure how aggressively the embedder was trained to spread pairs apart, not whether its output geometry has anything to do with your corpus.
+> Adding a topological analysis layer reorders the ranking and reveals two distinct domain-shift failure modes.
+> MLM-pretrained encoders fall back on linguistic surface features when content signal vanishes, while contrastive-pretrained encoders fall through them entirely.
 
 # Layer 1: Cosine Geometry, And Why LR Accuracy Is Misleading
 
@@ -517,6 +529,11 @@ Visibly more color mixing within nodes — the categorical boundaries that were 
 
 Pick an encoder for each corpus to load its KeplerMapper graph at base seed 42. Hover any node for the first 200 characters of its member prompts.
 
+Two comparisons worth running yourself: 
+
+1. On SciCUEval, flip between `medcpt-query` and `bioformer-8l` and notice how MedCPT's clusters are tighter and more regional while bioformer's are broader.
+2. Flip both viewers to MMLU and watch MedCPT's graph collapse to a couple of nodes (the manifold-disintegration finding) while bioformer's stays organized (the surface-feature-fallback finding).
+
 <MapperViewer corpus="scicueval" defaultEncoder="medcpt-query" />
 
 <MapperViewer corpus="mmlu" defaultEncoder="medcpt-query" />
@@ -598,9 +615,9 @@ Or run the whole analysis (downloads + cosine + TDA x both corpora) in one shot 
 
 # References And Further Reading
 
-- Rathore, A., Zhou, Y., Srikumar, V., Wang, B. (2023). [TopoBERT: Exploring the topology of fine-tuned word representations](https://arxiv.org/abs/2310.16937). *Information Visualization*. — Methodologically closest precedent.
+- Rathore, A., Zhou, Y., Srikumar, V., Wang, B. (2023). [TopoBERT: Exploring the topology of fine-tuned word representations](https://journals.sagepub.com/doi/10.1177/14738716231168671). *Information Visualization*. — Methodologically closest precedent.
 - ["When Annotators Disagree, Topology Explains: Mapper, a Topological Tool for Exploring Text Embedding Geometry and Ambiguity"](https://arxiv.org/abs/2510.17548) (2025). — Argues Mapper captures structure UMAP alone flattens; source of the seed-bootstrap design.
-- Draganov, O., Skiena, S. (2024). [The shape of word embeddings: Quantifying non-isometry with topological data analysis](https://aclanthology.org/2024.findings-emnlp.927/). *Findings of EMNLP 2024*. — Recovers linguistic phylogeny from FastText embeddings via TDA; methodological inspiration for using known linguistic structure to validate topology.
+- Draganov, O., Skiena, S. (2024). [The shape of word embeddings: Quantifying non-isometry with topological data analysis](https://arxiv.org/abs/2404.00500). — Recovers linguistic phylogeny from FastText embeddings via TDA; methodological inspiration for using known linguistic structure to validate topology.
 - Uchendu, A., Le, T. (2024). [Unveiling Topological Structures from Language: A Comprehensive Survey of TDA Applications in NLP](https://arxiv.org/abs/2411.10298). — Field survey, good entry point.
 - [Awesome TDA for NLP](https://github.com/AdaUchendu/AwesomeTDA4NLP) — maintained reading list.
 
