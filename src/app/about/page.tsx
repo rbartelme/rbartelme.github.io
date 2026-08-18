@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation'
 
 export const metadata = {
   title: 'About - Ryan Bartelme',
-  description: 'Learn about Dr. Ryan Bartelme\'s background in bioinformatics, data science, and sustainable agriculture research.',
+  description: 'Ryan Bartelme, Ph.D. Full-stack data scientist working across bioinformatics, microbial ecology, sustainable agriculture, and scientific data infrastructure.',
 }
 
 export default function AboutPage() {
