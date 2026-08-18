@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Ryan Bartelme - Computational Biologist & Data Scientist',
   description: 'Bioinformatics research, data science insights, and computational biology from Dr. Ryan Bartelme.',
-  keywords: ['bioinformatics', 'data science', 'computational biology', 'agriculture', 'microbial ecology'],
+  keywords: ['bioinformatics', 'data science', 'computational biology', 'AI', 'machine learning', 'agriculture', 'microbial ecology'],
   authors: [{ name: 'Ryan Bartelme' }],
   creator: 'Ryan Bartelme',
   openGraph: {

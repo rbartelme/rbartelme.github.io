@@ -99,8 +99,15 @@ export default async function BlogPost({ params }: BlogPostProps) {
           <div className="bg-gray-50 dark:bg-gray-800 p-4 md:p-6 rounded-lg">
             <h3 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm md:text-base">About the Author</h3>
             <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base leading-relaxed">
-              Dr. Ryan Bartelme is the founder and principal data scientist at Informatic Edge, LLC. His expertise spans bioinformatics, data science, 
-              microbial ecology, and controlled environment agriculture.
+              Ryan Bartelme, Ph.D. is the founder and principal data scientist at{' '}
+              <a
+                href="https://informaticedge.com"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                Informatic Edge, LLC
+              </a>
+              , working across bioinformatics, data science, microbial ecology, and
+              controlled environment agriculture.
             </p>
           </div>
         </footer>

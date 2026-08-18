@@ -10,6 +10,82 @@ export default function Home() {
   return (
     <Layout>
       <div className="space-y-12 md:space-y-16">
+        {/* Hero Section */}
+        <section className="text-center py-8 md:py-16 bg-gradient-to-r from-stone-50 to-amber-50 dark:from-stone-900/40 dark:to-amber-900/20 rounded-xl">
+          <div className="max-w-4xl mx-auto px-4 md:px-8">
+            <OptimizedImage 
+              src="/images/dalle-network-vlh.webp"
+              alt="Isometric technical illustration of networked scientific instruments"
+              width={1024}
+              height={1024}
+              className="mx-auto mb-4 md:mb-6 max-w-full sm:max-w-md h-auto rounded-lg"
+            />
+
+            <h1 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">
+              Ryan Bartelme, Ph.D.
+            </h1>
+            <p className="text-lg md:text-xl text-gray-700 dark:text-gray-100 mb-6 md:mb-8 leading-relaxed">
+              Founder of{' '}
+              <a
+                href="https://informaticedge.com"
+                className="font-semibold text-blue-600 hover:text-blue-700 underline decoration-blue-300 underline-offset-4 transition-colors"
+              >
+                Informatic Edge, LLC
+              </a>
+              <br className="hidden sm:block" />
+              <span className="block sm:inline">Full-stack data scientist specializing in bioinformatics and computational biology</span>
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6">
+              <Link 
+                href="/blog"
+                className="bg-blue-600 text-white px-6 md:px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm md:text-base"
+              >
+                Read My Blog
+              </Link>
+              <Link 
+                href="/contact"
+                className="bg-blue-600 text-white px-6 md:px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm md:text-base"
+              >
+                Contact Me
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Research Focus Areas */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-xl shadow-sm border dark:border-gray-600">
+            <div className="text-2xl md:text-3xl mb-3 md:mb-4">🧬</div>
+            <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3 text-gray-900 dark:text-white">Data Infrastructure</h3>
+            <p className="text-gray-600 dark:text-gray-200 text-sm md:text-base">
+              Bioinformatics pipelines, database architecture, and cloud platforms built to serve
+              real research data at scale.
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-xl shadow-sm border dark:border-gray-600">
+            <div className="text-2xl md:text-3xl mb-3 md:mb-4">📊</div>
+            <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3 text-gray-900 dark:text-white">Algorithms & AI</h3>
+            <p className="text-gray-600 dark:text-gray-200 text-sm md:text-base">
+              Custom methods, model development, and the AI ops work that keeps them running
+              after the notebook is closed.
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-xl shadow-sm border dark:border-gray-600">
+            <div className="text-2xl md:text-3xl mb-3 md:mb-4">🎯</div>
+            <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3 text-gray-900 dark:text-white">Consulting & Contracting</h3>
+            <p className="text-gray-600 dark:text-gray-200 text-sm md:text-base">
+              Have an idea for a project? I scope work through{' '}
+              <a
+                href="https://informaticedge.com"
+                className="text-blue-600 hover:text-blue-700 underline decoration-blue-300 underline-offset-2 transition-colors"
+              >
+                Informatic Edge, LLC
+              </a>
+              .
+            </p>
+          </div>
+        </section>
+
         {/* Latest Posts */}
         {posts.length > 0 && (
           <section>
@@ -57,83 +133,29 @@ export default function Home() {
             </div>
           </section>
         )}
-                
-        {/* Hero Section */}
-        <section className="text-center py-8 md:py-16 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 rounded-xl">
-          <div className="max-w-4xl mx-auto px-4 md:px-8">
-            <OptimizedImage 
-              src="/images/dalle-landing.png"
-              alt="Dr. Ryan Bartelme"
-              width={1280}
-              height={720}
-              className="mx-auto mb-4 md:mb-6 max-w-full h-auto"
-            />
 
-            <h1 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">
-              Ryan Bartelme, Ph.D.
-            </h1>
-            <p className="text-lg md:text-xl text-gray-700 dark:text-gray-100 mb-6 md:mb-8 leading-relaxed">
-              Founder of <span className="font-semibold text-blue-600">Informatic Edge, LLC</span>
-              <br className="hidden sm:block" />
-              <span className="block sm:inline">Full-stack data scientist specializing in bioinformatics and computational biology</span>
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6">
-              <Link 
-                href="/blog"
-                className="bg-blue-600 text-white px-6 md:px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm md:text-base"
-              >
-                Read My Blog
-              </Link>
-              <Link 
-                href="/contact"
-                className="bg-blue-600 text-white px-6 md:px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm md:text-base"
-              >
-                Contact Me
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Research Focus Areas */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-          <div className="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-xl shadow-sm border dark:border-gray-600">
-            <div className="text-2xl md:text-3xl mb-3 md:mb-4">🧬</div>
-            <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3 text-gray-900 dark:text-white">Bioinformatics</h3>
-            <p className="text-gray-600 dark:text-gray-200 text-sm md:text-base">
-              Developing computational approaches to understand complex biological systems and solve real-world challenges.
-            </p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-xl shadow-sm border dark:border-gray-600">
-            <div className="text-2xl md:text-3xl mb-3 md:mb-4">📊</div>
-            <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3 text-gray-900 dark:text-white">Data Science</h3>
-            <p className="text-gray-600 dark:text-gray-200 text-sm md:text-base">
-              Full-stack data solutions combining statistical thinking, machine learning, and algorithmic innovation.
-            </p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-xl shadow-sm border dark:border-gray-600">
-            <div className="text-2xl md:text-3xl mb-3 md:mb-4">🎯</div>
-            <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3 text-gray-900 dark:text-white">Consulting & Contracting</h3>
-            <p className="text-gray-600 dark:text-gray-200 text-sm md:text-base">
-              Strategic consulting and project-based solutions for research institutions and biotechnology companies.
-            </p>
-          </div>
-        </section>
-
-        {/* Call to Action */}
-        <section className="bg-blue-50 p-6 md:p-12 rounded-xl text-center">
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">
-            Ready to Tackle Your Data Challenges?
+        {/* Keep Reading */}
+        <section className="bg-stone-50 dark:bg-stone-900/40 p-6 md:p-12 rounded-xl text-center">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 md:mb-4">
+            Keep Reading
           </h2>
-          <p className="text-gray-700 mb-4 md:mb-6 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
-            Whether you need strategic consulting, custom algorithm development, or end-to-end project execution, 
-            Informatic Edge combines deep biological expertise with cutting-edge computational methods.
+          <p className="text-gray-700 dark:text-gray-100 mb-4 md:mb-6 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+            New posts on bioinformatics, data science, and the odd self-hosting tangent.
           </p>
-          <Link 
-            href="/contact"
-            className="bg-blue-600 text-white px-6 md:px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm md:text-base"
-          >
-            Let&apos;s Collaborate
-          </Link>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <a
+              href="/feed.xml"
+              className="bg-blue-600 text-white px-6 md:px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm md:text-base"
+            >
+              Subscribe via RSS
+            </a>
+            <a
+              href="https://bsky.app/profile/microbialbart.bsky.social"
+              className="border border-blue-600 text-blue-600 dark:text-blue-300 dark:border-blue-300 px-6 md:px-8 py-3 rounded-lg hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white transition-colors font-medium text-sm md:text-base"
+            >
+              Follow on Bluesky
+            </a>
+          </div>
         </section>
       </div>
     </Layout>
