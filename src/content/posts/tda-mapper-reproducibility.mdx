@@ -95,6 +95,17 @@ Swapping embeddings between machines for `minilm` on SciCUEval shows that each d
 
 The single draw spans 0.06 to 0.46 across the four cells; the per-seed mean spans 0.24 to 0.31.
 
+<Alert title="What changed in the measurement" type="info">
+
+- **Anchor ρ is now two numbers.** The first post's single draw is still computed, unchanged. The headline value is now the mean over 25 graphs, with its spread.
+- **The new estimator differs in three ways:** pairs are drawn uniformly rather than in `combinations` order, each seed draws its own 500-document subsample, and a graph too sparse to score is skipped instead of counted as zero.
+- **ARI keeps its definition** and gains a jackknife standard error.
+- **Seeds are now aggregated in seed order.** That moves the means only in the last bit, and it makes reruns bit-identical.
+
+So the per-seed numbers here are not directly comparable with the anchor ρ tables in the first post.
+
+</Alert>
+
 # A correction to the first post
 
 The first post's opening observation was that `minilm`, the cosine winner, finished dead last on anchor ρ (0.059 on SciCUEval, 0.006 on MMLU), and I read that as contrastive training scrubbing surface features.
