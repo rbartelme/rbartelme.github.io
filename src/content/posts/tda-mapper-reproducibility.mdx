@@ -52,7 +52,8 @@ A seeded UMAP amplifies it into a different layout, the Mapper cover bins that l
 Bitwise identity across machines takes deliberate engineering, such as fixed-order parallel reductions ([Siklósi et al., 2024](https://doi.org/10.3390/app14020639)), and the relevant standard here is the weaker one: results consistent within their own uncertainty ([National Academies, 2019](https://doi.org/10.17226/25303)).
 Within one machine, fixed order is cheap: the bootstrap now aggregates seeds in seed order, and reruns agree bit for bit.
 
-{/* Malka, Zacchiroli & Zimmermann (2026), "A Decade of Software Reproducibility in the Nix Package Ecosystem": venue unconfirmed (replication data: doi.org/10.5281/zenodo.22054537). Cite once published, if the toolchain point earns a sentence. */}
+Pinning the environment doesn't close the gap either.
+Both machines ran the same lockfile apart from torch, which buys what [Malka, Zacchiroli and Zimmermann (2026)](https://doi.org/10.1007/s10664-026-10924-1) call rebuildability; bitwise identity is a stronger property even for build artifacts, and here the difference lies in the arithmetic, not the build.
 
 That standard needs error bars, which is where the first post's anchor ρ fell short.
 
