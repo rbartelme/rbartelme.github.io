@@ -1,0 +1,118 @@
+---
+title: "Reproducing the Topology Bake-Off on a Second Machine"
+date: "2026-09-27"
+draft: true
+description: "Cosine metrics reproduce to four decimals on a second machine. Mapper metrics don't, and can't be expected to. The first post's anchor ρ turns out to be a single draw resting on about eleven documents; with a 25-seed estimator the two machines agree, and one of the first post's headline contrasts doesn't survive."
+tags: ["topological data analysis", "TDA", "Mapper", "UMAP", "reproducibility", "embeddings", "model evaluation"]
+abstract: "Before training anything for the loss-function follow-up, I re-ran the first post's evaluation on the three starting encoders, on the original laptop (x86_64) and on a DGX Spark (aarch64). Layer 1 reproduced to four decimals. The Mapper layer did not, and the anchor ρ estimator inherited from the first post proved to be a single, badly sampled draw. A per-seed estimator with standard errors brings the machines into agreement, corrects one claim from the first post, and sets the resolution the follow-up experiments have to beat."
+---
+
+<Alert title="TLDR" type="info">
+
+Cosine geometry reproduces across CPU architectures; UMAP-based Mapper does not, so a second machine is effectively a new random seed.
+The first post's anchor ρ came from one Mapper graph and about eleven documents.
+Averaged over 25 graphs, the laptop and the Spark agree on every row, and `minilm`'s "dead last" anchor ρ holds on MMLU but not on SciCUEval.
+
+</Alert>
+
+# Setup
+
+The [first post](/blog/tda-embedder-bakeoff) ranked 14 encoders on cosine geometry plus a 25-seed UMAP → KeplerMapper bootstrap.
+The follow-up fine-tunes three of them (`biomedbert-fulltext`, `minilm`, `bge-base`) under different losses, so their untrained rows are the baseline everything gets compared against.
+I re-ran those rows on two machines with the same code, seeds and evaluation sample:
+
+| | laptop | DGX Spark |
+| --- | --- | --- |
+| CPU | x86_64, 16 cores | aarch64, 20 cores |
+| GPU | RTX 4070 Laptop, 8 GB | GB10 (Blackwell) |
+| torch | 2.6.0 (as in the first post) | 2.13.0 (2.6.0 predates Blackwell) |
+
+# Cosine reproduces; Mapper doesn't
+
+Layer 1 matched on both machines: the cosine gap to four decimals on all six rows, and logistic-regression accuracy to within one held-out prediction.
+On the laptop, the Mapper layer also matched the first post exactly on SciCUEval, down to node counts.
+On the Spark, mean ARI moved by up to 0.05:
+
+| row | ARI, laptop | ARI, Spark | two-SE bound |
+| --- | --- | --- | --- |
+| `biomedbert-fulltext` SciCUEval | 0.818 | 0.799 | 0.037 |
+| `biomedbert-fulltext` MMLU | 0.701 | 0.692 | 0.066 |
+| `minilm` SciCUEval | 0.757 | 0.807 | 0.047 |
+| `minilm` MMLU | 0.829 | 0.798 | 0.045 |
+| `bge-base` SciCUEval | 0.766 | 0.783 | 0.039 |
+| `bge-base` MMLU | 0.849 | 0.845 | 0.040 |
+
+The bound is two jackknife standard errors of the difference (more on that below).
+Five rows fall inside it; `minilm` SciCUEval sits just outside, 0.050 against 0.047, which six comparisons at this threshold produce about a quarter of the time.
+
+That is expected.
+Different architectures round floating-point sums differently in the last bits, through fused multiply-adds, reassociated reductions and their math libraries.
+Most numerical codes absorb that.
+A seeded UMAP amplifies it into a different layout, the Mapper cover bins that layout differently, and HDBSCAN clusters the bins differently, so another architecture behaves like another seed.
+Bitwise identity across machines takes deliberate engineering, such as fixed-order parallel reductions ([Siklósi et al., 2024](https://doi.org/10.3390/app14020639)), and the relevant standard here is the weaker one: results consistent within their own uncertainty ([National Academies, 2019](https://doi.org/10.17226/25303)).
+Within one machine, fixed order is cheap: the bootstrap now aggregates seeds in seed order, and reruns agree bit for bit.
+
+{/* Malka, Zacchiroli & Zimmermann (2026), "A Decade of Software Reproducibility in the Nix Package Ecosystem": venue unconfirmed (replication data: doi.org/10.5281/zenodo.22054537). Cite once published, if the toolchain point earns a sentence. */}
+
+That standard needs error bars, which is where the first post's anchor ρ fell short.
+
+# The anchor ρ in the first post was a single draw
+
+Anchor ρ is the Spearman correlation between Mapper graph distance and the distance between two prompts' surface-text features.
+The implementation I inherited computes it once, on the seed-42 graph, from a 500-document subsample, stopping at 5,000 pairs.
+Those pairs are taken in `itertools.combinations` order: the first document against the other 499, then the second, and so on.
+Every pair therefore touches one of the first eleven documents.
+
+A synthetic check makes the consequence concrete.
+On a path-shaped graph whose features track position, I corrupted 20 of 500 documents.
+Pairs drawn uniformly still give ρ = +0.92; the combinations-order estimator gives −0.82, because all of its pairs run through the corrupted documents.
+
+The replacement draws 5,000 pairs uniformly on every one of the 25 bootstrap graphs and reports the mean and the spread:
+
+| row | single draw, laptop | single draw, Spark | per-seed mean ± sd, laptop | per-seed mean ± sd, Spark |
+| --- | --- | --- | --- | --- |
+| `biomedbert-fulltext` SciCUEval | 0.249 | 0.199 | 0.216 ± 0.158 | 0.207 ± 0.087 |
+| `biomedbert-fulltext` MMLU | 0.476 | 0.322 | 0.230 ± 0.204 | 0.209 ± 0.155 |
+| `minilm` SciCUEval | 0.059 | 0.457 | 0.262 ± 0.126 | 0.265 ± 0.128 |
+| `minilm` MMLU | 0.036 | 0.015 | 0.083 ± 0.121 | 0.031 ± 0.076 |
+| `bge-base` SciCUEval | 0.195 | 0.227 | 0.257 ± 0.128 | 0.304 ± 0.133 |
+| `bge-base` MMLU | −0.009 | 0.440 | 0.117 ± 0.125 | 0.170 ± 0.207 |
+
+{/* FIGURE (after the per-seed rerun): one rug of the 25 per-seed values per row and machine, single draw marked, shared x-axis. Tufte style: range frame, direct labels. */}
+
+The single draws disagree across machines by up to 0.45.
+The per-seed means agree within two standard errors on all six rows.
+
+# A correction to the first post
+
+The first post's opening observation was that `minilm`, the cosine winner, finished dead last on anchor ρ (0.059 on SciCUEval, 0.006 on MMLU), and I read that as contrastive training scrubbing surface features.
+With 25 draws, that holds on MMLU, where `minilm` sits three to five standard errors below `biomedbert-fulltext`.
+It does not hold on SciCUEval, where `minilm` is nominally *higher* on both machines, by one to two standard errors.
+
+More generally, every anchor ρ in the first post is a single draw.
+For the three encoders re-measured here the per-seed spread is 0.12 to 0.20, so two single draws of the same encoder differ by about 0.17 on average, which is what the laptop and Spark single draws above do.
+Differences between encoders in the first post's anchor ρ tables have to be read against that.
+
+# Why not a deterministic lens?
+
+PCA would remove the seed entirely, so I checked what it would measure.
+The top two principal components carry only 7.5–21% of the variance, and they track the surface features more strongly than the UMAP axes do: up to |ρ| = 0.67 against 0.39.
+Contrastive training also flattens the spectrum; on SciCUEval the first component holds 13% of the variance for `biomedbert-fulltext` and 7–8% for the two contrastive models.
+Under a PCA lens, anchor ρ would fall during contrastive fine-tuning partly because the dominant direction fades, which is the very effect the follow-up is trying to measure.
+I kept UMAP and added error bars.
+
+# ARI needs a jackknife
+
+Mean ARI averages 300 pairs of seeds, and those pairs share seeds.
+Dividing their spread by √25 treats them as independent and understates the standard error, by a factor of about √2 when each seed contributes additively.
+The evaluation now reports a leave-one-seed-out jackknife instead.
+
+# Loose ends
+
+- On the laptop, MMLU ARI and node counts differ slightly from the first post, on the same machine, and within noise. I haven't explained it. Evaluation order is ruled out: MMLU run alone reproduces MMLU run second to within float rounding.
+- On the Spark, the aarch64 build of numba has no TBB and falls back to GNU OpenMP, which kills forked worker processes. Setting `NUMBA_THREADING_LAYER=forksafe` fixes it.
+
+# What this sets up
+
+Per-seed anchor ρ has a standard error of 0.02 to 0.04 per row, so two checkpoints need to differ by roughly 0.09 before the difference means anything.
+That is the bar the loss-function results in the next post have to clear.
