@@ -9,15 +9,23 @@ abstract: "A larger follow-up to the first post will run on a DGX Spark (aarch64
 
 <Alert title="TLDR" type="info">
 
-Cosine geometry reproduces across CPU architectures; UMAP-based Mapper does not, so a second machine is effectively a new random seed.
-The first post's anchor ρ came from one Mapper graph and about eleven documents.
+Cosine geometry reproduces across CPU architectures. Mapper graphs, built on a seeded UMAP projection, do not, so a second machine acts like a new random seed.
+The first post's anchor ρ, which asks whether graph distance tracks surface features like prompt length, came from one graph and about eleven documents.
 Averaged over 25 graphs, the laptop and the Spark agree on every row, and `minilm`'s "dead last" anchor ρ holds on MMLU but not on SciCUEval.
 
 </Alert>
 
+# What the first post measured
+
+The [first post](/blog/tda-embedder-bakeoff) ranked 14 encoders on two corpora of multiple-choice prompts: SciCUEval (biomedical) and MMLU (general knowledge, non-STEM).
+Each encoder turns a prompt into a vector, so a corpus becomes a cloud of points in 384 to 1,024 dimensions, measured in three layers:
+
+- **Cosine geometry (Layer 1).** How much closer same-subject prompts sit than different-subject ones (the *cosine gap*), and how well a linear classifier recovers the subject from the vectors (*LR accuracy*).
+- **Mapper (Layer 2).** A summary of the cloud's shape as a graph. A *lens* projects every point to a low-dimensional view, here a 2-D UMAP that depends on a random seed. A *cover* tiles that view with overlapping bins, the points in each bin are clustered by their full-dimensional cosine distances (HDBSCAN), each cluster becomes a *node*, and clusters that share prompts are joined by an *edge*. Repeating this for 25 seeds gives 25 graphs, and the *ARI* (adjusted Rand index) scores how consistently pairs of graphs group the same prompts: 1 for identical, 0 for chance.
+- **Linguistic anchors (Layer 3).** *Anchor ρ* is the Spearman correlation, over pairs of prompts, between how many hops apart they sit in the graph and how different their surface features are (length, reading ease, vocabulary difficulty). High ρ means the graph is laid out along those gradients.
+
 # Setup
 
-The [first post](/blog/tda-embedder-bakeoff) ranked 14 encoders on cosine geometry plus a 25-seed UMAP → KeplerMapper bootstrap.
 A larger follow-up will run on a DGX Spark, which is aarch64 where the first post ran on x86_64, so I first checked whether the evaluation reproduces there.
 I re-ran three of the encoders (`biomedbert-fulltext`, `minilm`, `bge-base`) on both machines with the same code, seeds and evaluation sample:
 
@@ -63,8 +71,7 @@ That standard needs error bars, which is where the first post's anchor ρ fell s
 
 # The anchor ρ in the first post was a single draw
 
-Anchor ρ is the Spearman correlation between Mapper graph distance and the distance between two prompts' surface-text features.
-The implementation I inherited computes it once, on the seed-42 graph, from a 500-document subsample, stopping at 5,000 pairs.
+The implementation I inherited computes anchor ρ once, on the seed-42 graph, from a 500-document subsample, stopping at 5,000 pairs.
 Those pairs are taken in `itertools.combinations` order: the first document against the other 499, then the second, and so on.
 Every pair therefore touches one of the first eleven documents.
 
