@@ -53,7 +53,7 @@ Bitwise identity across machines takes deliberate engineering, such as fixed-ord
 Within one machine, fixed order is cheap: the bootstrap now aggregates seeds in seed order, and reruns agree bit for bit.
 
 Pinning the environment doesn't close the gap either.
-Both machines ran the same lockfile apart from torch, which buys what [Malka, Zacchiroli and Zimmermann (2026)](https://doi.org/10.1007/s10664-026-10924-1) call rebuildability; bitwise identity is a stronger property even for build artifacts, and here the difference lies in the arithmetic, not the build.
+Both machines ran the same lockfile apart from torch, which buys what [Malka, Zacchiroli and Zimmermann (2026)](https://doi.org/10.1007/s10664-026-10924-1) call rebuildability, not bitwise identity, and that one exception turns out to matter as much as the CPU (below).
 
 That standard needs error bars, which is where the first post's anchor ρ fell short.
 
@@ -79,10 +79,21 @@ The replacement draws 5,000 pairs uniformly on every one of the 25 bootstrap gra
 | `bge-base` SciCUEval | 0.195 | 0.227 | 0.257 ± 0.128 | 0.304 ± 0.133 |
 | `bge-base` MMLU | −0.009 | 0.440 | 0.117 ± 0.125 | 0.170 ± 0.207 |
 
-{/* FIGURE (after the per-seed rerun): one rug of the 25 per-seed values per row and machine, single draw marked, shared x-axis. Tufte style: range frame, direct labels. */}
+![Per-seed anchor ρ on the laptop and the DGX Spark: 25 ticks per row, the mean with a two-standard-error bar, and each machine's single draw as a diamond](/images/mapper-repro/anchor-per-seed.png)
 
 The single draws disagree across machines by up to 0.45.
 The per-seed means agree within two standard errors on all six rows.
+
+Which difference matters, the torch build or the CPU?
+The two machines' embeddings agree to a few units in the last float32 place, yet only 2–6% of their values are bit-identical.
+Swapping embeddings between machines for `minilm` on SciCUEval shows that each difference acts like a new seed on its own:
+
+| embeddings | Mapper on laptop | Mapper on Spark |
+| --- | --- | --- |
+| laptop | single draw 0.059, mean 0.262 | single draw 0.334, mean 0.311 |
+| Spark | single draw 0.293, mean 0.238 | single draw 0.457, mean 0.265 |
+
+The single draw spans 0.06 to 0.46 across the four cells; the per-seed mean spans 0.24 to 0.31.
 
 # A correction to the first post
 
