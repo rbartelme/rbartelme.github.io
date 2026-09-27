@@ -125,7 +125,7 @@ Differences between encoders in the first post's anchor ρ tables have to be rea
 PCA would remove the seed entirely, so I checked what it would measure.
 The top two principal components carry only 7.5–21% of the variance, and they track the surface features more strongly than the UMAP axes do: up to |ρ| = 0.67 against 0.39.
 Contrastive training also flattens the spectrum; on SciCUEval the first component holds 13% of the variance for `biomedbert-fulltext` and 7–8% for the two contrastive models.
-Under a PCA lens, anchor ρ would fall during contrastive fine-tuning partly because the dominant direction fades, which is the very effect the follow-up is trying to measure.
+So a PCA-lens anchor ρ would partly measure the shape of the spectrum rather than neighbourhood structure, and would separate contrastive from MLM encoders for that reason alone.
 I kept UMAP and added error bars.
 
 # ARI needs a jackknife
