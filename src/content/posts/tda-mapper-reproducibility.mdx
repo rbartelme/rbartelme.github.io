@@ -4,7 +4,7 @@ date: "2026-09-27"
 draft: true
 description: "Cosine metrics reproduce to four decimals on a second machine. Mapper metrics don't, and can't be expected to. The first post's anchor ρ turns out to be a single draw resting on about eleven documents; with a 25-seed estimator the two machines agree, and one of the first post's headline contrasts doesn't survive."
 tags: ["topological data analysis", "TDA", "Mapper", "UMAP", "reproducibility", "embeddings", "model evaluation"]
-abstract: "Before training anything for the loss-function follow-up, I re-ran the first post's evaluation on the three starting encoders, on the original laptop (x86_64) and on a DGX Spark (aarch64). Layer 1 reproduced to four decimals. The Mapper layer did not, and the anchor ρ estimator inherited from the first post proved to be a single, badly sampled draw. A per-seed estimator with standard errors brings the machines into agreement, corrects one claim from the first post, and sets the resolution the follow-up experiments have to beat."
+abstract: "A larger follow-up to the first post will run on a DGX Spark (aarch64), so I first checked whether its evaluation reproduces there, re-running three of its encoders on the original laptop (x86_64) and on the Spark. The encoded vectors barely differ and Layer 1 reproduced to four decimals. The Mapper layer did not, and the check exposed an error of mine: the first post's anchor ρ is a single, badly sampled draw. A per-seed estimator with standard errors brings the machines into agreement and corrects one of the first post's claims."
 ---
 
 <Alert title="TLDR" type="info">
@@ -18,8 +18,8 @@ Averaged over 25 graphs, the laptop and the Spark agree on every row, and `minil
 # Setup
 
 The [first post](/blog/tda-embedder-bakeoff) ranked 14 encoders on cosine geometry plus a 25-seed UMAP → KeplerMapper bootstrap.
-The follow-up fine-tunes three of them (`biomedbert-fulltext`, `minilm`, `bge-base`) under different losses, so their untrained rows are the baseline everything gets compared against.
-I re-ran those rows on two machines with the same code, seeds and evaluation sample:
+A larger follow-up will run on a DGX Spark, which is aarch64 where the first post ran on x86_64, so I first checked whether the evaluation reproduces there.
+I re-ran three of the encoders (`biomedbert-fulltext`, `minilm`, `bge-base`) on both machines with the same code, seeds and evaluation sample:
 
 | | laptop | DGX Spark |
 | --- | --- | --- |
@@ -27,8 +27,12 @@ I re-ran those rows on two machines with the same code, seeds and evaluation sam
 | GPU | RTX 4070 Laptop, 8 GB | GB10 (Blackwell) |
 | torch | 2.6.0 (as in the first post) | 2.13.0 (2.6.0 predates Blackwell) |
 
+Most of it reproduced. The check also turned up an error of mine in the first post, which this post corrects.
+
 # Cosine reproduces; Mapper doesn't
 
+The encoded vectors barely differ: every prompt's vector on the Spark has a cosine similarity of at least 0.9999996 with its laptop counterpart, and no coordinate moves by more than 4 × 10⁻⁶ of the largest one.
+On the laptop they are bit-identical to the first post's cached vectors from May.
 Layer 1 matched on both machines: the cosine gap to four decimals on all six rows, and logistic-regression accuracy to within one held-out prediction.
 On the laptop, the Mapper layer also matched the first post exactly on SciCUEval, down to node counts.
 On the Spark, mean ARI moved by up to 0.05:
@@ -85,7 +89,7 @@ The single draws disagree across machines by up to 0.45.
 The per-seed means agree within two standard errors on all six rows.
 
 Which difference matters, the torch build or the CPU?
-The two machines' embeddings agree to a few units in the last float32 place, yet only 2–6% of their values are bit-identical.
+Even vectors that close are only 2–6% bit-identical, and that is enough.
 Swapping embeddings between machines for `minilm` on SciCUEval shows that each difference acts like a new seed on its own:
 
 | embeddings | Mapper on laptop | Mapper on Spark |
@@ -137,5 +141,5 @@ The evaluation now reports a leave-one-seed-out jackknife instead.
 
 # What this sets up
 
-Per-seed anchor ρ has a standard error of 0.02 to 0.04 per row, so two checkpoints need to differ by roughly 0.09 before the difference means anything.
-That is the bar the loss-function results in the next post have to clear.
+Per-seed anchor ρ has a standard error of 0.02 to 0.04 per row, so two encoders, or two versions of one, need to differ by roughly 0.09 before the difference means anything.
+That is the resolution the larger follow-up will work with.
