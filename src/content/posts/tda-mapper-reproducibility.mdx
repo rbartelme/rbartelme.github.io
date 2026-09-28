@@ -27,7 +27,7 @@ Each encoder turns a prompt into a vector, so a corpus becomes a cloud of points
 # Setup
 
 A larger follow-up will run on a DGX Spark, which is aarch64 where the first post ran on x86_64, so I first checked whether the evaluation reproduces there.
-I re-ran three of the encoders (`biomedbert-fulltext`, `minilm`, `bge-base`) on both machines with the same code, seeds and evaluation sample:
+It started with three of the encoders, `biomedbert-fulltext`, `minilm` and `bge-base`, run on both machines with the same code, seeds and evaluation sample:
 
 | | laptop | DGX Spark |
 | --- | --- | --- |
@@ -35,7 +35,8 @@ I re-ran three of the encoders (`biomedbert-fulltext`, `minilm`, `bge-base`) on 
 | GPU | RTX 4070 Laptop, 8 GB | GB10 (Blackwell) |
 | torch | 2.6.0 (as in the first post) | 2.13.0 (2.6.0 predates Blackwell) |
 
-Most of it reproduced. The check also turned up an error of mine in the first post, which this post corrects.
+Most of it reproduced, but the check turned up an error of mine in the first post, so I widened it to all 15 encoders to see how far the error reached.
+Finding and fixing your own mistakes is part of the job; this post is that correction.
 
 # Cosine reproduces; Mapper doesn't
 
@@ -89,8 +90,6 @@ The replacement draws 5,000 pairs uniformly on every one of the 25 bootstrap gra
 | `minilm` MMLU | 0.036 | 0.015 | 0.083 ± 0.121 | 0.031 ± 0.076 |
 | `bge-base` SciCUEval | 0.195 | 0.227 | 0.257 ± 0.128 | 0.304 ± 0.133 |
 | `bge-base` MMLU | −0.009 | 0.440 | 0.117 ± 0.125 | 0.170 ± 0.207 |
-
-![Per-seed anchor ρ as split violins, laptop above the centre line and DGX Spark below: each half shows the 25 per-seed values, their mean with a two-standard-error whisker, and that machine's seed-42 single draw as a diamond](/images/mapper-repro/anchor-per-seed.png)
 
 The single draws disagree across machines by up to 0.45.
 The per-seed means agree within two standard errors on all six rows.
