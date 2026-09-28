@@ -4,20 +4,20 @@ date: "2026-09-28"
 draft: true
 description: "Cosine metrics reproduce to four decimals on a second machine. Mapper metrics don't, and can't be expected to. The first post's anchor ρ turns out to be a single draw resting on about eleven documents; with a 25-seed estimator the two machines agree, and one of the first post's headline contrasts doesn't survive."
 tags: ["topological data analysis", "TDA", "Mapper", "UMAP", "reproducibility", "embeddings", "model evaluation"]
-abstract: "A larger follow-up to the first post to check results on a DGX Spark (aarch64). I first tested whether its evaluation reproduces on an aarch64 computer, re-running three of its encoders on the original laptop (x86_64) and on the Spark. The encoded vectors (Layer 1) reproduced to four decimals across the two machines. The Mapper layer did not, and the check exposed an error of mine: the first post's anchor ρ is a single, badly sampled draw. A per-seed estimator with standard errors brings the machines into more agreement and corrects one of the first post's claims."
+abstract: "A larger follow-up to the first post will run on a DGX Spark (aarch64), so I first tested whether its evaluation reproduces there, re-running three of its encoders on the original laptop (x86_64) and on the Spark. The cosine-geometry metrics (Layer 1) reproduced to four decimals across the two machines. The Mapper layer did not, and the check exposed an error of mine: the first post's anchor ρ is a single, badly sampled draw. A per-seed estimator with standard errors brings the machines into agreement across all 15 of the first post's evaluation rows and corrects one of its claims."
 ---
 
 <Alert title="TLDR" type="info">
 
 Cosine geometry of the embedding models reproduces across CPU architectures. Mapper graphs, built on a seeded UMAP projection, do not, so a second machine effectively acts like a new random seed.
-The first post's anchor ρ, which asks whether graph distance tracks surface features like prompt length, grammar, reading ease, etc., came from one mapper algorithm graph and about eleven documents.
-Averaged over 25 graphs, the laptop and the DGX Spark agree across all 15 encoders. The first post's MMLU story survives, but its SciCUEval anchor ρ ranking was mostly noise, MedCPT's "outright" win included.
+The first post's anchor ρ, which asks whether graph distance tracks surface features like prompt length, grammar, reading ease, etc., came from one Mapper graph and about eleven documents.
+Averaged over 25 graphs, the laptop and the DGX Spark agree within their error bars across all 15 evaluation rows. The first post's MMLU story survives, but its SciCUEval anchor ρ ranking was mostly noise, MedCPT's "outright" win included.
 
 </Alert>
 
 # What the first post measured
 
-The [first post](/blog/tda-embedder-bakeoff) ranked 14 encoders on two corpora of multiple-choice prompts: SciCUEval (biomedical) and MMLU (general knowledge, non-STEM).
+The [first post](/blog/tda-embedder-bakeoff) ranked 14 encoders (15 evaluation rows, since EmbeddingGemma ran with and without its prescribed prefix) on two corpora of multiple-choice prompts: SciCUEval (biomedical) and MMLU (general knowledge, non-STEM).
 Each encoder turns a prompt into a vector, so a corpus becomes a cloud of points in 384 to 1,024 dimensions, measured in three layers:
 
 - **Cosine geometry (Layer 1).** How much closer same-subject prompts sit than different-subject ones (the *cosine gap*), and how well a linear classifier recovers the subject from the vectors (*LR accuracy*).
@@ -35,7 +35,7 @@ It started with three of the encoders, `biomedbert-fulltext`, `minilm` and `bge-
 | GPU | RTX 4070 Laptop, 8 GB | GB10 (Blackwell) |
 | torch | 2.6.0 (as in the first post) | 2.13.0 (2.6.0 predates Blackwell) |
 
-Most of it reproduced, but the check turned up an error of mine in the first post, so I widened it to all 15 encoders to see how far the error reached.
+Most of it reproduced, but the check turned up an error of mine in the first post, so I widened it to all 15 evaluation rows to see how far the error reached.
 Finding and fixing your own mistakes is part of the job; this post is that correction.
 
 # Cosine reproduces; Mapper doesn't
@@ -66,7 +66,7 @@ Bitwise identity across machines takes deliberate engineering, such as fixed-ord
 Within one machine, fixed order is cheap: the bootstrap now aggregates seeds in seed order, and reruns agree bit for bit.
 
 Pinning the environment doesn't close the gap either.
-Both machines ran the same lockfile apart from torch, which buys what [Malka, Zacchiroli and Zimmermann (2026)](https://doi.org/10.1007/s10664-026-10924-1) call rebuildability, not bitwise identity, and that one exception turns out to matter as much as the CPU (below).
+Both machines ran the same lockfile apart from torch, which buys what [Malka, Zacchiroli and Zimmermann (2026)](https://link.springer.com/article/10.1007/s10664-026-10924-1) call rebuildability, not bitwise identity, and that one exception turns out to matter as much as the CPU (below).
 
 That standard needs error bars, which is where the first post's anchor ρ fell short.
 
@@ -80,7 +80,7 @@ A synthetic check makes the consequence concrete.
 On a path-shaped graph whose features track position, I corrupted 20 of 500 documents.
 Pairs drawn uniformly still give ρ = +0.92; the combinations-order estimator gives −0.82, because all of its pairs run through the corrupted documents.
 
-The replacement draws 5,000 pairs uniformly on every one of the 25 bootstrap graphs and reports the mean and the spread from a subset of the initial embedding models:
+The replacement draws 5,000 pairs uniformly on every one of the 25 bootstrap graphs and reports their mean and spread. For the three encoders run on both machines:
 
 | row | single draw, laptop | single draw, Spark | per-seed mean ± sd, laptop | per-seed mean ± sd, Spark |
 | --- | --- | --- | --- | --- |
@@ -124,7 +124,7 @@ To see which claims survive, I re-ran the per-seed estimator on the first post's
 ![Per-seed anchor ρ for all 15 encoders from the first post, as split violins (laptop above, DGX Spark below) on SciCUEval and MMLU, sorted by the laptop's SciCUEval per-seed mean, with the first post's published value as a diamond](/images/mapper-repro/anchor-roster.png)
 
 - **SciCUEval: the ranking was mostly noise.** All 15 per-seed means fall between 0.16 and 0.37, with standard errors of 0.02 to 0.03. `medcpt-query` still comes first at 0.37, but only 1.3 standard errors ahead of `embeddinggemma`, so it doesn't win "outright"; its published 0.53, like `arctic-embed-m`'s 0.49, was a high draw. `minilm` and `e5-base-v2`, the first post's bottom two, sit mid-pack, and the MLM encoders average slightly *below* the contrastive ones.
-- **MMLU: the story broadly survives.** The top two rows are MLM encoders (`biomedbert-fulltext` 0.23, `bioformer-8l` 0.20), and `minilm`, `e5-base-v2` and the prescribed EmbeddingGemma sit at the bottom (0.04 to 0.08). The first post's reading, that MLM encoders fall back on surface features when the content signal thins out and contrastive ones fall through them, holds here.
+- **MMLU: the story broadly survives.** The top two rows are MLM encoders (`biomedbert-fulltext` 0.23, `bioformer-8l` 0.20), and `minilm`, `e5-base-v2` and `embeddinggemma-prescribed` sit at the bottom (0.04 to 0.08). The first post's reading, that MLM encoders fall back on surface features when the content signal thins out and contrastive ones fall through them, holds here.
 - **The machines agree across the roster.** With the same vectors and Mapper run on each machine, per-seed means agree within two standard errors on 24 of 27 scorable rows. The three misses exceed the bound by at most 1.5×, which 27 comparisons produce about one time in eight.
 
 # Why not a deterministic lens + Mapper?
@@ -132,19 +132,19 @@ To see which claims survive, I re-ran the per-seed estimator on the first post's
 PCA would remove the seed entirely, so I checked what it would measure.
 The top two principal components carry only 7.5–21% of the variance, and they track the surface features more strongly than the UMAP axes do: up to |ρ| = 0.67 against 0.39.
 Contrastive training also flattens the spectrum; on SciCUEval the first component holds 13% of the variance for `biomedbert-fulltext` and 7–8% for the two contrastive models.
-So a PCA-lens anchor ρ would partly measure the shape of the spectrum rather than neighbourhood structure, and would separate contrastive from MLM encoders for that reason alone.
+So a PCA-lens anchor ρ would partly measure the shape of the spectrum rather than neighborhood structure, and would separate contrastive from MLM encoders for that reason alone.
 I kept UMAP and added error bars.
 
 # ARI needs a jackknife
 
 Mean ARI averages 300 pairs of seeds, and those pairs share seeds.
-Dividing their spread by √25 treats them as independent and understates the standard error, by a factor of about √2 when each seed contributes additively.
+Dividing their spread by √25 ignores that sharing and understates the standard error, by a factor of about √2 when each seed contributes additively.
 The evaluation now reports a leave-one-seed-out jackknife instead.
 
 # Loose ends
 
 - On the laptop, 7 of 15 MMLU rows differ slightly from the first post (ARI by up to 0.03), from the same cached vectors on the same machine, while every SciCUEval row reproduces exactly. The mismatches interleave with exact rows computed in the same session, so it isn't a library change mid-run, and evaluation order is ruled out. I haven't found the cause.
-- Disintegration is a threshold, so a borderline row can flip between machines: `biomedbert-abstract` on MMLU covers 5.3% of prompts on the laptop and 4.96% on the Spark, against a cutoff of 5%.
+- Disintegration, a Mapper graph that covers under 5% of prompts, is a threshold, so a borderline row can flip between machines: `biomedbert-abstract` on MMLU covers 5.3% of prompts on the laptop and 4.96% on the Spark.
 - On the Spark, the aarch64 build of numba has no TBB and falls back to GNU OpenMP, which kills forked worker processes. Setting `NUMBA_THREADING_LAYER=forksafe` fixes it.
 
 # What this sets up
