@@ -1,7 +1,6 @@
 ---
 title: "Reproducing the Topology Bake-Off on a Second Machine"
 date: "2026-09-28"
-draft: true
 description: "Cosine metrics reproduce to four decimals on a second machine. Mapper metrics don't, and can't be expected to. The first post's anchor ρ turns out to be a single draw resting on about eleven documents; with a 25-seed estimator the two machines agree, and one of the first post's headline contrasts doesn't survive."
 tags: ["topological data analysis", "TDA", "Mapper", "UMAP", "reproducibility", "embeddings", "model evaluation"]
 abstract: "A larger follow-up to the first post will run on a DGX Spark (aarch64), so I first tested whether its evaluation reproduces there, re-running three of its encoders on the original laptop (x86_64) and on the Spark. The cosine-geometry metrics (Layer 1) reproduced to four decimals across the two machines. The Mapper layer did not, and the check exposed an error of mine: the first post's anchor ρ is a single, badly sampled draw. A per-seed estimator with standard errors brings the machines into agreement across all 15 of the first post's evaluation rows and corrects one of its claims."
