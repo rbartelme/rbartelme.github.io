@@ -4,14 +4,14 @@ date: "2026-09-27"
 draft: true
 description: "Cosine metrics reproduce to four decimals on a second machine. Mapper metrics don't, and can't be expected to. The first post's anchor ρ turns out to be a single draw resting on about eleven documents; with a 25-seed estimator the two machines agree, and one of the first post's headline contrasts doesn't survive."
 tags: ["topological data analysis", "TDA", "Mapper", "UMAP", "reproducibility", "embeddings", "model evaluation"]
-abstract: "A larger follow-up to the first post will run on a DGX Spark (aarch64), so I first checked whether its evaluation reproduces there, re-running three of its encoders on the original laptop (x86_64) and on the Spark. The encoded vectors barely differ and Layer 1 reproduced to four decimals. The Mapper layer did not, and the check exposed an error of mine: the first post's anchor ρ is a single, badly sampled draw. A per-seed estimator with standard errors brings the machines into agreement and corrects one of the first post's claims."
+abstract: "A larger follow-up to the first post to check results on a DGX Spark (aarch64). I first tested whether its evaluation reproduces on an aarch64 computer, re-running three of its encoders on the original laptop (x86_64) and on the Spark. The encoded vectors (Layer 1) reproduced to four decimals across the two machines. The Mapper layer did not, and the check exposed an error of mine: the first post's anchor ρ is a single, badly sampled draw. A per-seed estimator with standard errors brings the machines into more agreement and corrects one of the first post's claims."
 ---
 
 <Alert title="TLDR" type="info">
 
-Cosine geometry reproduces across CPU architectures. Mapper graphs, built on a seeded UMAP projection, do not, so a second machine acts like a new random seed.
-The first post's anchor ρ, which asks whether graph distance tracks surface features like prompt length, came from one graph and about eleven documents.
-Averaged over 25 graphs, the laptop and the Spark agree across all 15 encoders. The first post's MMLU story survives, but its SciCUEval anchor ρ ranking was mostly noise, MedCPT's "outright" win included.
+Cosine geometry of the embedding models reproduces across CPU architectures. Mapper graphs, built on a seeded UMAP projection, do not, so a second machine effectively acts like a new random seed.
+The first post's anchor ρ, which asks whether graph distance tracks surface features like prompt length, grammar, reading ease, etc., came from one mapper algorithm graph and about eleven documents.
+Averaged over 25 graphs, the laptop and the DGX Spark agree across all 15 encoders. The first post's MMLU story survives, but its SciCUEval anchor ρ ranking was mostly noise, MedCPT's "outright" win included.
 
 </Alert>
 
@@ -72,7 +72,7 @@ That standard needs error bars, which is where the first post's anchor ρ fell s
 
 # The anchor ρ in the first post was a single draw
 
-The implementation I inherited computes anchor ρ once, on the seed-42 graph, from a 500-document subsample, stopping at 5,000 pairs.
+The implementation from the first TDA blog post computes anchor ρ once, on the seed-42 graph, from a 500-document subsample, stopping at 5,000 pairs.
 Those pairs are taken in `itertools.combinations` order: the first document against the other 499, then the second, and so on.
 Every pair therefore touches one of the first eleven documents.
 
@@ -80,7 +80,7 @@ A synthetic check makes the consequence concrete.
 On a path-shaped graph whose features track position, I corrupted 20 of 500 documents.
 Pairs drawn uniformly still give ρ = +0.92; the combinations-order estimator gives −0.82, because all of its pairs run through the corrupted documents.
 
-The replacement draws 5,000 pairs uniformly on every one of the 25 bootstrap graphs and reports the mean and the spread:
+The replacement draws 5,000 pairs uniformly on every one of the 25 bootstrap graphs and reports the mean and the spread from a subset of the initial embedding models:
 
 | row | single draw, laptop | single draw, Spark | per-seed mean ± sd, laptop | per-seed mean ± sd, Spark |
 | --- | --- | --- | --- | --- |
@@ -127,7 +127,7 @@ To see which claims survive, I re-ran the per-seed estimator on the first post's
 - **MMLU: the story broadly survives.** The top two rows are MLM encoders (`biomedbert-fulltext` 0.23, `bioformer-8l` 0.20), and `minilm`, `e5-base-v2` and the prescribed EmbeddingGemma sit at the bottom (0.04 to 0.08). The first post's reading, that MLM encoders fall back on surface features when the content signal thins out and contrastive ones fall through them, holds here.
 - **The machines agree across the roster.** With the same vectors and Mapper run on each machine, per-seed means agree within two standard errors on 24 of 27 scorable rows. The three misses exceed the bound by at most 1.5×, which 27 comparisons produce about one time in eight.
 
-# Why not a deterministic lens?
+# Why not a deterministic lens + Mapper?
 
 PCA would remove the seed entirely, so I checked what it would measure.
 The top two principal components carry only 7.5–21% of the variance, and they track the surface features more strongly than the UMAP axes do: up to |ρ| = 0.67 against 0.39.
