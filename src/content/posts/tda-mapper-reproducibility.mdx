@@ -11,7 +11,7 @@ abstract: "A larger follow-up to the first post will run on a DGX Spark (aarch64
 
 Cosine geometry reproduces across CPU architectures. Mapper graphs, built on a seeded UMAP projection, do not, so a second machine acts like a new random seed.
 The first post's anchor ρ, which asks whether graph distance tracks surface features like prompt length, came from one graph and about eleven documents.
-Averaged over 25 graphs, the laptop and the Spark agree on every row, and `minilm`'s "dead last" anchor ρ holds on MMLU but not on SciCUEval.
+Averaged over 25 graphs, the laptop and the Spark agree across all 15 encoders. The first post's MMLU story survives, but its SciCUEval anchor ρ ranking was mostly noise, MedCPT's "outright" win included.
 
 </Alert>
 
@@ -119,13 +119,14 @@ So the per-seed numbers here are not directly comparable with the anchor ρ tabl
 
 # A correction to the first post
 
-The first post's opening observation was that `minilm`, the cosine winner, finished dead last on anchor ρ (0.059 on SciCUEval, 0.006 on MMLU), and I read that as contrastive training scrubbing surface features.
-With 25 draws, that holds on MMLU, where `minilm` sits three to five standard errors below `biomedbert-fulltext`.
-It does not hold on SciCUEval, where `minilm` is nominally *higher* on both machines, by one to two standard errors.
+Every anchor ρ in the first post was a single draw, and across its encoders the per-seed spread is 0.08 to 0.20, so two single draws of the same encoder typically differ by 0.1 to 0.2.
+To see which claims survive, I re-ran the per-seed estimator on the first post's own cached vectors for all 15 rows; on the laptop that reproduces every published SciCUEval single draw exactly, so only the estimator changed.
 
-More generally, every anchor ρ in the first post is a single draw.
-For the three encoders re-measured here the per-seed spread is 0.12 to 0.20, so two single draws of the same encoder differ by about 0.17 on average, which is what the laptop and Spark single draws above do.
-Differences between encoders in the first post's anchor ρ tables have to be read against that.
+![Per-seed anchor ρ for all 15 encoders from the first post, as split violins (laptop above, DGX Spark below) on SciCUEval and MMLU, sorted by the laptop's SciCUEval per-seed mean, with the first post's published value as a diamond](/images/mapper-repro/anchor-roster.png)
+
+- **SciCUEval: the ranking was mostly noise.** All 15 per-seed means fall between 0.16 and 0.37, with standard errors of 0.02 to 0.03. `medcpt-query` still comes first at 0.37, but only 1.3 standard errors ahead of `embeddinggemma`, so it doesn't win "outright"; its published 0.53, like `arctic-embed-m`'s 0.49, was a high draw. `minilm` and `e5-base-v2`, the first post's bottom two, sit mid-pack, and the MLM encoders average slightly *below* the contrastive ones.
+- **MMLU: the story broadly survives.** The top two rows are MLM encoders (`biomedbert-fulltext` 0.23, `bioformer-8l` 0.20), and `minilm`, `e5-base-v2` and the prescribed EmbeddingGemma sit at the bottom (0.04 to 0.08). The first post's reading, that MLM encoders fall back on surface features when the content signal thins out and contrastive ones fall through them, holds here.
+- **The machines agree across the roster.** With the same vectors and Mapper run on each machine, per-seed means agree within two standard errors on 24 of 27 scorable rows. The three misses exceed the bound by at most 1.5×, which 27 comparisons produce about one time in eight.
 
 # Why not a deterministic lens?
 
@@ -143,7 +144,8 @@ The evaluation now reports a leave-one-seed-out jackknife instead.
 
 # Loose ends
 
-- On the laptop, MMLU ARI and node counts differ slightly from the first post, on the same machine, and within noise. I haven't explained it. Evaluation order is ruled out: MMLU run alone reproduces MMLU run second to within float rounding.
+- On the laptop, 7 of 15 MMLU rows differ slightly from the first post (ARI by up to 0.03), from the same cached vectors on the same machine, while every SciCUEval row reproduces exactly. The mismatches interleave with exact rows computed in the same session, so it isn't a library change mid-run, and evaluation order is ruled out. I haven't found the cause.
+- Disintegration is a threshold, so a borderline row can flip between machines: `biomedbert-abstract` on MMLU covers 5.3% of prompts on the laptop and 4.96% on the Spark, against a cutoff of 5%.
 - On the Spark, the aarch64 build of numba has no TBB and falls back to GNU OpenMP, which kills forked worker processes. Setting `NUMBA_THREADING_LAYER=forksafe` fixes it.
 
 # What this sets up
